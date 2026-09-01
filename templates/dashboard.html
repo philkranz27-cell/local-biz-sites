@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Biz Sites — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #06040f; --bg-1: #0d0a1f; --bg-2: #140f2e;
+    --card: rgba(255,255,255,.065); --card-border: rgba(255,255,255,.1);
+    --ink: #ece9fb; --muted: #9b93c2;
+    --purple: #a78bfa; --blue: #38bdf8; --pink: #f472b6; --gold: #fbbf24; --green: #34d399;
+    --line: rgba(167,139,250,.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink);
+    background:
+      radial-gradient(ellipse 900px 600px at 15% -10%, rgba(139,92,246,.25), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 110% 10%, rgba(56,189,248,.18), transparent 55%),
+      radial-gradient(ellipse 800px 600px at 50% 120%, rgba(244,114,182,.13), transparent 55%),
+      var(--bg-0);
+    min-height: 100vh;
+  }
+  h1, h2, h3 { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .8rem; padding: 1.1rem 1.6rem; border-bottom: 1px solid var(--card-border); background: rgba(10,8,22,.6); }
+  .topbar h1 { margin: 0; font-size: 1.2rem; font-weight: 700; background: linear-gradient(90deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .actions { display: flex; align-items: center; gap: .7rem; }
+  .actions .hint { font-size: .78rem; color: var(--muted); max-width: 260px; line-height: 1.35; }
+  button.btn { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #0a0714; border: none; padding: .6rem 1.2rem; border-radius: 10px; cursor: pointer; font-size: .85rem; font-weight: 700; transition: transform .15s, box-shadow .15s; }
+  button.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(167,139,250,.6); }
+
+  .view { display: none; padding: 2rem 1.6rem 4rem; max-width: 1120px; margin: 0 auto; }
+  .view.active { display: block; animation: fadeIn .5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* --- Mindmap ---
+     Alle Positionen und Groessen sind Prozentwerte relativ zu .mindmap, dessen
+     Seitenverhaeltnis per aspect-ratio fest auf 820:600 steht. Dadurch bleibt die
+     Geometrie (Abstaende, Symmetrie) bei JEDER Fensterbreite exakt gleich - nichts
+     verschiebt sich relativ zueinander wie es bei fixen Pixelgroessen + variabler
+     Breite der Fall waere. */
+  /* Zentrierung ueber ganz normales Block-Element + margin:auto (kein Flex/Grid noetig -
+     das ist die simpelste, zuverlaessigste Zentrierungstechnik in CSS ueberhaupt). */
+  .mindmap {
+    position: relative; width: 100%; max-width: 820px; aspect-ratio: 820 / 600; margin: 2.5rem auto 0;
+  }
+
+  .orb { border-radius: 50%; position: relative; }
+  .orb::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background-size: 200% 200%;
+    animation: orbShift 9s ease-in-out infinite;
+    will-change: background-position;
+  }
+  @keyframes orbShift {
+    0%, 100% { background-position: 20% 30%, 80% 20%, 40% 90%; }
+    50% { background-position: 70% 70%, 20% 60%, 70% 20%; }
+  }
+  /* WICHTIG: translate(-50%,-50%) muss in JEDEM Keyframe wiederholt werden - eine
+     CSS-Animation auf "transform" ERSETZT den Wert komplett statt ihn zu ergaenzen.
+     Ohne das hier wuerde die Animation die Zentrierung der Kreise aufheben (und zwar
+     unterschiedlich stark je nach Kreisgroesse, was wie "verschieden weit vom
+     Zentrum entfernt" aussieht). */
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(1); }
+    50% { transform: translate(-50%, -50%) translateY(-10px) scale(1.03); }
+  }
+
+  .mm-node { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; aspect-ratio: 1; transform: translate(-50%, -50%); will-change: transform; }
+  .mm-center { width: 27%; top: 50%; left: 50%; z-index: 3; animation: orbFloat 6s ease-in-out infinite; box-shadow: 0 0 70px -10px rgba(139,92,246,.55), inset 0 0 50px rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.08); }
+  .mm-center::before { background-image: radial-gradient(circle at 30% 30%, rgba(167,139,250,.95), transparent 60%), radial-gradient(circle at 75% 45%, rgba(56,189,248,.8), transparent 60%), radial-gradient(circle at 50% 85%, rgba(244,114,182,.6), transparent 55%); background-color: #0d0b1e; }
+  .mm-center .mm-inner { position: relative; z-index: 1; }
+  .mm-center h2 { margin: 0; font-size: 1.2rem; line-height: 1.3; color: #fff; }
+  .mm-center p { margin: .5rem 0 0; font-size: .8rem; color: rgba(255,255,255,.75); }
+
+  .mm-bubble { width: 20%; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: transform .25s, box-shadow .25s; font-family: inherit; padding: 0; animation: orbFloat 6s ease-in-out infinite; }
+  .mm-bubble:hover { transform: translate(-50%, -50%) scale(1.08) translateY(-6px); }
+  .mm-bubble .mm-inner { position: relative; z-index: 1; }
+  .mm-bubble .mm-icon { font-size: 1.9rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
+  .mm-bubble .mm-label { font-weight: 700; font-size: .92rem; margin-top: .35rem; color: #fff; }
+  .mm-bubble .mm-count { font-size: .74rem; margin-top: .2rem; color: rgba(255,255,255,.7); }
+
+  /* Alle drei Bubbles sitzen auf einem echten Kreis um das Zentrum, exakt 120 Grad
+     versetzt (oben, unten-links, unten-rechts) - dadurch ist der Abstand vom Zentrum
+     zu JEDER der drei Bubbles identisch, nicht nur die Links-Rechts-Symmetrie.
+     Gleiche Animationsdauer + kein animation-delay bei allen vieren (Zentrum +
+     3 Bubbles) - sonst schweben sie zeitversetzt und der Abstand schwankt sichtbar,
+     obwohl er im Mittel stimmt. */
+  .mm-bubble-1 { top: 10%; left: 50%; box-shadow: 0 0 50px -14px rgba(167,139,250,.7); }
+  .mm-bubble-1::before { background-image: radial-gradient(circle at 30% 30%, rgba(167,139,250,.95), transparent 60%), radial-gradient(circle at 75% 65%, rgba(139,92,246,.7), transparent 60%); background-color: #150f2e; }
+
+  .mm-bubble-2 { top: 70%; left: 24.66%; box-shadow: 0 0 50px -14px rgba(56,189,248,.7); }
+  .mm-bubble-2::before { background-image: radial-gradient(circle at 30% 30%, rgba(56,189,248,.95), transparent 60%), radial-gradient(circle at 75% 65%, rgba(59,130,246,.7), transparent 60%); background-color: #0c1a2e; }
+
+  .mm-bubble-3 { top: 70%; left: 75.34%; box-shadow: 0 0 50px -14px rgba(52,211,153,.7); }
+  .mm-bubble-3::before { background-image: radial-gradient(circle at 30% 30%, rgba(52,211,153,.95), transparent 60%), radial-gradient(circle at 75% 65%, rgba(16,185,129,.7), transparent 60%); background-color: #0c2018; }
+
+  @media (max-width: 680px) {
+    .mindmap { aspect-ratio: auto; }
+    /* position: relative (nicht static!) - sonst verlieren die absolut positionierten
+       ::before-Farbverlaeufe ihren eigenen Bezugsrahmen und stapeln sich alle auf den
+       gemeinsamen .mindmap-Container statt auf ihre eigene Karte. */
+    .mm-node { position: relative; top: auto !important; left: auto !important; transform: none !important; width: 100% !important; aspect-ratio: auto; height: auto !important; border-radius: 20px; padding: 1.3rem; margin-bottom: 1rem; flex-direction: row; justify-content: flex-start; gap: 1rem; text-align: left; animation: none !important; }
+    .mm-node:hover { transform: none !important; }
+    .mm-node::before { border-radius: 20px; }
+    .mm-center { flex-direction: row; }
+  }
+
+  .back-link { display: inline-flex; align-items: center; gap: .4rem; background: none; border: none; color: var(--purple); font-weight: 600; cursor: pointer; font-size: .9rem; padding: 0; margin-bottom: 1.3rem; }
+  .back-link:hover { color: var(--blue); }
+  .view h2.section-title { font-size: 1.5rem; margin: 0 0 .4rem; color: #fff; }
+  .view .section-sub { color: var(--muted); font-size: .88rem; margin: 0 0 1.5rem; max-width: 62ch; }
+
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; overflow: hidden; }
+  th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .87rem; vertical-align: top; }
+  th { font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .status-chip { padding: .22rem .65rem; border-radius: 999px; font-size: .74rem; background: rgba(167,139,250,.16); color: var(--purple); white-space: nowrap; }
+  a.site-link { color: var(--blue); font-weight: 600; text-decoration: none; }
+  a.site-link:hover { text-decoration: underline; }
+
+  .email-card { padding: 1.3rem 1.5rem; margin-bottom: 1rem; }
+  .email-card .meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; font-size: .82rem; color: var(--muted); margin-bottom: .6rem; }
+  .email-card .subject { font-weight: 700; margin: 0 0 .5rem; color: #fff; }
+  .email-card .body { white-space: pre-wrap; font-size: .88rem; color: #d6d2ee; line-height: 1.6; }
+
+  .inbox-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem; }
+  .inbox-card h3 { margin: 0 0 .3rem; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: .5rem; }
+  .inbox-card .inbox-sub { font-size: .8rem; color: var(--muted); margin: 0 0 1rem; }
+  .inbox-msg { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .85rem; }
+  .inbox-msg:last-child { border-bottom: none; }
+  .inbox-msg .from { font-weight: 600; color: #fff; }
+  .inbox-msg .date { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+  .not-configured { font-size: .85rem; color: var(--muted); }
+  .not-configured code { background: rgba(255,255,255,.08); padding: .1rem .4rem; border-radius: 4px; }
+
+  .deal-row select, .deal-row input { font: inherit; font-size: .85rem; padding: .4rem .55rem; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; width: 100%; background: rgba(255,255,255,.05); color: var(--ink); }
+  .deal-row select option { background: #150f2e; color: var(--ink); }
+  .deal-row td { min-width: 120px; }
+  .save-btn { background: linear-gradient(135deg, var(--green), #10b981); color: #04140d; border: none; padding: .4rem .8rem; border-radius: 6px; font-size: .8rem; cursor: pointer; font-weight: 700; }
+  .pay-btn { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #0a0714; border: none; padding: .4rem .8rem; border-radius: 6px; font-size: .8rem; cursor: pointer; font-weight: 700; margin-left: .4rem; }
+  .save-ok { color: var(--green); font-size: .78rem; margin-left: .4rem; opacity: 0; transition: opacity .3s; }
+  .save-ok.show { opacity: 1; }
+  .pay-link { display: block; font-size: .76rem; margin-top: .3rem; color: var(--blue); word-break: break-all; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>◈ Local Biz Sites</h1>
+  <div class="actions">
+    <span class="hint">"Pipeline jetzt starten" löst sofort einen kompletten Durchlauf aus (Leads suchen → prüfen → Website + Mail erzeugen), statt auf den nächsten automatischen Zyklus zu warten. Läuft sonst schon durchgehend im Hintergrund.</span>
+    <button class="btn" onclick="fetch('/api/run-pipeline', {method:'POST'}).then(()=>alert('Pipeline gestartet — läuft im Hintergrund weiter.'))">Pipeline jetzt starten</button>
+  </div>
+</div>
+
+<!-- MINDMAP HUB -->
+<div id="mindmap-view" class="view active">
+  <div class="mindmap">
+    <div class="mm-node orb mm-center">
+      <div class="mm-inner">
+        <h2>Local Biz Sites</h2>
+        <p>{{ total_leads }} Betriebe im System</p>
+      </div>
+    </div>
+    <button class="mm-node orb mm-bubble mm-bubble-1" onclick="showView('leads-view')">
+      <div class="mm-inner">
+        <span class="mm-icon">🏪</span>
+        <span class="mm-label">Neue Betriebe</span>
+        <span class="mm-count">{{ total_leads }} gesamt</span>
+      </div>
+    </button>
+    <button class="mm-node orb mm-bubble mm-bubble-2" onclick="showView('emails-view')">
+      <div class="mm-inner">
+        <span class="mm-icon">📧</span>
+        <span class="mm-label">E-Mails</span>
+        <span class="mm-count">{{ emails_drafted }} entworfen · {{ emails_sent }} versendet</span>
+      </div>
+    </button>
+    <button class="mm-node orb mm-bubble mm-bubble-3" onclick="showView('payments-view')">
+      <div class="mm-inner">
+        <span class="mm-icon">💶</span>
+        <span class="mm-label">Zahlungen</span>
+        <span class="mm-count">{{ deals_active }} in Verhandlung</span>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- LEADS VIEW -->
+<div id="leads-view" class="view">
+  <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
+  <h2 class="section-title">🏪 Neue Betriebe</h2>
+  <p class="section-sub">Sucht durchgehend im Hintergrund (~55 Städte × 7 Kategorien) nach Betrieben ohne Website mit bekannter Kontakt-Mail und generiert automatisch eine Demo-Site.</p>
+  <table>
+    <thead>
+      <tr><th>Betrieb</th><th>Kategorie</th><th>Stadt</th><th>Status</th><th>Kontakt</th><th>Demo</th></tr>
+    </thead>
+    <tbody>
+      {% for lead in leads %}
+      <tr>
+        <td>{{ lead.name }}</td>
+        <td>{{ lead.category }}</td>
+        <td>{{ lead.city }}</td>
+        <td><span class="status-chip">{{ lead.status }}</span></td>
+        <td>{{ lead.contact_email or lead.phone or '—' }}</td>
+        <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- EMAILS VIEW -->
+<div id="emails-view" class="view">
+  <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
+  <h2 class="section-title">📧 E-Mails</h2>
+  <p class="section-sub">Entwürfe/Versand-Historie unten, Posteingang deines Geschäfts-Postfachs oben.</p>
+
+  <div class="card inbox-card">
+    <h3>📥 Posteingang{% if imap_user %} · {{ imap_user }}{% endif %}</h3>
+    {% if imap_configured %}
+      <p class="inbox-sub">Letzte Mails, live per IMAP abgerufen.</p>
+      <div id="inbox-list">Lade...</div>
+    {% else %}
+      <p class="not-configured">
+        Noch nicht verbunden. In <code>.env</code>: <code>IMAP_USER</code> und
+        <code>IMAP_PASSWORD</code> (App-Passwort, nicht das normale Passwort) eintragen —
+        Anleitung: <a class="site-link" href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>.
+      </p>
+    {% endif %}
+  </div>
+
+  {% for lead in leads %}
+    {% if lead.email_subject %}
+    <div class="card email-card">
+      <div class="meta">
+        <span><b style="color:#fff">{{ lead.name }}</b> · {{ lead.contact_email }}</span>
+        <span class="status-chip">{{ 'versendet' if lead.status == 'emailed' else 'entworfen, noch nicht gesendet' }}</span>
+      </div>
+      <p class="subject">{{ lead.email_subject }}</p>
+      <div class="body">{{ lead.email_body }}</div>
+    </div>
+    {% endif %}
+  {% else %}
+    <p class="not-configured">Noch keine E-Mail-Entwürfe vorhanden.</p>
+  {% endfor %}
+</div>
+
+<!-- PAYMENTS VIEW -->
+<div id="payments-view" class="view">
+  <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
+  <h2 class="section-title">💶 Zahlungen &amp; Deal-Status</h2>
+  {% if stripe_configured %}
+  <p class="section-sub">Preis eintragen und "Payment Link" klicken — erstellt einen echten Stripe-Zahlungslink, den du dem Betrieb schicken kannst.</p>
+  {% else %}
+  <p class="not-configured" style="margin-bottom:1.5rem;">
+    Stripe noch nicht verbunden — Status/Preis/Notizen lassen sich trotzdem manuell tracken.
+    Für echte Payment Links: kostenlosen Account auf <a class="site-link" href="https://dashboard.stripe.com/register" target="_blank">stripe.com</a> anlegen,
+    unter "Entwickler" → "API-Schlüssel" den <code>Geheimen Schlüssel</code> kopieren und als <code>STRIPE_SECRET_KEY</code> in <code>.env</code> eintragen
+    (Test-Keys funktionieren sofort, ohne Geschäftsverifizierung).
+  </p>
+  {% endif %}
+  <table>
+    <thead>
+      <tr><th>Betrieb</th><th>Status</th><th>Preis (€)</th><th>Notizen</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for lead in leads %}
+      {% if lead.status in ['ready_to_send', 'emailed'] %}
+      <tr class="deal-row" data-lead-id="{{ lead.id }}">
+        <td>{{ lead.name }}</td>
+        <td>
+          <select class="deal-status">
+            {% for opt in ['offen', 'kontaktiert', 'interessiert', 'verhandlung', 'bezahlt', 'abgelehnt'] %}
+            <option value="{{ opt }}" {% if lead.deal_status == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td><input type="text" class="deal-price" placeholder="z.B. 150" value="{{ lead.deal_price or '' }}"></td>
+        <td>
+          <input type="text" class="deal-notes" placeholder="Notizen..." value="{{ lead.deal_notes or '' }}">
+          {% if lead.stripe_payment_link %}<a class="pay-link" href="{{ lead.stripe_payment_link }}" target="_blank">{{ lead.stripe_payment_link }}</a>{% endif %}
+        </td>
+        <td style="white-space:nowrap;">
+          <button class="save-btn" onclick="saveDeal(this)">Speichern</button>
+          {% if stripe_configured %}<button class="pay-btn" onclick="createPaymentLink(this)">Payment Link</button>{% endif %}
+          <span class="save-ok">✓</span>
+        </td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    if (id === 'emails-view') loadInbox();
+  }
+
+  function loadInbox() {
+    var el = document.getElementById('inbox-list');
+    if (!el) return;
+    fetch('/api/inbox').then(function(r) { return r.json(); }).then(function(data) {
+      if (!data.configured) return;
+      if (data.error) { el.innerHTML = '<p class="not-configured">' + data.error + '</p>'; return; }
+      if (!data.messages.length) { el.innerHTML = '<p class="not-configured">Postfach leer.</p>'; return; }
+      el.innerHTML = data.messages.map(function(m) {
+        return '<div class="inbox-msg"><div><div class="from">' + m.from + '</div>' + m.subject + '</div><div class="date">' + m.date + '</div></div>';
+      }).join('');
+    }).catch(function() { el.innerHTML = '<p class="not-configured">Abruf fehlgeschlagen.</p>'; });
+  }
+
+  function saveDeal(btn) {
+    var row = btn.closest('.deal-row');
+    var leadId = row.dataset.leadId;
+    var payload = {
+      deal_status: row.querySelector('.deal-status').value,
+      deal_price: row.querySelector('.deal-price').value,
+      deal_notes: row.querySelector('.deal-notes').value
+    };
+    fetch('/api/lead/' + leadId + '/deal', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    }).then(function() {
+      var ok = row.querySelector('.save-ok');
+      ok.classList.add('show');
+      setTimeout(function() { ok.classList.remove('show'); }, 1500);
+    });
+  }
+
+  function createPaymentLink(btn) {
+    var row = btn.closest('.deal-row');
+    var leadId = row.dataset.leadId;
+    var price = parseFloat(row.querySelector('.deal-price').value);
+    if (!price || price <= 0) { alert('Bitte zuerst einen Preis eintragen.'); return; }
+    btn.disabled = true;
+    btn.textContent = '...';
+    fetch('/api/lead/' + leadId + '/payment-link', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({amount_eur: price})
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      btn.disabled = false;
+      btn.textContent = 'Payment Link';
+      if (data.url) { location.reload(); }
+    });
+  }
+</script>
+</body>
+</html>
