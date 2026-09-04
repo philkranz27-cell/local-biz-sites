@@ -48,14 +48,14 @@ def source_health() -> dict:
 
     minutes_ago = int((time.time() - _last_success_ts) / 60) if _last_success_ts else None
     if _consecutive_failures == 0:
-        return {"state": "ok", "text": "Lead-Suche laeuft"}
+        return {"state": "ok", "text": "Lead-Suche läuft"}
     if _consecutive_failures < 5:
         return {"state": "warn", "text": f"{_consecutive_failures} Abfragen in Folge fehlgeschlagen"}
 
     since = f"seit {minutes_ago} Min. keine Treffer" if minutes_ago is not None else "noch nie erfolgreich"
     return {
         "state": "down",
-        "text": f"OpenStreetMap nicht erreichbar - {since} ({_consecutive_failures} Fehlversuche)",
+        "text": f"OpenStreetMap nicht erreichbar – {since} ({_consecutive_failures} Fehlversuche)",
     }
 
 # Kategorie -> OSM-Tag (key, value). Weitere Kategorien: https://wiki.openstreetmap.org/wiki/Map_features
