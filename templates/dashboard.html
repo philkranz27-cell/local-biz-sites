@@ -149,6 +149,16 @@
   .save-ok { color: var(--green); font-size: .78rem; margin-left: .4rem; opacity: 0; transition: opacity .3s; }
   .save-ok.show { opacity: 1; }
   .pay-link { display: block; font-size: .76rem; margin-top: .3rem; color: var(--blue); word-break: break-all; }
+  /* Zustand der Lead-Suche. Sitzt mittig ueber der Mindmap und stoert die Symmetrie
+     der Kreise nicht, macht einen Ausfall der Datenquelle aber sofort sichtbar. */
+  .src-health { display: flex; justify-content: center; margin: 1.1rem auto -.4rem; }
+  .src-health span { display: inline-flex; align-items: center; gap: .5rem; font-size: .78rem; padding: .35rem .9rem; border-radius: 999px; border: 1px solid var(--card-border); background: rgba(10,8,22,.6); color: rgba(255,255,255,.72); }
+  .src-health .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .src-health.ok .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .src-health.warn .dot { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+  .src-health.down .dot { background: #f87171; box-shadow: 0 0 8px #f87171; }
+  .src-health.down span { color: #fca5a5; border-color: rgba(248,113,113,.35); }
+  .src-health.unknown .dot { background: rgba(255,255,255,.35); }
 </style>
 </head>
 <body>
@@ -163,6 +173,9 @@
 
 <!-- MINDMAP HUB -->
 <div id="mindmap-view" class="view active">
+  <div class="src-health {{ source_health.state }}">
+    <span><i class="dot"></i>{{ source_health.text }}</span>
+  </div>
   <div class="mindmap">
     <div class="mm-node orb mm-center">
       <div class="mm-inner">

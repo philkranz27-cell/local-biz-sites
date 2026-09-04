@@ -14,8 +14,48 @@ from app.models import Lead
 
 logger = logging.getLogger(__name__)
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+# Mehrere Server statt einem: overpass-api.de war ueber Stunden gar nicht erreichbar
+# (ConnectTimeout) und die Pipeline lief dadurch komplett ins Leere - ohne dass es
+# ausser im Log aufgefallen waere. Die Mirrors sind vollwertige Planet-Kopien, nur
+# langsamer und wechselhaft ausgelastet, deshalb reihum probieren.
+# Achtung: overpass.osm.ch NICHT aufnehmen - das ist ein reiner Schweiz-Auszug und
+# liefert fuer deutsche Staedte stillschweigend 0 Treffer.
+OVERPASS_ENDPOINTS = (
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+)
+# Kurzer Verbindungsaufbau (ein toter Server soll nicht 40s kosten), aber grosszuegiges
+# Lesefenster - die Mirrors brauchen unter Last regelmaessig 15-50s pro Abfrage.
+REQUEST_TIMEOUT = httpx.Timeout(connect=10.0, read=75.0, write=10.0, pool=10.0)
 HEADERS = {"User-Agent": "local-biz-sites/1.0 (small side project, low volume)"}
+
+# Merkt sich den zuletzt erfolgreichen Server, damit nicht jede Abfrage erneut in den
+# Timeout des ausgefallenen Servers laeuft.
+_preferred_endpoint = 0
+
+# Zustand der Datenquelle, damit ein Totalausfall im Dashboard sichtbar wird statt nur
+# im Log zu stehen - genau das ist einmal stundenlang unbemerkt geblieben.
+_last_success_ts: float | None = None
+_consecutive_failures = 0
+
+
+def source_health() -> dict:
+    """Fuer die Anzeige im Dashboard: laeuft die Lead-Suche gerade oder nicht?"""
+    if _last_success_ts is None and _consecutive_failures == 0:
+        return {"state": "unknown", "text": "Noch keine Abfrage seit dem Start"}
+
+    minutes_ago = int((time.time() - _last_success_ts) / 60) if _last_success_ts else None
+    if _consecutive_failures == 0:
+        return {"state": "ok", "text": "Lead-Suche laeuft"}
+    if _consecutive_failures < 5:
+        return {"state": "warn", "text": f"{_consecutive_failures} Abfragen in Folge fehlgeschlagen"}
+
+    since = f"seit {minutes_ago} Min. keine Treffer" if minutes_ago is not None else "noch nie erfolgreich"
+    return {
+        "state": "down",
+        "text": f"OpenStreetMap nicht erreichbar - {since} ({_consecutive_failures} Fehlversuche)",
+    }
 
 # Kategorie -> OSM-Tag (key, value). Weitere Kategorien: https://wiki.openstreetmap.org/wiki/Map_features
 CATEGORY_OSM_TAGS = {
@@ -75,26 +115,50 @@ def find_leads(category: str, city: str, max_results: int) -> list[Lead]:
         return []
     tag_key, tag_value = tag
 
+    global _preferred_endpoint, _last_success_ts, _consecutive_failures
+
+    query = _build_query(tag_key, tag_value, city, max_results)
     cooldown = 3
-    try:
-        response = httpx.post(
-            OVERPASS_URL,
-            headers=HEADERS,
-            data={"data": _build_query(tag_key, tag_value, city, max_results)},
-            timeout=30,
+    elements = None
+    failures: list[str] = []
+
+    # Beim zuletzt erfolgreichen Server anfangen und bei Ausfall zum naechsten wechseln.
+    for offset in range(len(OVERPASS_ENDPOINTS)):
+        index = (_preferred_endpoint + offset) % len(OVERPASS_ENDPOINTS)
+        endpoint = OVERPASS_ENDPOINTS[index]
+        host = endpoint.split("//", 1)[-1].split("/", 1)[0]
+        try:
+            response = httpx.post(endpoint, headers=HEADERS, data={"data": query}, timeout=REQUEST_TIMEOUT)
+            if response.status_code == 429:
+                # Der Server drosselt uns - laenger pausieren statt sofort wieder
+                # anzufragen, sonst verlaengert sich die Sperre nur.
+                cooldown = 30
+            response.raise_for_status()
+            elements = response.json().get("elements", [])
+        except httpx.HTTPError as exc:
+            failures.append(f"{host}: {type(exc).__name__}")
+            continue
+
+        if offset:
+            logger.info("Overpass: auf %s ausgewichen (%s)", host, "; ".join(failures))
+        _preferred_endpoint = index
+        _last_success_ts = time.time()
+        _consecutive_failures = 0
+        break
+
+    if elements is None:
+        _consecutive_failures += 1
+        # Alle Server ausgefallen - als Fehler melden, denn dann findet die Pipeline
+        # nichts mehr und das darf nicht still passieren.
+        logger.error(
+            "Overpass-Anfrage fehlgeschlagen fuer %s/%s auf allen %d Servern: %s",
+            category, city, len(OVERPASS_ENDPOINTS), "; ".join(failures),
         )
-        if response.status_code == 429:
-            # Der oeffentliche Server drosselt uns - laenger Pause machen statt sofort
-            # wieder anzufragen, sonst verlaengert sich die Sperre nur.
-            cooldown = 30
-        response.raise_for_status()
-        elements = response.json().get("elements", [])
-    except httpx.HTTPError as exc:
-        logger.error("Overpass-Anfrage fehlgeschlagen fuer %s/%s: %s", category, city, exc)
-        return []
-    finally:
-        # Oeffentliche, kostenlose Infrastruktur - nicht ohne Pause hintereinander anfragen.
         time.sleep(cooldown)
+        return []
+
+    # Oeffentliche, kostenlose Infrastruktur - nicht ohne Pause hintereinander anfragen.
+    time.sleep(cooldown)
 
     leads = [_lead_from_element(el, category, city) for el in elements]
     return [lead for lead in leads if lead is not None]

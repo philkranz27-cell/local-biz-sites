@@ -14,6 +14,7 @@ from app.outreach.inbox import fetch_recent_messages
 from app.outreach.mailer import send_reservation_notification
 from app.payments import create_payment_link
 from app.pipeline import run_pipeline
+from app.sources import overpass
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,7 @@ def dashboard(request: Request):
             "imap_configured": settings.imap_configured,
             "stripe_configured": settings.stripe_configured,
             "imap_user": settings.imap_user,
+            "source_health": overpass.source_health(),
         },
     )
 
