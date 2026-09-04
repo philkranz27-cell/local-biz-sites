@@ -26,8 +26,9 @@ OVERPASS_ENDPOINTS = (
     "https://overpass.private.coffee/api/interpreter",
 )
 # Kurzer Verbindungsaufbau (ein toter Server soll nicht 40s kosten), aber grosszuegiges
-# Lesefenster - die Mirrors brauchen unter Last regelmaessig 15-50s pro Abfrage.
-REQUEST_TIMEOUT = httpx.Timeout(connect=10.0, read=75.0, write=10.0, pool=10.0)
+# Lesefenster - es muss ueber dem Zeitbudget liegen, das die Abfrage dem Server einraeumt
+# ([out:json][timeout:90]), sonst brechen wir ab waehrend der Server noch rechnet.
+REQUEST_TIMEOUT = httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=10.0)
 HEADERS = {"User-Agent": "local-biz-sites/1.0 (small side project, low volume)"}
 
 # Merkt sich den zuletzt erfolgreichen Server, damit nicht jede Abfrage erneut in den
@@ -71,7 +72,7 @@ CATEGORY_OSM_TAGS = {
 
 def _build_query(tag_key: str, tag_value: str, city: str, max_results: int) -> str:
     return f"""
-    [out:json][timeout:25];
+    [out:json][timeout:90];
     area["name"="{city}"]["boundary"="administrative"]->.searchArea;
     (
       node["{tag_key}"="{tag_value}"](area.searchArea);
@@ -134,7 +135,14 @@ def find_leads(category: str, city: str, max_results: int) -> list[Lead]:
                 # anzufragen, sonst verlaengert sich die Sperre nur.
                 cooldown = 30
             response.raise_for_status()
-            elements = response.json().get("elements", [])
+            payload = response.json()
+            remark = payload.get("remark")
+            if remark:
+                # Overpass meldet Abbrueche NICHT per Statuscode, sondern als "remark" in
+                # einer 200er-Antwort mit unvollstaendigen Daten. Ohne diese Pruefung
+                # haetten wir Teilergebnisse stillschweigend als vollstaendig verbucht.
+                raise httpx.HTTPError(f"Overpass-Hinweis: {remark[:120]}")
+            elements = payload.get("elements", [])
         except httpx.HTTPError as exc:
             failures.append(f"{host}: {type(exc).__name__}")
             continue

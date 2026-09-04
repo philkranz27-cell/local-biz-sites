@@ -54,7 +54,12 @@ class Settings(BaseSettings):
         "Reutlingen,Koblenz,Jena,Erlangen,Siegen,Hildesheim"
     )
     search_categories: str = "restaurant,hair_salon,bakery,cafe,bar,gym,florist"
-    max_leads_per_run: int = 20
+    # Obergrenze der Treffer je Stadt+Kategorie-Abfrage. Wichtig: Overpass liefert ohne
+    # Offset immer dieselben ersten N Treffer - mit 20 war die Quelle nach einem Durchlauf
+    # durch alle Staedte erschoepft ("20 Treffer, 0 neu"). 200 kostet kaum mehr Zeit
+    # (15s statt 10s), 1000 laeuft in den Timeout. Begrenzt nur die Suche; wie viele
+    # Websites/Mails daraus entstehen, deckeln die Phasen unten getrennt.
+    max_leads_per_run: int = 200
     max_emails_per_day: int = 15
 
     db_path: str = "data/app.db"
