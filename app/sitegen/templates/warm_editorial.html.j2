@@ -172,6 +172,10 @@
       <p>✓ Danke, {{ name }} hat Ihre Anfrage erhalten.</p>
       <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
     </div>
+    <div class="modal-success" id="reservationError">
+      <p>Die Anfrage konnte leider nicht übermittelt werden.</p>
+      <p class="modal-note">Bitte versuchen Sie es später noch einmal{% if phone %} oder rufen Sie direkt an: {{ phone }}{% endif %}.</p>
+    </div>
     {% if phone %}<a class="modal-tel" href="tel:{{ phone }}">oder direkt anrufen: {{ phone }}</a>{% endif %}
   </div>
 </div>
@@ -191,9 +195,15 @@
     ev.preventDefault();
     var data = Object.fromEntries(new FormData(ev.target));
     fetch('/api/reservation/{{ slug }}', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
-      .finally(function() {
+      .then(function(res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
         reservationForm.style.display = 'none';
         document.getElementById('reservationSuccess').style.display = 'block';
+      })
+      .catch(function() {
+        // Ehrlich bleiben: Erfolg nur melden, wenn die Anfrage wirklich angekommen ist.
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationError').style.display = 'block';
       });
   });
 </script>

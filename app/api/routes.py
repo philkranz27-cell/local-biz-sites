@@ -1,8 +1,10 @@
 import logging
+import secrets
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 
 from app import db
@@ -20,8 +22,32 @@ templates = Jinja2Templates(directory=str(PROJECT_ROOT / "templates"))
 
 router = APIRouter()
 
+_basic_auth = HTTPBasic(auto_error=True)
 
-@router.get("/", response_class=HTMLResponse)
+
+def require_admin(credentials: HTTPBasicCredentials = Depends(_basic_auth)) -> str:
+    """Schuetzt Dashboard und Verwaltungs-Endpunkte. Wichtig, weil die App per Tunnel
+    oeffentlich erreichbar ist - ohne das koennte jeder mit der Adresse die Firmenkontakte,
+    Mail-Entwuerfe und sogar den Posteingang (/api/inbox) abrufen.
+
+    Faellt bewusst zu (deny), wenn kein Passwort gesetzt ist - lieber ausgesperrt als offen."""
+    if not settings.dashboard_password:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="DASHBOARD_PASSWORD ist nicht gesetzt - Dashboard aus Sicherheitsgruenden gesperrt.",
+        )
+    user_ok = secrets.compare_digest(credentials.username, settings.dashboard_user)
+    pass_ok = secrets.compare_digest(credentials.password, settings.dashboard_password)
+    if not (user_ok and pass_ok):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Falsche Zugangsdaten",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+
+@router.get("/", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 def dashboard(request: Request):
     leads = db.get_all_leads()
     return templates.TemplateResponse(
@@ -46,14 +72,14 @@ def healthz():
     return {"status": "ok"}
 
 
-@router.post("/api/run-pipeline")
+@router.post("/api/run-pipeline", dependencies=[Depends(require_admin)])
 def api_run_pipeline(background_tasks: BackgroundTasks):
     """Manueller Trigger fuer Tests, statt auf das naechste Scheduler-Intervall zu warten."""
     background_tasks.add_task(run_pipeline)
     return {"status": "started"}
 
 
-@router.get("/api/stats")
+@router.get("/api/stats", dependencies=[Depends(require_admin)])
 def api_stats():
     return db.get_stats()
 
@@ -73,13 +99,13 @@ def api_reservation(slug: str, payload: ReservationRequest):
     return {"status": "ok"}
 
 
-@router.post("/api/lead/{lead_id}/deal")
+@router.post("/api/lead/{lead_id}/deal", dependencies=[Depends(require_admin)])
 def api_update_deal(lead_id: int, payload: DealUpdate):
     db.update_deal(lead_id, payload.deal_status, payload.deal_price, payload.deal_notes)
     return {"status": "ok"}
 
 
-@router.get("/api/inbox")
+@router.get("/api/inbox", dependencies=[Depends(require_admin)])
 def api_inbox():
     """Fuer die E-Mails-Ansicht im Dashboard - zeigt die letzten Mails aus dem
     Geschaefts-Postfach per IMAP, falls konfiguriert."""
@@ -92,7 +118,7 @@ def api_inbox():
         return {"configured": True, "messages": [], "error": "Abruf fehlgeschlagen - App-Passwort pruefen"}
 
 
-@router.post("/api/lead/{lead_id}/payment-link")
+@router.post("/api/lead/{lead_id}/payment-link", dependencies=[Depends(require_admin)])
 def api_create_payment_link(lead_id: int, payload: PaymentLinkRequest):
     if not settings.stripe_configured:
         raise HTTPException(status_code=400, detail="Stripe nicht konfiguriert")

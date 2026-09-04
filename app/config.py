@@ -37,6 +37,13 @@ class Settings(BaseSettings):
     # Account spaeter bei Stripe verifiziert werden).
     stripe_secret_key: str = ""
 
+    # Zugangsschutz fuer Dashboard + Verwaltungs-Endpunkte. Zwingend noetig, sobald die App
+    # ueber einen Tunnel oeffentlich erreichbar ist - sonst kaeme jeder mit der Adresse an
+    # Firmenkontakte, Mail-Entwuerfe und den Posteingang. Leeres Passwort = Dashboard
+    # gesperrt (fail closed), die oeffentlichen Demo-Seiten bleiben davon unberuehrt.
+    dashboard_user: str = "admin"
+    dashboard_password: str = ""
+
     search_cities: str = (
         "Berlin,Hamburg,München,Köln,Frankfurt am Main,Stuttgart,Düsseldorf,Leipzig,"
         "Dortmund,Essen,Bremen,Dresden,Hannover,Nürnberg,Duisburg,Bochum,Wuppertal,"
