@@ -50,7 +50,8 @@ def source_health() -> dict:
     if _consecutive_failures == 0:
         return {"state": "ok", "text": "Lead-Suche läuft"}
     if _consecutive_failures < 5:
-        return {"state": "warn", "text": f"{_consecutive_failures} Abfragen in Folge fehlgeschlagen"}
+        wort = "Abfrage" if _consecutive_failures == 1 else "Abfragen"
+        return {"state": "warn", "text": f"{_consecutive_failures} {wort} in Folge fehlgeschlagen"}
 
     since = f"seit {minutes_ago} Min. keine Treffer" if minutes_ago is not None else "noch nie erfolgreich"
     return {
