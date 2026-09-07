@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timezone
+from pathlib import Path
 
 from app import db
 from app.config import settings
@@ -16,26 +17,63 @@ def _start_of_today_iso() -> str:
     return now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
 
 
+# Ein kompletter Suchlauf ueber alle Staedte und Kategorien sind 56x7 = 392 Abfragen und
+# dauert bei ~80s pro Abfrage rund 9 Stunden. Weil run_pipeline die Phasen nacheinander
+# ausfuehrt, kam die Website-Erzeugung dahinter praktisch nie an die Reihe - 83 fertig
+# qualifizierte Leads lagen unbearbeitet da. Deshalb pro Durchlauf nur ein kleines Stueck
+# der Liste abarbeiten und beim naechsten Mal dort weitermachen.
+FIND_COMBOS_PER_RUN = 12
+_CURSOR_FILE = Path(settings.db_path).parent / "find_cursor.txt"
+
+
+def _load_cursor() -> int:
+    """Position in der Stadt/Kategorie-Liste. Liegt in einer Datei, damit ein Neustart
+    (der Rechner faehrt nachts hoch und runter) nicht wieder bei Berlin anfaengt."""
+    try:
+        return int(_CURSOR_FILE.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return 0
+
+
+def _save_cursor(value: int) -> None:
+    try:
+        _CURSOR_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _CURSOR_FILE.write_text(str(value), encoding="utf-8")
+    except OSError:
+        logger.warning("Konnte Suchposition nicht speichern (%s)", _CURSOR_FILE)
+
+
 def phase_find_leads() -> None:
     """Nach Nutzervorgabe nur Betriebe ohne Website UND mit bekannter Kontakt-Mail
     behalten - alles andere wird direkt aussortiert (kein Scraping/Impressum-Suche noetig,
     die Mail kommt ausschliesslich aus OSM-eigenen contact:email/email-Tags)."""
-    for city in settings.city_list:
-        for category in settings.category_list:
-            leads = find_leads(category, city, settings.max_leads_per_run)
-            inserted = 0
-            for lead in leads:
-                lead_id = db.insert_lead(lead)
-                if lead_id is None:
-                    continue
-                inserted += 1
-                if lead.existing_website:
-                    db.set_status(lead_id, "excluded_has_website")
-                elif lead.osm_email:
-                    db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
-                else:
-                    db.set_status(lead_id, "excluded_no_email")
-            logger.info("Gefunden %s/%s: %d Treffer, %d neu", category, city, len(leads), inserted)
+    combos = [(city, category) for city in settings.city_list for category in settings.category_list]
+    if not combos:
+        return
+
+    start = _load_cursor() % len(combos)
+    for offset in range(min(FIND_COMBOS_PER_RUN, len(combos))):
+        position = (start + offset) % len(combos)
+        city, category = combos[position]
+        _save_cursor(position + 1)
+
+        leads = find_leads(category, city, settings.max_leads_per_run)
+        inserted = 0
+        for lead in leads:
+            lead_id = db.insert_lead(lead)
+            if lead_id is None:
+                continue
+            inserted += 1
+            if lead.existing_website:
+                db.set_status(lead_id, "excluded_has_website")
+            elif lead.osm_email:
+                db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
+            else:
+                db.set_status(lead_id, "excluded_no_email")
+        logger.info(
+            "Gefunden %s/%s: %d Treffer, %d neu (Position %d/%d)",
+            category, city, len(leads), inserted, position + 1, len(combos),
+        )
 
 
 def phase_generate_sites() -> None:
@@ -82,7 +120,10 @@ def phase_send_emails() -> None:
 
 
 def run_pipeline() -> None:
-    phase_find_leads()
+    # Verarbeitung zuerst, Suche zuletzt: der Rechner laeuft nicht durchgehend, sondern in
+    # Schueben von ein bis zwei Stunden. Wer zuerst sucht, verbraucht das ganze Zeitfenster
+    # mit Suchen und liefert am Ende keine einzige fertige Website.
     phase_generate_sites()
     phase_draft_emails()
     phase_send_emails()
+    phase_find_leads()
