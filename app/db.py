@@ -50,6 +50,8 @@ def init_db() -> None:
             conn.execute("ALTER TABLE leads ADD COLUMN deal_notes TEXT")
         if "stripe_payment_link" not in existing_columns:
             conn.execute("ALTER TABLE leads ADD COLUMN stripe_payment_link TEXT")
+        if "osm_image" not in existing_columns:
+            conn.execute("ALTER TABLE leads ADD COLUMN osm_image TEXT")
 
 
 def insert_lead(lead: Lead) -> int | None:
@@ -59,8 +61,8 @@ def insert_lead(lead: Lead) -> int | None:
             """
             INSERT OR IGNORE INTO leads
                 (place_id, name, category, city, address, phone, existing_website,
-                 rating, user_ratings_total, opening_hours_json, status, found_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'found', ?)
+                 rating, user_ratings_total, opening_hours_json, osm_image, status, found_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'found', ?)
             """,
             (
                 lead.place_id,
@@ -73,6 +75,7 @@ def insert_lead(lead: Lead) -> int | None:
                 lead.rating,
                 lead.user_ratings_total,
                 lead.opening_hours_json,
+                lead.osm_image,
                 _now(),
             ),
         )

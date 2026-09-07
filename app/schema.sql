@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS leads (
     rating REAL,
     user_ratings_total INTEGER,
     opening_hours_json TEXT,
+    osm_image TEXT,
     status TEXT NOT NULL DEFAULT 'found',
     site_slug TEXT,
     email_subject TEXT,

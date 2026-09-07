@@ -107,6 +107,7 @@ def _lead_from_element(element: dict, category: str, city: str) -> Lead | None:
         existing_website=tags.get("website") or tags.get("contact:website"),
         opening_hours_json=json.dumps([tags["opening_hours"]], ensure_ascii=False) if tags.get("opening_hours") else None,
         osm_email=tags.get("contact:email") or tags.get("email"),
+        osm_image=tags.get("image") or tags.get("wikimedia_commons"),
     )
 
 

@@ -10,6 +10,7 @@ from app.llm import STYLE_HINTS, generate_site_copy
 from app.config import settings
 from app.sitegen.images import get_photos
 from app.sitegen.opening_hours import format_opening_hours
+from app.sitegen.osm_photo import hole_foto
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -80,6 +81,15 @@ def generate_site(lead: sqlite3.Row) -> str:
     photos = get_photos(copy.image_query, lead["category"], count=4)
     hero_image = photos[0] if photos else None
     gallery_images = photos[1:4] if len(photos) > 1 else []
+
+    # Hat der Betrieb in OSM ein echtes Foto hinterlegt, kommt das nach vorne - ein
+    # Bild des Betriebs schlaegt jedes Stimmungsbild. Kommt selten vor (Stichprobe:
+    # 1 von 60), lohnt sich aber genau bei denen, wo es klappt.
+    echtes_foto = hole_foto(lead["osm_image"] if "osm_image" in lead.keys() else None)
+    if echtes_foto:
+        if hero_image:
+            gallery_images = ([hero_image] + gallery_images)[:3]
+        hero_image = echtes_foto
 
     slug = slugify(lead["name"], lead["city"], lead["place_id"])
     # OSM-Rohsyntax ("Su-Th 17:00-23:30") in lesbares Deutsch uebersetzen, bevor sie

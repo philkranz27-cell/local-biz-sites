@@ -16,6 +16,11 @@ class Lead(BaseModel):
     rating: Optional[float] = None
     user_ratings_total: Optional[int] = None
     opening_hours_json: Optional[str] = None
+    osm_image: Optional[str] = None
+    """image-Tag aus OSM, falls der Betrieb dort ein echtes Foto hinterlegt hat.
+    Selten (in der Stichprobe 1 von 60), aber der einzige rechtlich saubere Weg zu
+    einem Bild, das wirklich diesen Betrieb zeigt."""
+
     osm_email: Optional[str] = None
     """Direkt aus OSM-Tags (contact:email/email) - falls vorhanden, sparen wir uns das
     Scraping der Impressum-Seite fuer diesen Lead."""

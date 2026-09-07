@@ -23,6 +23,17 @@ OPT_OUT_NOTE = (
 # hierhin und nicht ins Sprachmodell, weil es bei jeder Mail gleich ist.
 GREETING = "Guten Tag,\n\n"
 
+# Die Fotos auf den Demo-Seiten sind Stockbilder, keine Aufnahmen des Betriebs - echte
+# gibt es fuer diese Betriebe nirgends in einer Form, die wir verwenden duerften.
+# Ohne diesen Hinweis sieht ein Wirt fremde Raeume und haelt die Seite fuer unbrauchbar.
+# Steht bewusst hier und nicht im Prompt: Er muss in JEDER Mail stehen, nicht mal so und
+# mal anders formuliert - und er darf keinen Preis nennen.
+PHOTO_NOTE = (
+    "\n\nDie Fotos auf der Seite sind Platzhalter. Ihre eigenen Bilder, Texte, Farben "
+    "und Angebote setze ich selbstverständlich ein – sagen Sie einfach, wie Sie es "
+    "haben möchten."
+)
+
 
 def _signature() -> str:
     """Name des Absenders aus der Anbieterkennzeichnung ziehen - dort steht er ohnehin
@@ -45,7 +56,7 @@ def _send(to_email: str, subject: str, body: str) -> None:
 
 
 def send_outreach_email(to_email: str, subject: str, body: str) -> None:
-    _send(to_email, subject, GREETING + body + _signature() + OPT_OUT_NOTE)
+    _send(to_email, subject, GREETING + body + PHOTO_NOTE + _signature() + OPT_OUT_NOTE)
 
 
 def send_reservation_notification(business_name: str, slug: str, req: ReservationRequest) -> None:
