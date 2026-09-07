@@ -158,6 +158,36 @@
                   white-space: nowrap; max-width: 100%; margin-top: .15rem; }
   .mail-open .mail-preview { display: none; }
 
+  /* Live-Verlauf. Sitzt unter der Kopfzeile und schiebt die Mindmap nach unten,
+     statt sie zu überdecken - man soll beides gleichzeitig sehen können. */
+  .live { max-width: 900px; margin: 1.2rem auto 0; padding: 1rem 1.2rem; border-radius: 14px;
+          border: 1px solid var(--card-border); background: rgba(10,8,22,.75); }
+  .live-kopf { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+               font-size: .85rem; color: #fff; margin-bottom: .7rem; }
+  .live-punkt { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .live.aktiv .live-punkt { background: var(--green); box-shadow: 0 0 8px var(--green);
+                            animation: pulsieren 1.4s ease-in-out infinite; }
+  @keyframes pulsieren { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  .live-dauer { color: var(--muted); font-size: .78rem; }
+  .live-zu { margin-left: auto; background: none; border: none; color: var(--muted);
+             cursor: pointer; font-size: 1.1rem; line-height: 1; }
+  .live-zu:hover { color: #fff; }
+  .live-liste { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto;
+                font-size: .82rem; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+  .live-liste li { display: flex; gap: .7rem; padding: .28rem 0;
+                   border-bottom: 1px solid rgba(255,255,255,.05); }
+  .live-liste li:last-child { border-bottom: none; }
+  .live-zeit { color: var(--muted); flex: none; }
+  .live-marke { flex: none; width: 8.5rem; font-weight: 600; }
+  .live-marke.websites { color: #c4b5fd; }
+  .live-marke.entwuerfe { color: #7dd3fc; }
+  .live-marke.versand { color: #6ee7b7; }
+  .live-marke.suche { color: #fcd34d; }
+  .live-marke.veroeffentlichen { color: #f0abfc; }
+  .live-marke.fehler { color: #fca5a5; }
+  .live-marke.start, .live-marke.ende { color: var(--muted); }
+  .live-text { color: #ddd8f0; word-break: break-word; }
+
   .block-card { margin-bottom: 1rem; }
   .block-add { display: flex; flex-wrap: wrap; gap: .6rem; margin: .9rem 0; }
   .block-add input { flex: 1 1 200px; padding: .5rem .7rem; border-radius: 8px;
@@ -204,8 +234,18 @@
   <h1>◈ Local Biz Sites</h1>
   <div class="actions">
     <span class="hint">"Pipeline jetzt starten" löst sofort einen kompletten Durchlauf aus (Leads suchen → prüfen → Website + Mail erzeugen), statt auf den nächsten automatischen Zyklus zu warten. Läuft sonst schon durchgehend im Hintergrund.</span>
-    <button class="btn" onclick="fetch('/api/run-pipeline', {method:'POST'}).then(()=>alert('Pipeline gestartet — läuft im Hintergrund weiter.'))">Pipeline jetzt starten</button>
+    <button class="btn" onclick="pipelineStarten()">Pipeline jetzt starten</button>
   </div>
+</div>
+
+<div class="live" id="live" hidden>
+  <div class="live-kopf">
+    <i class="live-punkt"></i>
+    <span id="livePhase">Warte auf die Pipeline…</span>
+    <span class="live-dauer" id="liveDauer"></span>
+    <button class="live-zu" onclick="liveSchliessen()" title="Ausblenden">×</button>
+  </div>
+  <ul class="live-liste" id="liveListe"></ul>
 </div>
 
 <!-- MINDMAP HUB -->
@@ -400,6 +440,72 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
     });
   }
+
+  // --- Live-Verlauf ---------------------------------------------------------
+  // Die Pipeline läuft ohnehin durchgehend im Hintergrund; der Knopf stößt nur
+  // zusätzlich einen Durchlauf an. Der Verlauf zeigt deshalb einfach, was gerade
+  // passiert - egal wodurch es angestoßen wurde.
+  var liveSeit = 0, liveTimer = null;
+
+  var PHASEN = {
+    start: 'Start', ende: 'Fertig', websites: 'Websites', entwuerfe: 'Entwürfe',
+    versand: 'Versand', suche: 'Suche', veroeffentlichen: 'Veröffentl.', fehler: 'Fehler'
+  };
+
+  function liveZeigen() {
+    document.getElementById('live').hidden = false;
+    if (!liveTimer) { liveHolen(); liveTimer = setInterval(liveHolen, 2000); }
+  }
+
+  function liveSchliessen() {
+    document.getElementById('live').hidden = true;
+    if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+  }
+
+  function liveHolen() {
+    fetch('/api/progress?seit=' + liveSeit)
+      .then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
+      .then(function(d) {
+        var kasten = document.getElementById('live');
+        kasten.classList.toggle('aktiv', d.running);
+        document.getElementById('livePhase').textContent =
+          d.running ? (PHASEN[d.phase] || 'Läuft') + ' …' : 'Kein Durchlauf aktiv';
+        document.getElementById('liveDauer').textContent =
+          d.running && d.laeuft_seit_sek != null ? 'seit ' + d.laeuft_seit_sek + ' s' : '';
+
+        var liste = document.getElementById('liveListe');
+        d.events.forEach(function(e) {
+          var li = document.createElement('li');
+          var zeit = new Date(e.zeit * 1000).toLocaleTimeString('de-DE');
+          li.innerHTML = '<span class="live-zeit">' + esc(zeit) + '</span>'
+            + '<span class="live-marke ' + esc(e.phase) + '">' + esc(PHASEN[e.phase] || e.phase) + '</span>'
+            + '<span class="live-text">' + esc(e.text) + '</span>';
+          liste.appendChild(li);
+        });
+        if (d.events.length) {
+          liveSeit = d.letzte_id;
+          // Nur mitscrollen, wenn der Nutzer ohnehin unten steht - sonst reißt man
+          // ihm die Stelle weg, die er gerade liest.
+          if (liste.scrollHeight - liste.scrollTop - liste.clientHeight < 60) {
+            liste.scrollTop = liste.scrollHeight;
+          }
+          while (liste.children.length > 200) { liste.removeChild(liste.firstChild); }
+        }
+      })
+      .catch(function() { /* Server kurz weg (Neustart) - beim nächsten Mal wieder */ });
+  }
+
+  function pipelineStarten() {
+    liveZeigen();
+    fetch('/api/run-pipeline', { method: 'POST' })
+      .then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } })
+      .catch(function() { alert('Start fehlgeschlagen – läuft die Anwendung noch?'); });
+  }
+
+  // Beim Öffnen des Dashboards nachsehen: läuft gerade etwas? Dann gleich anzeigen.
+  fetch('/api/progress').then(function(r) { return r.json(); }).then(function(d) {
+    if (d.running) { liveZeigen(); }
+  }).catch(function() {});
 
   function addBlock() {
     var feld = document.getElementById('blockEmail');

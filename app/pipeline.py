@@ -6,6 +6,7 @@ from app import db
 from app.config import settings
 from app.outreach.mailer import send_outreach_email
 from app.sitegen.generator import generate_site
+from app import progress
 from app.publisher import veroeffentlichen
 from app.sources.overpass import find_leads
 from app.llm import generate_outreach_email
@@ -75,31 +76,45 @@ def phase_find_leads() -> None:
             "Gefunden %s/%s: %d Treffer, %d neu (Position %d/%d)",
             category, city, len(leads), inserted, position + 1, len(combos),
         )
+        progress.log(
+            "suche" if leads else "fehler",
+            f"{city} / {category}: {len(leads)} Treffer, {inserted} neu"
+            f"  ·  Position {position + 1} von {len(combos)}",
+        )
 
 
 def phase_generate_sites() -> None:
     if not settings.groq_configured:
+        progress.set_phase("websites", "Websites übersprungen – kein Groq-Zugang hinterlegt")
         return
-    for row in db.get_leads_by_status("email_found", limit=20):
+    wartend = db.get_leads_by_status("email_found", limit=20)
+    progress.set_phase("websites", f"Websites bauen – {len(wartend)} Betriebe in der Warteschlange")
+    for row in wartend:
         try:
             slug = generate_site(row)
             db.set_site_generated(row["id"], slug)
-        except Exception:
+            progress.log("websites", f"Website fertig: {row['name']} ({row['city']})")
+        except Exception as exc:
             logger.exception("Site-Generierung fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
+            progress.log("fehler", f"Website fehlgeschlagen: {row['name']} – {type(exc).__name__}")
 
 
 def phase_draft_emails() -> None:
     if not settings.groq_configured:
         return
-    for row in db.get_leads_by_status("site_generated", limit=20):
+    wartend = db.get_leads_by_status("site_generated", limit=20)
+    progress.set_phase("entwuerfe", f"Mail-Entwürfe schreiben – {len(wartend)} offen")
+    for row in wartend:
         try:
             demo_url = f"{settings.base_url}/sites/{row['site_slug']}/"
             email = generate_outreach_email(row["name"], row["category"], row["city"], demo_url)
             db.set_email_draft(row["id"], email.subject, email.body + f"\n\nHier die Demo: {demo_url}")
-        except Exception:
+            progress.log("entwuerfe", f"Entwurf fertig: {row['name']}")
+        except Exception as exc:
             logger.exception("E-Mail-Entwurf fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
+            progress.log("fehler", f"Entwurf fehlgeschlagen: {row['name']} – {type(exc).__name__}")
 
 
 def phase_send_emails() -> None:
@@ -109,7 +124,13 @@ def phase_send_emails() -> None:
     sent_today = db.count_emails_sent_since(_start_of_today_iso())
     budget = settings.max_emails_per_day - sent_today
     if budget <= 0:
+        progress.set_phase(
+            "versand",
+            "Versand pausiert – Tagesdeckel erreicht"
+            if settings.max_emails_per_day else "Versand aus – MAX_EMAILS_PER_DAY steht auf 0",
+        )
         return
+    progress.set_phase("versand", f"Versand – noch {budget} Mails heute möglich")
     for row in db.get_leads_by_status("ready_to_send", limit=budget):
         # Widerspruch beachten. Steht vor dem Versand, nicht danach - eine gesperrte
         # Adresse darf gar nicht erst angeschrieben werden.
@@ -121,20 +142,30 @@ def phase_send_emails() -> None:
             send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"])
             db.mark_emailed(row["id"])
             logger.info("Mail gesendet an Lead %s (%s)", row["id"], row["contact_email"])
-        except Exception:
+            progress.log("versand", f"Mail gesendet an {row['name']} <{row['contact_email']}>")
+        except Exception as exc:
             logger.exception("Versand fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
+            progress.log("fehler", f"Versand fehlgeschlagen: {row['name']} – {type(exc).__name__}")
 
 
 def run_pipeline() -> None:
     # Verarbeitung zuerst, Suche zuletzt: der Rechner laeuft nicht durchgehend, sondern in
     # Schueben von ein bis zwei Stunden. Wer zuerst sucht, verbraucht das ganze Zeitfenster
     # mit Suchen und liefert am Ende keine einzige fertige Website.
-    phase_generate_sites()
-    # Erst veroeffentlichen, dann Mails entwerfen und verschicken: Der Link in einer
-    # Mail muss ab dem Moment funktionieren, in dem sie rausgeht - nicht erst beim
-    # naechsten Durchlauf.
-    veroeffentlichen()
-    phase_draft_emails()
-    phase_send_emails()
-    phase_find_leads()
+    progress.start_run()
+    try:
+        phase_generate_sites()
+        # Erst veroeffentlichen, dann Mails entwerfen und verschicken: Der Link in einer
+        # Mail muss ab dem Moment funktionieren, in dem sie rausgeht - nicht erst beim
+        # naechsten Durchlauf.
+        progress.set_phase("veroeffentlichen", "Seiten veröffentlichen")
+        if veroeffentlichen():
+            progress.log("veroeffentlichen", "Demo-Seiten hochgeladen")
+        phase_draft_emails()
+        phase_send_emails()
+        progress.set_phase("suche", "Neue Betriebe suchen")
+        phase_find_leads()
+    finally:
+        # Auch bei einem Abbruch soll das Dashboard nicht ewig "läuft" anzeigen.
+        progress.end_run()

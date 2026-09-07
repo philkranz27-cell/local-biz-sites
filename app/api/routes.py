@@ -13,7 +13,7 @@ from app.models import BlockRequest, DealUpdate, PaymentLinkRequest, Reservation
 from app.outreach.inbox import fetch_recent_messages
 from app.outreach.mailer import send_reservation_notification
 from app.payments import create_payment_link
-from app import publisher
+from app import progress, publisher
 from app.pipeline import run_pipeline
 from app.sources import overpass
 
@@ -82,6 +82,13 @@ def api_run_pipeline(background_tasks: BackgroundTasks):
     """Manueller Trigger fuer Tests, statt auf das naechste Scheduler-Intervall zu warten."""
     background_tasks.add_task(run_pipeline)
     return {"status": "started"}
+
+
+@router.get("/api/progress", dependencies=[Depends(require_admin)])
+def api_progress(seit: int = 0):
+    """Live-Verlauf fuer das Dashboard. `seit` ist die zuletzt gesehene Meldungs-ID,
+    damit nur das Neue uebertragen wird statt jedes Mal der ganze Verlauf."""
+    return progress.snapshot(seit)
 
 
 @router.get("/api/stats", dependencies=[Depends(require_admin)])
