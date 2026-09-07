@@ -23,6 +23,35 @@ _events: deque[dict] = deque(maxlen=MAX_EVENTS)
 _state = {"phase": None, "started_at": None, "running": False}
 _counter = 0
 
+# Pause-Schalter. Der Scheduler feuert weiterhin jede Minute, run_pipeline steigt dann
+# aber sofort wieder aus - das ist einfacher und robuster, als den Job selbst zu
+# pausieren (dafuer muesste die Scheduler-Instanz bis in die Routen durchgereicht
+# werden, was einen Ringschluss beim Import ergaebe).
+_paused = False
+
+
+class Angehalten(Exception):
+    """Wird geworfen, wenn ein laufender Vorgang wegen des Stopp-Schalters abbricht.
+    Wichtig, dass das NICHT als Fehlschlag des Betriebs zaehlt: Sonst erhoeht jeder
+    Stopp-Klick den Fehlerzaehler, und nach drei Klicks faellt ein voellig gesunder
+    Lead dauerhaft aus der Verarbeitung."""
+
+
+def pause() -> None:
+    global _paused
+    _paused = True
+    log("pause", "Pipeline angehalten – laufender Durchlauf wird abgebrochen")
+
+
+def resume() -> None:
+    global _paused
+    _paused = False
+    log("pause", "Pipeline fortgesetzt")
+
+
+def is_paused() -> bool:
+    return _paused
+
 
 def start_run() -> None:
     global _counter
@@ -64,6 +93,7 @@ def snapshot(seit_id: int = 0) -> dict:
         laeuft_seit = int(time.time() - _state["started_at"]) if _state["started_at"] else None
         return {
             "running": _state["running"],
+            "paused": _paused,
             "phase": _state["phase"],
             "laeuft_seit_sek": laeuft_seit,
             "letzte_id": _counter,

@@ -84,6 +84,21 @@ def api_run_pipeline(background_tasks: BackgroundTasks):
     return {"status": "started"}
 
 
+@router.post("/api/pipeline/pause", dependencies=[Depends(require_admin)])
+def api_pause():
+    """Haelt die Pipeline an - auch mitten im Durchlauf. Die Phasen pruefen den Schalter
+    zwischen den einzelnen Betrieben, ein laufender Durchlauf bricht also zuegig ab
+    statt erst nach zwanzig weiteren Versuchen."""
+    progress.pause()
+    return {"status": "ok", "paused": True}
+
+
+@router.post("/api/pipeline/resume", dependencies=[Depends(require_admin)])
+def api_resume():
+    progress.resume()
+    return {"status": "ok", "paused": False}
+
+
 @router.get("/api/progress", dependencies=[Depends(require_admin)])
 def api_progress(seit: int = 0):
     """Live-Verlauf fuer das Dashboard. `seit` ist die zuletzt gesehene Meldungs-ID,

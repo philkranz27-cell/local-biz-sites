@@ -55,6 +55,8 @@ def phase_find_leads() -> None:
 
     start = _load_cursor() % len(combos)
     for offset in range(min(FIND_COMBOS_PER_RUN, len(combos))):
+        if progress.is_paused():
+            break
         position = (start + offset) % len(combos)
         city, category = combos[position]
         _save_cursor(position + 1)
@@ -90,10 +92,14 @@ def phase_generate_sites() -> None:
     wartend = db.get_leads_by_status("email_found", limit=20)
     progress.set_phase("websites", f"Websites bauen – {len(wartend)} Betriebe in der Warteschlange")
     for row in wartend:
+        if progress.is_paused():
+            break
         try:
             slug = generate_site(row)
             db.set_site_generated(row["id"], slug)
             progress.log("websites", f"Website fertig: {row['name']} ({row['city']})")
+        except progress.Angehalten:
+            break
         except Exception as exc:
             logger.exception("Site-Generierung fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
@@ -106,11 +112,15 @@ def phase_draft_emails() -> None:
     wartend = db.get_leads_by_status("site_generated", limit=20)
     progress.set_phase("entwuerfe", f"Mail-Entwürfe schreiben – {len(wartend)} offen")
     for row in wartend:
+        if progress.is_paused():
+            break
         try:
             demo_url = f"{settings.base_url}/sites/{row['site_slug']}/"
             email = generate_outreach_email(row["name"], row["category"], row["city"], demo_url)
             db.set_email_draft(row["id"], email.subject, email.body + f"\n\nHier die Demo: {demo_url}")
             progress.log("entwuerfe", f"Entwurf fertig: {row['name']}")
+        except progress.Angehalten:
+            break
         except Exception as exc:
             logger.exception("E-Mail-Entwurf fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
@@ -132,6 +142,8 @@ def phase_send_emails() -> None:
         return
     progress.set_phase("versand", f"Versand – noch {budget} Mails heute möglich")
     for row in db.get_leads_by_status("ready_to_send", limit=budget):
+        if progress.is_paused():
+            break
         # Widerspruch beachten. Steht vor dem Versand, nicht danach - eine gesperrte
         # Adresse darf gar nicht erst angeschrieben werden.
         if db.is_blocked(row["contact_email"]):
@@ -153,9 +165,14 @@ def run_pipeline() -> None:
     # Verarbeitung zuerst, Suche zuletzt: der Rechner laeuft nicht durchgehend, sondern in
     # Schueben von ein bis zwei Stunden. Wer zuerst sucht, verbraucht das ganze Zeitfenster
     # mit Suchen und liefert am Ende keine einzige fertige Website.
+    if progress.is_paused():
+        return
+
     progress.start_run()
     try:
         phase_generate_sites()
+        if progress.is_paused():
+            return
         # Erst veroeffentlichen, dann Mails entwerfen und verschicken: Der Link in einer
         # Mail muss ab dem Moment funktionieren, in dem sie rausgeht - nicht erst beim
         # naechsten Durchlauf.
@@ -163,7 +180,11 @@ def run_pipeline() -> None:
         if veroeffentlichen():
             progress.log("veroeffentlichen", "Demo-Seiten hochgeladen")
         phase_draft_emails()
+        if progress.is_paused():
+            return
         phase_send_emails()
+        if progress.is_paused():
+            return
         progress.set_phase("suche", "Neue Betriebe suchen")
         phase_find_leads()
     finally:

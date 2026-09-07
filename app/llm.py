@@ -4,6 +4,7 @@ import time
 
 import groq
 
+from app import progress
 from app.config import settings
 from app.models import GeneratedSiteCopy, OutreachEmail
 
@@ -58,8 +59,17 @@ def _structured(system_prompt: str, user_prompt: str, schema_model: type, temper
         except groq.RateLimitError:
             if attempt == RATE_LIMIT_RETRIES:
                 raise
+            if progress.is_paused():
+                # Beim Anhalten nicht noch 20s warten und es dann doch versuchen -
+                # sonst haengt ein Stopp-Klick minutenlang in der Warteschleife fest.
+                raise progress.Angehalten from None
             logger.warning("Groq-Rate-Limit erreicht, warte %ds (Versuch %d/%d)", RATE_LIMIT_BACKOFF_SEC, attempt + 1, RATE_LIMIT_RETRIES)
-            time.sleep(RATE_LIMIT_BACKOFF_SEC)
+            # In Sekundenschritten warten statt am Stueck, damit ein Stopp waehrend der
+            # Wartezeit sofort greift und nicht erst 20 Sekunden spaeter.
+            for _ in range(RATE_LIMIT_BACKOFF_SEC):
+                if progress.is_paused():
+                    raise progress.Angehalten from None
+                time.sleep(1)
 
 
 def _call(client: groq.Groq, system_prompt: str, user_prompt: str, schema_model: type, temperature: float) -> dict:
