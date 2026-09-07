@@ -11,6 +11,19 @@ OPT_OUT_NOTE = (
     f"{settings.sender_impressum}"
 )
 
+# Der Prompt weist das Sprachmodell an, weder Anrede noch Grussformel zu schreiben -
+# "die wird automatisch angehaengt". Genau das fehlte aber: Die Mails begannen mitten
+# im Satz ("ich habe fuer den Gutshof ...") und endeten ohne Namen. Beides gehoert
+# hierhin und nicht ins Sprachmodell, weil es bei jeder Mail gleich ist.
+GREETING = "Guten Tag,\n\n"
+
+
+def _signature() -> str:
+    """Name des Absenders aus der Anbieterkennzeichnung ziehen - dort steht er ohnehin
+    und muss nicht an zwei Stellen gepflegt werden."""
+    name = (settings.sender_impressum or "").split(",")[0].strip()
+    return f"\n\nViele Grüße\n{name}" if name else ""
+
 
 def _send(to_email: str, subject: str, body: str) -> None:
     message = EmailMessage()
@@ -26,7 +39,7 @@ def _send(to_email: str, subject: str, body: str) -> None:
 
 
 def send_outreach_email(to_email: str, subject: str, body: str) -> None:
-    _send(to_email, subject, body + OPT_OUT_NOTE)
+    _send(to_email, subject, GREETING + body + _signature() + OPT_OUT_NOTE)
 
 
 def send_reservation_notification(business_name: str, slug: str, req: ReservationRequest) -> None:

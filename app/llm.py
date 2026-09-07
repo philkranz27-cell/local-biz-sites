@@ -168,8 +168,11 @@ falschen Behauptungen ueber den Betrieb, keine konkrete Preisnennung. Erwaehne k
 den Betriebsnamen und dass es sich um eine unverbindliche Demo handelt. Baue sinngemaess \
 ein, dass man sich bei Interesse gerne ueber die genauen Konditionen/Preise austauschen \
 kann (keine Zahl nennen, nur das Angebot zum Austausch). Schliesse NICHT mit einer \
-Anrede/Grussformel oder Signatur ab - die wird automatisch angehaengt. Antworte NUR mit \
-subject und body (body = nur der Fliesstext ohne Anrede am Anfang oder Gruss am Ende)."""
+Anrede/Grussformel oder Signatur ab - die wird automatisch angehaengt. Schreibe den \
+Demo-Link NICHT in den Fliesstext, er wird ebenfalls automatisch angehaengt - sonst \
+steht er zweimal in der Mail, was unsauber aussieht und von Spamfiltern negativ \
+bewertet wird. Antworte NUR mit subject und body (body = nur der Fliesstext ohne Anrede \
+am Anfang, ohne Gruss am Ende und ohne URL)."""
 
 
 def generate_outreach_email(name: str, category: str, city: str, demo_url: str) -> OutreachEmail:
