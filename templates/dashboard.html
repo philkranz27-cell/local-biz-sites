@@ -82,6 +82,9 @@
   .mm-center .mm-inner { position: relative; z-index: 1; }
   .mm-center h2 { margin: 0; font-size: 1.2rem; line-height: 1.3; color: #fff; }
   .mm-center p { margin: .5rem 0 0; font-size: .8rem; color: rgba(255,255,255,.75); }
+  /* Zweite Zeile bewusst kleiner und leiser: Die geprüfte Gesamtzahl ist Kontext,
+     die qualifizierten Leads sind die Aussage. */
+  .mm-center .mm-sub { margin-top: .15rem; font-size: .68rem; color: rgba(255,255,255,.5); }
 
   .mm-bubble { width: 20%; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: transform .25s, box-shadow .25s; font-family: inherit; padding: 0; animation: orbFloat 6s ease-in-out infinite; }
   .mm-bubble:hover { transform: translate(-50%, -50%) scale(1.08) translateY(-6px); }
@@ -266,14 +269,15 @@
     <div class="mm-node orb mm-center">
       <div class="mm-inner">
         <h2>Local Biz Sites</h2>
-        <p>{{ total_leads }} Betriebe im System</p>
+        <p>{{ total_leads }} qualifiziert</p>
+        <p class="mm-sub">aus {{ "{:,}".format(screened_leads).replace(",", ".") }} geprüften Betrieben</p>
       </div>
     </div>
     <button class="mm-node orb mm-bubble mm-bubble-1" onclick="showView('leads-view')">
       <div class="mm-inner">
         <span class="mm-icon">🏪</span>
         <span class="mm-label">Neue Betriebe</span>
-        <span class="mm-count">{{ total_leads }} gesamt</span>
+        <span class="mm-count">{{ total_leads }} von {{ "{:,}".format(screened_leads).replace(",", ".") }} geprüft</span>
       </div>
     </button>
     <button class="mm-node orb mm-bubble mm-bubble-2" onclick="showView('emails-view')">

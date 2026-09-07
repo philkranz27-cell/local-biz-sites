@@ -182,6 +182,17 @@ def get_all_leads(limit: int = 500) -> list[sqlite3.Row]:
         ).fetchall()
 
 
+def count_screened() -> int:
+    """Alle jemals geprueften Betriebe, auch die aussortierten.
+
+    Die aussortierten bleiben in der Tabelle, damit dieselbe Baeckerei nicht bei jedem
+    Durchlauf erneut bewertet wird. Fuers Dashboard ist die Zahl trotzdem wichtig: 127
+    qualifizierte Leads sehen nach wenig aus, bis daneben steht, dass dafuer ueber
+    zwoelftausend Betriebe durchgesehen wurden."""
+    with get_connection() as conn:
+        return conn.execute("SELECT COUNT(*) AS n FROM leads").fetchone()["n"]
+
+
 def get_stats() -> dict:
     with get_connection() as conn:
         rows = conn.execute(

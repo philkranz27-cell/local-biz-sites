@@ -59,6 +59,7 @@ def dashboard(request: Request):
             "leads": leads,
             "stats": db.get_stats(),
             "total_leads": len(leads),
+            "screened_leads": db.count_screened(),
             "emails_drafted": sum(1 for l in leads if l["email_subject"]),
             "emails_sent": sum(1 for l in leads if l["status"] == "emailed"),
             "deals_active": sum(1 for l in leads if l["deal_status"] not in ("offen", "abgelehnt")),
