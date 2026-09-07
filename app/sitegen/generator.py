@@ -7,6 +7,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from app.llm import STYLE_HINTS, generate_site_copy
+from app.config import settings
 from app.sitegen.images import get_photos
 from app.sitegen.opening_hours import format_opening_hours
 
@@ -108,6 +109,7 @@ def generate_site(lead: sqlite3.Row) -> str:
         accent=palette["accent"],
         accent_dark=palette["accent_dark"],
         slug=slug,
+        api_base=settings.api_base,
     )
 
     site_dir = SITES_DIR / slug

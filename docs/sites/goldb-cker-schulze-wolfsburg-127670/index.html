@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goldbäcker Schulze — Wolfsburg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #b8860b; --accent-dark: #8a6508; --ink: #16181d; --paper: #ffffff; --paper-alt: #f4f5f7; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
+  .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
+
+  @keyframes kenburns { from { background-size: 110% auto; } to { background-size: 130% auto; } }
+  @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  header.hero {
+    position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
+    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
+    
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
+    background-position: center; background-repeat: no-repeat;
+    animation: kenburns 16s ease-in-out infinite alternate;
+    
+    color: #fff; padding: 3rem 1.5rem;
+  }
+  .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
+  .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
+  .hero-inner .badge { animation-delay: .05s; }
+  .hero-inner .eyebrow { animation-delay: .15s; }
+  .hero-inner h1 { animation-delay: .28s; }
+  .hero-inner .sub { animation-delay: .42s; }
+  .hero-inner .cta { animation-delay: .56s; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 600; color: #fff; opacity: .85; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; margin: .5rem 0 .6rem; letter-spacing: -.01em; }
+  .sub { font-size: 1.15rem; opacity: .92; max-width: 46ch; margin: 0 0 1.6rem; }
+  .cta { display: inline-block; padding: .85rem 1.9rem; background: var(--accent); color: #fff; text-decoration: none; border-radius: 10px; font-weight: 700; transition: background .15s, transform .15s, box-shadow .15s; }
+  .cta:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 10px 24px -8px var(--accent); }
+
+  main { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; position: relative; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .25; background: var(--accent); pointer-events: none; z-index: 0; animation: floaty 9s ease-in-out infinite; }
+  .blob-1 { width: 280px; height: 280px; top: 10%; right: -100px; }
+  .blob-2 { width: 220px; height: 220px; bottom: 5%; left: -90px; animation-delay: 2.5s; }
+
+  .highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: -2.5rem auto 3.5rem; position: relative; z-index: 2; }
+  .highlight { background: var(--paper); border-radius: 14px; padding: 1.1rem 1.3rem; box-shadow: 0 6px 24px rgba(0,0,0,.08); font-weight: 600; font-size: .95rem; border-top: 3px solid var(--accent); transition: transform .25s, box-shadow .25s; }
+  .highlight:hover { transform: translateY(-5px); box-shadow: 0 14px 30px -10px rgba(0,0,0,.18); }
+  section { margin: 3.5rem 0; position: relative; z-index: 1; }
+  h2 { font-size: 1.7rem; font-weight: 800; margin-bottom: 1.2rem; }
+  .about p { font-size: 1.08rem; max-width: 68ch; }
+  .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem; }
+  .service { background: var(--paper-alt); border-radius: 14px; padding: 1.3rem 1.4rem; transition: transform .25s, box-shadow .25s; }
+  .service:hover { transform: translateY(-4px); box-shadow: 0 12px 26px -12px rgba(0,0,0,.2); }
+  .service h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+  .service p { margin: 0; font-size: .92rem; opacity: .75; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; }
+  .gallery a { display: block; border-radius: 12px; overflow: hidden; }
+  .gallery img { width: 100%; height: 180px; object-fit: cover; display: block; transition: transform .5s ease; }
+  .gallery a:hover img { transform: scale(1.08); }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; background: var(--paper-alt); border-radius: 16px; padding: 1.8rem; }
+  .meta-item b { display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .6; margin-bottom: .3rem; }
+  .hours-list { list-style: none; padding: 0; margin: 0; font-size: .95rem; }
+  footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
+  footer a { color: #8a8f98; }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    header.hero, .blob { animation: none; }
+    .hero-inner > * { animation: none; opacity: 1; }
+  }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--paper); color: var(--ink); border-radius: 12px; padding: 2rem; max-width: 420px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: .8rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; line-height: 1; }
+  .modal-box h3 { margin-top: 0; }
+  .modal-note { font-size: .85rem; opacity: .7; }
+  .modal-box form label { display: block; font-size: .85rem; font-weight: 600; margin: .8rem 0 .3rem; }
+  .modal-box input, .modal-box textarea { width: 100%; padding: .6rem .7rem; border: 1px solid var(--paper-alt); background: var(--paper-alt); color: var(--ink); border-radius: 6px; font: inherit; }
+  .modal-row { display: flex; gap: 1rem; }
+  .modal-row label { flex: 1; }
+  .modal-submit { margin-top: 1.2rem; width: 100%; padding: .8rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: background .15s; }
+  .modal-submit:hover { background: var(--accent-dark); }
+  .modal-success { display: none; }
+  .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <span class="badge">Unverbindlicher Website-Entwurf</span>
+    <div class="eyebrow">Täglich frisch gebacken – Goldbäcker Schulze</div>
+    <h1>Goldbäcker Schulze – Ihre Bäckerei in Wolfsburg</h1>
+    <p class="sub">Wir backen in der Lange Straße und bieten Ihnen täglich frische Backwaren.</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt bestellen</a>
+  </div>
+</header>
+<main>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="highlights">
+    <div class="highlight reveal" style="transition-delay: 0.0s">Tägliche Frische</div><div class="highlight reveal" style="transition-delay: 0.08s">Regionale Zutaten</div><div class="highlight reveal" style="transition-delay: 0.16s">Zentrale Lage in Wolfsburg</div>
+  </div>
+
+  <section class="about reveal">
+    <h2>Über uns</h2>
+    <p>In der Lange Straße, zentral in Wolfsburg, stellen wir täglich Brötchen, Vollkornbrot und Kuchen aus regionalen Zutaten her. Unser Angebot umfasst knusprige Brötchen, herzhaftes Vollkornbrot und saisonale Kuchen, die wir unmittelbar nach dem Backen verkaufen. Wir legen Wert auf kurze Lieferwege und transparente Herkunft der Produkte. Besuchen Sie uns und probieren Sie das Ergebnis unserer täglichen Arbeit.</p>
+  </section>
+
+  <section>
+    <h2 class="reveal">Angebot</h2>
+    <div class="services">
+      
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Frische Brötchen</h3><p>Knusprige Brötchen, die wir jeden Morgen aus dem Ofen holen.</p></div>
+      
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Vollkornbrot</h3><p>Vollkornbrot nach unserem bewährten Rezept, täglich gebacken.</p></div>
+      
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Kuchen &amp; Torten</h3><p>Saisonale Kuchen und Torten für jede Gelegenheit.</p></div>
+      
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Spezialitäten</h3><p>Regionale Backwaren wie Brezeln und Laugengebäck.</p></div>
+      
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Kaffee &amp; Snacks</h3><p>Ausgewählte Kaffeesorten und kleine Snacks zum Verzehr vor Ort.</p></div>
+      
+      <div class="service reveal" style="transition-delay: 0.35000000000000003s"><h3>Bestellservice</h3><p>Online vorbestellen und im Laden abholen.</p></div>
+      
+    </div>
+  </section>
+
+  
+  <section>
+    <h2 class="reveal">Impressionen</h2>
+    <div class="gallery">
+      
+      <a class="reveal" href="https://www.pexels.com/photo/charming-bakery-display-of-fresh-bread-and-pastries-29380150/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/29380150/pexels-photo-29380150.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/turkish-flag-in-a-window-of-a-bakery-18656839/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/18656839/pexels-photo-18656839.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/assorted-pastries-display-in-a-cozy-bakery-29696186/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/29696186/pexels-photo-29696186.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      </a>
+      
+    </div>
+  </section>
+  
+
+  <section class="meta-grid reveal">
+    <div class="meta-item"><b>Adresse</b>Lange Straße 12, 38448 Wolfsburg</div>
+    <div class="meta-item"><b>Telefon</b>+49 5363 707377</div>
+    
+    
+    <div class="meta-item"><b>Öffnungszeiten</b>
+      <ul class="hours-list"><li>Mo-Fr 06:00-18:30; Sa 06:00-13:00; Su off</li></ul>
+    </div>
+    
+  </section>
+</main>
+<footer>
+  Dies ist ein unverbindlicher Demo-Entwurf für Goldbäcker Schulze, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  <br>Foto: <a href="https://www.pexels.com/photo/cozy-bakery-display-with-assorted-fresh-pastries-32459865/">Ani Hadushaj</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+</footer>
+
+<div class="modal-overlay" id="reservationModal">
+  <div class="modal-box">
+    <button class="modal-close" type="button" onclick="closeReservationModal()">&times;</button>
+    <h3>Anfrage an Goldbäcker Schulze</h3>
+    <p class="modal-note">Unverbindliche Anfrage — Goldbäcker Schulze meldet sich zur Bestätigung bei Ihnen.</p>
+    <form id="reservationForm">
+      <label>Name<input type="text" name="customer_name" required></label>
+      <label>Telefon oder E-Mail<input type="text" name="contact" required></label>
+      <div class="modal-row">
+        <label>Datum<input type="date" name="date"></label>
+        <label>Uhrzeit<input type="time" name="time"></label>
+      </div>
+      
+      <label>Nachricht (optional)<textarea name="message" rows="2"></textarea></label>
+      <button type="submit" class="modal-submit">Anfrage senden</button>
+    </form>
+    <div class="modal-success" id="reservationSuccess">
+      <p>✓ Danke, Goldbäcker Schulze hat Ihre Anfrage erhalten.</p>
+      <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
+    </div>
+    <div class="modal-success" id="reservationError">
+      <p>Die Anfrage konnte leider nicht übermittelt werden.</p>
+      <p class="modal-note">Bitte versuchen Sie es später noch einmal oder rufen Sie direkt an: +49 5363 707377.</p>
+    </div>
+    <a class="modal-tel" href="tel:+49 5363 707377">oder direkt anrufen: +49 5363 707377</a>
+  </div>
+</div>
+
+<script>
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
+  function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }
+  var reservationForm = document.getElementById('reservationForm');
+  reservationForm.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var data = Object.fromEntries(new FormData(ev.target));
+    fetch('https://philipplaptop.tail191c07.ts.net/api/reservation/goldb-cker-schulze-wolfsburg-127670', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+      .then(function(res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationSuccess').style.display = 'block';
+      })
+      .catch(function() {
+        // Ehrlich bleiben: Erfolg nur melden, wenn die Anfrage wirklich angekommen ist.
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationError').style.display = 'block';
+      });
+  });
+</script>
+</body>
+</html>

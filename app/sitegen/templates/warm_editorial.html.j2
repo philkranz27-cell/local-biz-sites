@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ name }} — {{ city }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -194,7 +195,7 @@
   reservationForm.addEventListener('submit', function(ev) {
     ev.preventDefault();
     var data = Object.fromEntries(new FormData(ev.target));
-    fetch('/api/reservation/{{ slug }}', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+    fetch('{{ api_base }}/api/reservation/{{ slug }}', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
       .then(function(res) {
         if (!res.ok) { throw new Error('HTTP ' + res.status); }
         reservationForm.style.display = 'none';

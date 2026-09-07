@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trend Yone Fitness Augsburg Ost — Augsburg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #c0392b; --accent-dark: #922b21; --ink: #f5f5f5; --paper: #0d0d0f; --paper-alt: #18181b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
+  h1, .brand-font { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
+  .badge { display: inline-block; background: var(--paper-alt); border: 1px solid #333; color: #ccc; padding: .35rem .9rem; border-radius: 999px; font-size: .75rem; }
+
+  @keyframes kenburns { from { background-size: 108% auto; } to { background-size: 126% auto; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scanline { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+  header.hero {
+    position: relative; min-height: 82vh; display: flex; align-items: flex-end; padding: 3rem 1.5rem; overflow: hidden;
+    background: linear-gradient(0deg, rgba(0,0,0,.88), rgba(0,0,0,.35)), #000;
+    
+    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/5407033/pexels-photo-5407033.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
+    background-position: center; background-repeat: no-repeat;
+    animation: kenburns 16s ease-in-out infinite alternate;
+    
+  }
+  header.hero::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.05), transparent);
+    animation: scanline 7s ease-in-out infinite; pointer-events: none;
+  }
+  .hero-inner { max-width: 980px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
+  .hero-inner > * { opacity: 0; animation: fadeUp .7s ease forwards; }
+  .hero-inner .badge { animation-delay: .05s; }
+  .hero-inner .tagline { animation-delay: .16s; }
+  .hero-inner h1 { animation-delay: .28s; }
+  .hero-inner .sub { animation-delay: .42s; }
+  .hero-inner .cta { animation-delay: .56s; }
+  .tagline { color: var(--accent); font-weight: 700; letter-spacing: .1em; margin-bottom: .8rem; font-size: .9rem; text-transform: uppercase; }
+  h1 { font-size: clamp(2.4rem, 6.5vw, 4.6rem); line-height: .98; margin: 0 0 1rem; letter-spacing: -.01em; }
+  .sub { font-size: 1.15rem; color: #cfcfcf; max-width: 46ch; margin: 0 0 1.8rem; }
+  .cta { display: inline-block; padding: .9rem 2rem; background: var(--accent); color: #050505; text-decoration: none; border-radius: 2px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: .9rem; transition: background .15s, color .15s, transform .15s; }
+  .cta:hover { background: var(--accent-dark); color: #fff; transform: translateY(-2px); }
+
+  main { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  .highlights { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid #262626; border-bottom: 1px solid #262626; margin: 3.5rem 0; }
+  .highlight { flex: 1 1 200px; padding: 1.6rem 1rem; border-right: 1px solid #262626; transition: background .2s; }
+  .highlight:hover { background: var(--paper-alt); }
+  .highlight:last-child { border-right: none; }
+  .highlight .num { color: var(--accent); font-weight: 800; font-family: 'Archivo Black', sans-serif; font-size: .85rem; display: block; margin-bottom: .5rem; }
+  section { margin: 4rem 0; }
+  h2 { font-size: 1.9rem; margin-bottom: 1.4rem; letter-spacing: -.01em; }
+  .about p { font-size: 1.1rem; color: #d8d8d8; max-width: 68ch; }
+  .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0; }
+  .service { padding: 1.4rem 0; border-bottom: 1px solid #262626; display: flex; gap: 1rem; align-items: baseline; transition: transform .2s, padding-left .2s; }
+  .service:hover { transform: translateX(6px); }
+  .service .idx { font-family: 'Archivo Black', sans-serif; color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
+  .service h3 { margin: 0 0 .3rem; font-size: 1.05rem; }
+  .service p { margin: 0; font-size: .9rem; color: #a3a3a3; }
+  .gallery { display: grid; grid-template-columns: 1.3fr 1fr; gap: .8rem; grid-auto-rows: 140px; }
+  .gallery a { display: block; overflow: hidden; border-radius: 4px; }
+  .gallery a:first-child { grid-row: span 2; height: 100%; }
+  .gallery.gallery-few { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); grid-auto-rows: auto; }
+  .gallery.gallery-few a:first-child { grid-row: auto; height: auto; }
+  .gallery img { width: 100%; height: 140px; object-fit: cover; display: block; transition: transform .5s ease, filter .5s ease; }
+  .gallery a:first-child img { height: 100%; }
+  .gallery a:hover img { transform: scale(1.08); filter: brightness(1.1); }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; background: var(--paper-alt); border-radius: 4px; padding: 1.8rem; border: 1px solid #262626; }
+  .meta-item b { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin-bottom: .3rem; }
+  .hours-list { list-style: none; padding: 0; margin: 0; font-size: .95rem; color: #d8d8d8; }
+  footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .78rem; color: #666; border-top: 1px solid #262626; margin-top: 3rem; }
+  footer a { color: #888; }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    header.hero, header.hero::after, .hero-inner > * { animation: none; opacity: 1; }
+  }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--paper-alt); color: var(--ink); border-radius: 6px; padding: 2rem; max-width: 420px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid #333; }
+  .modal-close { position: absolute; top: .8rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; line-height: 1; }
+  .modal-box h3 { margin-top: 0; font-family: 'Archivo Black', sans-serif; text-transform: uppercase; font-size: 1.2rem; }
+  .modal-note { font-size: .85rem; color: #a3a3a3; }
+  .modal-box form label { display: block; font-size: .8rem; font-weight: 700; margin: .8rem 0 .3rem; text-transform: uppercase; letter-spacing: .04em; }
+  .modal-box input, .modal-box textarea { width: 100%; padding: .6rem .7rem; border: 1px solid #333; background: #0d0d0f; color: var(--ink); border-radius: 4px; font: inherit; }
+  .modal-row { display: flex; gap: 1rem; }
+  .modal-row label { flex: 1; }
+  .modal-submit { margin-top: 1.2rem; width: 100%; padding: .8rem; background: var(--accent); color: #050505; border: none; border-radius: 2px; font-weight: 800; cursor: pointer; font-size: .9rem; text-transform: uppercase; letter-spacing: .04em; transition: background .15s; }
+  .modal-submit:hover { background: var(--accent-dark); }
+  .modal-success { display: none; }
+  .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: #a3a3a3; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <span class="badge">Unverbindlicher Website-Entwurf</span>
+    <div class="tagline">Fit. Stark. Anders.</div>
+    <h1>Trend Yone Fitness Augsburg Ost</h1>
+    <p class="sub">Ihr Trainingspartner im Augsburger Osten.</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt anmelden</a>
+  </div>
+</header>
+<main>
+  <div class="highlights">
+    <div class="highlight reveal" style="transition-delay: 0.0s"><span class="num">01</span>Moderne Geräte</div><div class="highlight reveal" style="transition-delay: 0.08s"><span class="num">02</span>Flexible Öffnungszeiten</div><div class="highlight reveal" style="transition-delay: 0.16s"><span class="num">03</span>Individuelle Trainingspläne</div>
+  </div>
+
+  <section class="about reveal">
+    <h2>Über uns</h2>
+    <p>Im Trend Yone Fitness am Partnachweg 1 finden Sie ein Trainingsumfeld, das exakt auf Ihre Ziele zugeschnitten ist. Das Studio verfügt über moderne Kraft‑ und Cardiogeräte, einen freien Functional‑Area und mehrere Kursräume. Unser Team aus zertifizierten Trainerinnen und Trainern unterstützt Sie mit individuellen Trainingsplänen und gibt Ihnen kontinuierliches Feedback, damit Sie konsequent Fortschritte sehen. Die offene Gestaltung sorgt für klare Sichtlinien und motiviert zum Dranbleiben.</p>
+  </section>
+
+  <section>
+    <h2 class="reveal">Angebot</h2>
+    <div class="services">
+      
+      <div class="service reveal" style="transition-delay: 0.0s"><span class="idx">01</span><div><h3>Krafttraining</h3><p>Geräte‑ und Freihantelübungen, die gezielt Ihren Muskelaufbau unterstützen.</p></div></div>
+      
+      <div class="service reveal" style="transition-delay: 0.06s"><span class="idx">02</span><div><h3>Kondition</h3><p>Ausdauerkurse und Cardio‑Stationen, die Ihre Herz‑Kreislauf‑Leistung steigern.</p></div></div>
+      
+      <div class="service reveal" style="transition-delay: 0.12s"><span class="idx">03</span><div><h3>Group Classes</h3><p>Kurse wie HIIT, Zumba und Yoga, die Sie im Team motivieren.</p></div></div>
+      
+      <div class="service reveal" style="transition-delay: 0.18s"><span class="idx">04</span><div><h3>Personal Training</h3><p>Individuelle Betreuung, exakt abgestimmt auf Ihre persönlichen Ziele.</p></div></div>
+      
+      <div class="service reveal" style="transition-delay: 0.24s"><span class="idx">05</span><div><h3>Functional Training</h3><p>Ganzkörper‑Workouts mit stabilisierenden Elementen für funktionelle Stärke.</p></div></div>
+      
+    </div>
+  </section>
+
+  
+  <section>
+    <h2 class="reveal">Impressionen</h2>
+    <div class="gallery">
+      
+      <a class="reveal" href="https://www.pexels.com/photo/a-spacious-gym-with-tools-and-equipments-6739958/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/6739958/pexels-photo-6739958.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/motorcycle-parked-inside-a-modern-gym-setting-38764832/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/38764832/pexels-photo-38764832.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/treadmills-at-gym-12250460/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/12250460/pexels-photo-12250460.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
+      </a>
+      
+    </div>
+  </section>
+  
+
+  <section class="meta-grid reveal">
+    <div class="meta-item"><b>Adresse</b>Partnachweg 1, 86165 Augsburg</div>
+    <div class="meta-item"><b>Telefon</b>+49 821 90724692</div>
+    
+    
+    <div class="meta-item"><b>Öffnungszeiten</b>
+      <ul class="hours-list"><li>Mo–So: 06:00–24:00 Uhr</li></ul>
+    </div>
+    
+  </section>
+</main>
+<footer>
+  Dies ist ein unverbindlicher Demo-Entwurf für Trend Yone Fitness Augsburg Ost, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  <br>Foto: <a href="https://www.pexels.com/photo/indoor-basketball-court-with-hoops-in-sports-club-5407033/">Diana ✨</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+</footer>
+
+<div class="modal-overlay" id="reservationModal">
+  <div class="modal-box">
+    <button class="modal-close" type="button" onclick="closeReservationModal()">&times;</button>
+    <h3>Anfrage an Trend Yone Fitness Augsburg Ost</h3>
+    <p class="modal-note">Unverbindliche Anfrage — Trend Yone Fitness Augsburg Ost meldet sich zur Bestätigung bei Ihnen.</p>
+    <form id="reservationForm">
+      <label>Name<input type="text" name="customer_name" required></label>
+      <label>Telefon oder E-Mail<input type="text" name="contact" required></label>
+      <div class="modal-row">
+        <label>Datum<input type="date" name="date"></label>
+        <label>Uhrzeit<input type="time" name="time"></label>
+      </div>
+      
+      <label>Nachricht (optional)<textarea name="message" rows="2"></textarea></label>
+      <button type="submit" class="modal-submit">Anfrage senden</button>
+    </form>
+    <div class="modal-success" id="reservationSuccess">
+      <p>✓ Danke, Trend Yone Fitness Augsburg Ost hat Ihre Anfrage erhalten.</p>
+      <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
+    </div>
+    <div class="modal-success" id="reservationError">
+      <p>Die Anfrage konnte leider nicht übermittelt werden.</p>
+      <p class="modal-note">Bitte versuchen Sie es später noch einmal oder rufen Sie direkt an: +49 821 90724692.</p>
+    </div>
+    <a class="modal-tel" href="tel:+49 821 90724692">oder direkt anrufen: +49 821 90724692</a>
+  </div>
+</div>
+
+<script>
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
+  function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }
+  var reservationForm = document.getElementById('reservationForm');
+  reservationForm.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var data = Object.fromEntries(new FormData(ev.target));
+    fetch('https://philipplaptop.tail191c07.ts.net/api/reservation/trend-yone-fitness-augsburg-ost-augsburg-466571', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+      .then(function(res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationSuccess').style.display = 'block';
+      })
+      .catch(function() {
+        // Ehrlich bleiben: Erfolg nur melden, wenn die Anfrage wirklich angekommen ist.
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationError').style.display = 'block';
+      });
+  });
+</script>
+</body>
+</html>

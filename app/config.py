@@ -66,6 +66,16 @@ class Settings(BaseSettings):
     port: int = 8000
     base_url: str = "http://localhost:8000"
 
+    # Adresse, unter der die Demo-Seiten liegen (GitHub Pages), und getrennt davon die
+    # Adresse dieser Anwendung. Beides faellt auseinander, seit die Seiten statisch
+    # ausgeliefert werden: der Link in der Mail muss auch dann noch funktionieren, wenn
+    # der Laptop schlaeft - das Reservierungs-Formular braucht aber die laufende App.
+    api_base_url: str = ""
+
+    @property
+    def api_base(self) -> str:
+        return (self.api_base_url or self.base_url).rstrip("/")
+
     # Mindestabstand zwischen Durchlaeufen. Ein voller Durchlauf ueber die ganze
     # Staedte-/Kategorienliste dauert bei dieser Listengroesse laenger als dieser Wert -
     # APScheduler laesst per Default keine Ueberlappung zu (max_instances=1), der naechste

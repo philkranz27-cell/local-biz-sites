@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>philswebsites — Websites für lokale Betriebe</title>
+<meta name="description" content="Individuelle Websites für Restaurants, Cafés, Friseursalons, Bäckereien und andere lokale Betriebe. Ab 299 € einmalig plus 15 € monatlich.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1614; --muted: #6b625c; --paper: #fbf8f4; --card: #ffffff;
+    --line: #e8e0d6; --accent: #b4541f; --accent-dark: #8f4018; --soft: #f3ece2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink);
+         background: var(--paper); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 700; line-height: 1.15; }
+  a { color: var(--accent-dark); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
+
+  header { padding: 4.5rem 0 3rem; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: .74rem;
+             font-weight: 700; color: var(--accent); margin-bottom: 1.1rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3.1rem); margin: 0 0 1rem; letter-spacing: -.02em; }
+  .lead { font-size: 1.18rem; color: var(--muted); max-width: 52ch; margin: 0 0 2rem; }
+  .cta { display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+         padding: .85rem 1.9rem; border-radius: 8px; font-weight: 600;
+         transition: background .15s, transform .15s; }
+  .cta:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .cta-note { font-size: .85rem; color: var(--muted); margin-top: .8rem; }
+
+  section { padding: 2.6rem 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 1.55rem; margin: 0 0 1.4rem; }
+  h3 { font-size: 1.02rem; margin: 0 0 .4rem; font-family: 'Inter', sans-serif; font-weight: 700; }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.2rem; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.3rem; }
+  .step .num { font-family: 'Fraunces', serif; font-size: 1.6rem; color: var(--accent); display: block;
+               margin-bottom: .3rem; line-height: 1; }
+  .step p { margin: 0; font-size: .92rem; color: var(--muted); }
+
+  .price-box { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+               padding: 1.8rem; }
+  .price-row { display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; align-items: baseline;
+               padding-bottom: 1.2rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--line); }
+  .price { font-family: 'Fraunces', serif; font-size: 2.1rem; color: var(--ink); line-height: 1; }
+  .price small { display: block; font-family: 'Inter', sans-serif; font-size: .82rem;
+                 color: var(--muted); font-weight: 500; margin-top: .35rem; line-height: 1.4; }
+  ul.checks { list-style: none; padding: 0; margin: 0; }
+  ul.checks li { padding-left: 1.6rem; position: relative; margin-bottom: .5rem; font-size: .95rem; }
+  ul.checks li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+  .faq { margin-bottom: 1.4rem; }
+  .faq p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+  .legal { background: var(--soft); }
+  .legal h2 { font-size: 1.2rem; }
+  .legal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+  .legal p, .legal li { font-size: .88rem; color: var(--muted); }
+  .legal b { color: var(--ink); }
+
+  footer { padding: 2.2rem 0 3rem; font-size: .82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">philswebsites</div>
+    <h1>Eine Website, die Ihren Betrieb so zeigt, wie er ist.</h1>
+    <p class="lead">
+      Ich baue Websites für Restaurants, Cafés, Bars, Friseursalons, Bäckereien,
+      Blumenläden und Fitnessstudios. Keine Baukasten-Vorlage von der Stange,
+      sondern eine Seite, die zu Ihrem Betrieb passt — mit Ihren Öffnungszeiten,
+      Ihrem Angebot und einer Anfragemöglichkeit, die funktioniert.
+    </p>
+    <a class="cta" href="mailto:kontakt.philswebsites@gmail.com?subject=Anfrage%20Website">Unverbindlich anfragen</a>
+    <p class="cta-note">Antwort in der Regel innerhalb eines Werktags.</p>
+  </header>
+
+  <section>
+    <h2>So läuft es ab</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="num">1</span>
+        <h3>Entwurf ansehen</h3>
+        <p>Sie bekommen einen fertigen Entwurf Ihrer Seite zu sehen — kostenlos und
+           unverbindlich. Erst wenn er Ihnen gefällt, reden wir weiter.</p>
+      </div>
+      <div class="step">
+        <span class="num">2</span>
+        <h3>Anpassen</h3>
+        <p>Texte, Bilder, Farben, Speisekarte: Sie sagen, was anders soll.
+           Zwei Korrekturrunden sind im Preis enthalten.</p>
+      </div>
+      <div class="step">
+        <span class="num">3</span>
+        <h3>Online gehen</h3>
+        <p>Ich bringe die Seite unter Ihre Wunschadresse, kümmere mich um Hosting
+           und Erreichbarkeit. Sie müssen sich um nichts kümmern.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Was es kostet</h2>
+    <div class="price-box">
+      <div class="price-row">
+        <div class="price">ab 299 €<small>einmalig für Erstellung<br>und Veröffentlichung</small></div>
+        <div class="price">15 € / Monat<small>Hosting, Erreichbarkeit<br>und kleine Änderungen</small></div>
+      </div>
+      <ul class="checks">
+        <li>Individuell gestaltete Seite, kein Vorlagen-Baukasten</li>
+        <li>Für Handy, Tablet und Rechner gleichermaßen gebaut</li>
+        <li>Ihre Öffnungszeiten, Adresse und Kontaktdaten</li>
+        <li>Anfrage- oder Reservierungsformular, das bei Ihnen ankommt</li>
+        <li>Zwei Korrekturrunden inklusive</li>
+        <li>Monatlich kündbar, keine Mindestlaufzeit</li>
+      </ul>
+      <p style="font-size:.85rem;color:var(--muted);margin:1.2rem 0 0">
+        Alle Preise verstehen sich als Endpreise. Größere Vorhaben — mehrere Seiten,
+        Online-Shop, mehrsprachig — rechne ich nach Aufwand ab; Sie bekommen vorher
+        einen Festpreis genannt. Über Preise und Konditionen lässt sich sprechen.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Häufige Fragen</h2>
+    <div class="faq">
+      <h3>Ich habe Ihnen einen Entwurf geschickt — woher haben Sie meine Daten?</h3>
+      <p>Aus frei zugänglichen Quellen: Name, Adresse und Kontaktdaten stammen aus
+         OpenStreetMap, einer offenen Kartendatenbank. Wenn Sie keine weitere Nachricht
+         von mir wünschen, schreiben Sie mir kurz — dann trage ich Sie ein und Sie hören
+         nichts mehr von mir.</p>
+    </div>
+    <div class="faq">
+      <h3>Ist der Entwurf wirklich kostenlos?</h3>
+      <p>Ja. Sie zahlen erst, wenn Sie die Seite haben wollen. Sagen Sie ab, entstehen
+         Ihnen keine Kosten.</p>
+    </div>
+    <div class="faq">
+      <h3>Was passiert, wenn ich später kündige?</h3>
+      <p>Die monatliche Betreuung ist jederzeit zum Monatsende kündbar. Ihre Inhalte
+         und die fertige Seite bekommen Sie auf Wunsch ausgehändigt.</p>
+    </div>
+    <div class="faq">
+      <h3>Brauche ich eine eigene Internetadresse?</h3>
+      <p>Nicht zwingend — ich kann die Seite unter einer Adresse von mir bereitstellen.
+         Eine eigene Adresse (z.B. ihr-betrieb.de) ist aber empfehlenswert; ich richte
+         sie auf Wunsch ein, die Gebühr des Anbieters kommt dann dazu.</p>
+    </div>
+  </section>
+
+  <section class="legal">
+    <div class="legal-grid">
+      <div>
+        <h2>Impressum</h2>
+        <p>
+          Angaben gemäß § 5 DDG<br><br>
+          <b>Philipp Kranz</b><br>
+          Niederlandstraße 3<br>
+          86972 Altenstadt<br>
+          Deutschland
+        </p>
+        <p>
+          E-Mail: <a href="mailto:kontakt.philswebsites@gmail.com">kontakt.philswebsites@gmail.com</a><br>
+          Verantwortlich für den Inhalt: Philipp Kranz, Anschrift wie oben.
+        </p>
+        <!-- Falls eine Umsatzsteuer-Identifikationsnummer vorliegt, gehoert sie hier hin:
+             "Umsatzsteuer-Identifikationsnummer gemaess § 27a UStG: DE………" -->
+        <p>
+          Plattform der EU-Kommission zur Online-Streitbeilegung:
+          <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>.
+          Ich bin nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor
+          einer Verbraucherschlichtungsstelle teilzunehmen.
+        </p>
+      </div>
+
+      <div>
+        <h2>Leistungen, Zahlung, Stornierung</h2>
+        <p>
+          <b>Leistung:</b> Erstellung und Veröffentlichung einer Website nach Absprache,
+          auf Wunsch mit laufender Betreuung.
+        </p>
+        <p>
+          <b>Zahlung:</b> Der einmalige Betrag wird nach Abnahme der fertigen Seite fällig,
+          die monatliche Betreuung im Voraus je Monat. Zahlung per Überweisung oder über
+          den Zahlungsdienstleister Stripe (Karte, SEPA-Lastschrift).
+        </p>
+        <p>
+          <b>Stornierung:</b> Bis zur Abnahme können Sie jederzeit kostenfrei absagen.
+          Nach Abnahme entfällt die Rückerstattung des Einmalbetrags, weil die Leistung
+          dann erbracht ist. Die monatliche Betreuung ist zum Monatsende kündbar; bereits
+          gezahlte Beträge für den laufenden Monat werden nicht anteilig erstattet.
+        </p>
+        <p>
+          <b>Mängel:</b> Entspricht die Seite nicht dem Vereinbarten, bessere ich nach.
+          Gelingt das nicht, erhalten Sie den gezahlten Betrag zurück.
+        </p>
+        <p>
+          <b>Datenschutz:</b> Ich verarbeite Ihre Kontaktdaten ausschließlich zur
+          Bearbeitung Ihrer Anfrage und zur Vertragsabwicklung und gebe sie nicht an
+          Dritte weiter, soweit das nicht zur Leistungserbringung nötig ist. Sie können
+          jederzeit Auskunft und Löschung verlangen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="jahr">2026</span> Philipp Kranz · philswebsites ·
+    <a href="mailto:kontakt.philswebsites@gmail.com">kontakt.philswebsites@gmail.com</a>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('jahr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
