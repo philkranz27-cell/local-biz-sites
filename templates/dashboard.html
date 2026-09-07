@@ -134,10 +134,29 @@
   .inbox-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem; }
   .inbox-card h3 { margin: 0 0 .3rem; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: .5rem; }
   .inbox-card .inbox-sub { font-size: .8rem; color: var(--muted); margin: 0 0 1rem; }
-  .inbox-msg { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .85rem; }
+  .inbox-msg { padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .85rem; }
   .inbox-msg:last-child { border-bottom: none; }
   .inbox-msg .from { font-weight: 600; color: #fff; }
   .inbox-msg .date { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+
+  /* Aufklappbare Mails: zugeklappt eine Zeile pro Mail, angeklickt der ganze Text.
+     Vorher standen alle Entwuerfe komplett ausgeschrieben untereinander - bei 43
+     Mails eine endlose Textwand, in der man nichts wiederfindet. */
+  .mail-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start;
+               cursor: pointer; width: 100%; background: none; border: none; padding: 0;
+               font: inherit; color: inherit; text-align: left; }
+  .mail-head:hover .subject, .mail-head:hover .from { color: var(--purple-light, #c4b5fd); }
+  /* Flex-Kinder gehen von sich aus nicht unter ihre Inhaltsbreite (min-width: auto).
+     Ohne das schiebt die lange Vorschauzeile die Seite waagerecht auf. */
+  .mail-head > span:first-child { min-width: 0; flex: 1; overflow: hidden; }
+  .mail-toggle { color: var(--muted); font-size: .75rem; flex: none; transition: transform .2s; }
+  .mail-open .mail-toggle { transform: rotate(90deg); }
+  .mail-body { white-space: pre-wrap; font-size: .88rem; color: #d6d2ee; line-height: 1.6;
+               margin-top: .8rem; padding-top: .8rem; border-top: 1px solid rgba(255,255,255,.08);
+               max-height: 60vh; overflow-y: auto; }
+  .mail-preview { color: var(--muted); font-size: .8rem; overflow: hidden; text-overflow: ellipsis;
+                  white-space: nowrap; max-width: 100%; margin-top: .15rem; }
+  .mail-open .mail-preview { display: none; }
   .not-configured { font-size: .85rem; color: var(--muted); }
   .not-configured code { background: rgba(255,255,255,.08); padding: .1rem .4rem; border-radius: 4px; }
 
@@ -258,8 +277,14 @@
         <span><b style="color:#fff">{{ lead.name }}</b> · {{ lead.contact_email }}</span>
         <span class="status-chip">{{ 'versendet' if lead.status == 'emailed' else 'entworfen, noch nicht gesendet' }}</span>
       </div>
-      <p class="subject">{{ lead.email_subject }}</p>
-      <div class="body">{{ lead.email_body }}</div>
+      <button type="button" class="mail-head" onclick="toggleMail(this)">
+        <span>
+          <span class="subject">{{ lead.email_subject }}</span>
+          <span class="mail-preview">{{ lead.email_body[:120] }}…</span>
+        </span>
+        <span class="mail-toggle">▶</span>
+      </button>
+      <div class="mail-body" hidden>{{ lead.email_body }}</div>
     </div>
     {% endif %}
   {% else %}
@@ -322,6 +347,22 @@
     if (id === 'emails-view') loadInbox();
   }
 
+  // Absender, Betreff und Text stammen aus fremden E-Mails - also niemals ungeprueft
+  // als HTML einsetzen, sonst kann eine praeparierte Mail Markup ins Dashboard schreiben.
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
+  function toggleMail(btn) {
+    var karte = btn.parentElement;
+    var text = btn.nextElementSibling;
+    if (!text) return;
+    text.hidden = !text.hidden;
+    karte.classList.toggle('mail-open', !text.hidden);
+  }
+
   function loadInbox() {
     var el = document.getElementById('inbox-list');
     if (!el) return;
@@ -330,7 +371,17 @@
       if (data.error) { el.innerHTML = '<p class="not-configured">' + data.error + '</p>'; return; }
       if (!data.messages.length) { el.innerHTML = '<p class="not-configured">Postfach leer.</p>'; return; }
       el.innerHTML = data.messages.map(function(m) {
-        return '<div class="inbox-msg"><div><div class="from">' + m.from + '</div>' + m.subject + '</div><div class="date">' + m.date + '</div></div>';
+        var body = (m.body || '').trim();
+        return '<div class="inbox-msg">'
+          + '<button type="button" class="mail-head" onclick="toggleMail(this)">'
+          +   '<span><div class="from">' + esc(m.from) + '</div>' + esc(m.subject)
+          +     (body ? '<div class="mail-preview">' + esc(body.slice(0, 120)) + '…</div>' : '')
+          +   '</span>'
+          +   '<span><span class="date">' + esc(m.date) + '</span> '
+          +   (body ? '<span class="mail-toggle">▶</span>' : '') + '</span>'
+          + '</button>'
+          + (body ? '<div class="mail-body" hidden>' + esc(body) + '</div>' : '')
+          + '</div>';
       }).join('');
     }).catch(function() { el.innerHTML = '<p class="not-configured">Abruf fehlgeschlagen.</p>'; });
   }
