@@ -111,6 +111,12 @@ def phase_send_emails() -> None:
     if budget <= 0:
         return
     for row in db.get_leads_by_status("ready_to_send", limit=budget):
+        # Widerspruch beachten. Steht vor dem Versand, nicht danach - eine gesperrte
+        # Adresse darf gar nicht erst angeschrieben werden.
+        if db.is_blocked(row["contact_email"]):
+            db.set_status(row["id"], "blocked")
+            logger.info("Uebersprungen, Adresse gesperrt: %s", row["contact_email"])
+            continue
         try:
             send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"])
             db.mark_emailed(row["id"])

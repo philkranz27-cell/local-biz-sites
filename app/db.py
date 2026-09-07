@@ -185,3 +185,39 @@ def get_stats() -> dict:
             "SELECT status, COUNT(*) AS n FROM leads WHERE status NOT LIKE 'excluded_%' GROUP BY status"
         ).fetchall()
     return {row["status"]: row["n"] for row in rows}
+
+
+# --- Sperrliste ------------------------------------------------------------------
+# Ein Widerspruch muss dauerhaft beachtet werden. Adressen immer klein vergleichen,
+# sonst schluepft "Info@X.de" an einem Eintrag "info@x.de" vorbei.
+
+
+def block_email(email: str, grund: str = "") -> bool:
+    """Adresse sperren. Gibt False zurueck, wenn sie schon gesperrt war."""
+    email = (email or "").strip().lower()
+    if not email:
+        return False
+    with get_connection() as conn:
+        cur = conn.execute(
+            "INSERT OR IGNORE INTO blocklist (email, grund, erstellt_am) VALUES (?, ?, ?)",
+            (email, grund.strip() or None, datetime.now(timezone.utc).isoformat()),
+        )
+        return cur.rowcount > 0
+
+
+def unblock_email(email: str) -> None:
+    with get_connection() as conn:
+        conn.execute("DELETE FROM blocklist WHERE email = ?", ((email or "").strip().lower(),))
+
+
+def is_blocked(email: str) -> bool:
+    email = (email or "").strip().lower()
+    if not email:
+        return False
+    with get_connection() as conn:
+        return conn.execute("SELECT 1 FROM blocklist WHERE email = ?", (email,)).fetchone() is not None
+
+
+def get_blocklist() -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute("SELECT * FROM blocklist ORDER BY erstellt_am DESC").fetchall()

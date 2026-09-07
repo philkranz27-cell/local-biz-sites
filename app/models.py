@@ -49,6 +49,13 @@ class OutreachEmail(BaseModel):
     body: str
 
 
+class BlockRequest(BaseModel):
+    """Widerspruch: Diese Adresse wird nie (wieder) angeschrieben."""
+
+    email: str
+    grund: Optional[str] = None
+
+
 class DealUpdate(BaseModel):
     deal_status: str
     deal_price: Optional[str] = None

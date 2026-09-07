@@ -4,10 +4,16 @@ from email.message import EmailMessage
 from app.config import settings
 from app.models import ReservationRequest
 
+# Art. 14 DSGVO: Wer Daten nicht bei der betroffenen Person selbst erhebt, muss ihr
+# mitteilen, woher sie stammen. Viele Adressaten sind Einzelunternehmer, ihre
+# Kontaktdaten sind damit personenbezogene Daten. Ein Satz erfuellt das - er stand
+# bisher nur in den FAQ der Website, nicht in der Mail selbst.
 OPT_OUT_NOTE = (
     "\n\n---\n"
     "Falls kein Interesse besteht: einfach kurz antworten, dann meldet sich hier niemand "
     "erneut.\n"
+    "Ihre Kontaktdaten stammen aus dem öffentlich einsehbaren OpenStreetMap-Eintrag "
+    "Ihres Betriebs. Auf Wunsch lösche ich sie.\n"
     f"{settings.sender_impressum}"
 )
 

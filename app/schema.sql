@@ -35,3 +35,13 @@ CREATE TABLE IF NOT EXISTS send_log (
     lead_id INTEGER NOT NULL REFERENCES leads(id),
     sent_at TEXT NOT NULL
 );
+
+-- Widersprueche. Wer hier steht, wird nie (wieder) angeschrieben. Rechtlich wichtig:
+-- Ein Widerspruch muss dauerhaft und nachweisbar beachtet werden - ihn nur im Postfach
+-- zu lesen und im Kopf zu behalten reicht nicht.
+-- Adresse in Kleinbuchstaben, damit "Info@X.de" und "info@x.de" derselbe Eintrag sind.
+CREATE TABLE IF NOT EXISTS blocklist (
+    email TEXT PRIMARY KEY,
+    grund TEXT,
+    erstellt_am TEXT NOT NULL
+);

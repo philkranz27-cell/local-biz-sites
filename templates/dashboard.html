@@ -157,6 +157,19 @@
   .mail-preview { color: var(--muted); font-size: .8rem; overflow: hidden; text-overflow: ellipsis;
                   white-space: nowrap; max-width: 100%; margin-top: .15rem; }
   .mail-open .mail-preview { display: none; }
+
+  .block-card { margin-bottom: 1rem; }
+  .block-add { display: flex; flex-wrap: wrap; gap: .6rem; margin: .9rem 0; }
+  .block-add input { flex: 1 1 200px; padding: .5rem .7rem; border-radius: 8px;
+                     border: 1px solid var(--card-border); background: rgba(0,0,0,.35);
+                     color: #fff; font: inherit; font-size: .85rem; }
+  .block-list { list-style: none; padding: 0; margin: 0; font-size: .85rem; }
+  .block-list li { display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+                   padding: .45rem 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .block-list li:last-child { border-bottom: none; }
+  .unblock { background: none; border: none; color: var(--muted); font-size: 1.1rem;
+             cursor: pointer; line-height: 1; padding: 0 .3rem; }
+  .unblock:hover { color: #f87171; }
   .not-configured { font-size: .85rem; color: var(--muted); }
   .not-configured code { background: rgba(255,255,255,.08); padding: .1rem .4rem; border-radius: 4px; }
 
@@ -278,6 +291,31 @@
     {% endif %}
   </div>
 
+  <div class="card block-card">
+    <h3>🚫 Sperrliste{% if blocklist %} · {{ blocklist|length }}{% endif %}</h3>
+    <p class="inbox-sub">
+      Wer hier steht, wird nicht mehr angeschrieben. Trag jeden Widerspruch sofort ein –
+      ihn nur im Postfach gelesen zu haben reicht rechtlich nicht.
+    </p>
+    <div class="block-add">
+      <input type="email" id="blockEmail" placeholder="adresse@betrieb.de">
+      <input type="text" id="blockGrund" placeholder="Grund (optional)">
+      <button class="btn" onclick="addBlock()">Sperren</button>
+    </div>
+    {% if blocklist %}
+      <ul class="block-list">
+        {% for b in blocklist %}
+        <li>
+          <span><b>{{ b.email }}</b>{% if b.grund %} · {{ b.grund }}{% endif %}</span>
+          <button class="unblock" onclick="removeBlock('{{ b.email }}')" title="Sperre aufheben">×</button>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="not-configured">Noch kein Widerspruch eingetragen.</p>
+    {% endif %}
+  </div>
+
   {% for lead in leads %}
     {% if lead.email_subject %}
     <div class="card email-card">
@@ -361,6 +399,28 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(ch) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
     });
+  }
+
+  function addBlock() {
+    var feld = document.getElementById('blockEmail');
+    var adresse = feld.value.trim();
+    if (!adresse) { feld.focus(); return; }
+    fetch('/api/blocklist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: adresse, grund: document.getElementById('blockGrund').value })
+    }).then(function(r) {
+      if (!r.ok) { throw new Error('HTTP ' + r.status); }
+      location.reload();
+    }).catch(function() { alert('Eintragen fehlgeschlagen – bitte erneut versuchen.'); });
+  }
+
+  function removeBlock(adresse) {
+    if (!confirm('Sperre für ' + adresse + ' aufheben?')) { return; }
+    fetch('/api/blocklist/' + encodeURIComponent(adresse), { method: 'DELETE' })
+      .then(function(r) {
+        if (!r.ok) { throw new Error('HTTP ' + r.status); }
+        location.reload();
+      }).catch(function() { alert('Aufheben fehlgeschlagen – bitte erneut versuchen.'); });
   }
 
   function toggleMail(btn) {

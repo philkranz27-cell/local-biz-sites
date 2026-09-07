@@ -1,157 +1,193 @@
 # Local Biz Sites
 
-Findet automatisch lokale Betriebe (Restaurants, Friseure, Bäckereien, Cafés, ...) **ohne
-eigene Website, bei denen aber eine Kontakt-Mailadresse öffentlich bekannt ist**, baut
-ihnen automatisch eine kostenlose Demo-Website (KI-Texte + Template, live erreichbar) und
-verschickt automatisch eine kurze Akquise-Mail mit Link zur Demo. Alle anderen Betriebe
-(mit vorhandener Website, oder ohne auffindbare Mail) werden komplett ignoriert — kein
-Scraping fremder Websites, keine Ansprache ohne bekannten Kontakt. Läuft komplett
-unbeaufsichtigt als Scheduler-Job.
+Findet automatisch lokale Betriebe (Restaurants, Friseure, Bäckereien, Cafés, Bars,
+Fitnessstudios, Blumenläden) **ohne eigene Website, bei denen aber eine Kontakt-Mailadresse
+öffentlich bekannt ist**, baut ihnen eine individuelle Demo-Website, veröffentlicht die
+dauerhaft erreichbar und verschickt eine kurze Akquise-Mail mit Link dorthin. Alle anderen
+Betriebe werden ignoriert — kein Scraping fremder Websites, keine Ansprache ohne bekannten
+Kontakt. Läuft unbeaufsichtigt als Scheduler-Job.
+
+Alles im Projekt ist bewusst kostenlos: OpenStreetMap für die Suche, Groq für die Texte,
+Pexels für Fotos, Gmail für den Versand, GitHub Pages für das Hosting.
 
 ## Wichtiger rechtlicher Hinweis — bitte lesen
 
 Automatisierte Werbe-E-Mails an Geschäfte, mit denen vorher **keine Geschäftsbeziehung**
 bestand, fallen in Deutschland unter **§7 UWG** (unzumutbare Belästigung) — das gilt
-grundsätzlich auch für B2B-Mails, nicht nur an Privatpersonen. In der Praxis wird das
-selten verfolgt, aber es ist ein bekannter Abmahn-Hebel (spezialisierte Kanzleien/
-Mitbewerber). Dieses Projekt automatisiert den Versand bewusst voll (deine Entscheidung),
-enthält aber ein paar Dinge, die das Risiko zumindest reduzieren:
+grundsätzlich auch für B2B-Mails. In der Praxis wird das selten verfolgt, aber es ist ein
+bekannter Abmahn-Hebel. Dieses Projekt automatisiert den Versand bewusst voll, enthält aber
+ein paar Dinge, die das Risiko reduzieren:
 
-- Jede Mail enthält eine vollständige Absenderkennzeichnung (`SENDER_IMPRESSUM` in `.env`)
-  und einen klaren Hinweis, dass eine kurze Antwort reicht, damit sich niemand mehr meldet.
-- Ein täglicher Versand-Deckel (`MAX_EMAILS_PER_DAY`) verhindert Massenversand.
-- Die generierten Demo-Sites tragen im Footer deutlich sichtbar "unverbindlicher
-  Demo-Entwurf, keine offizielle Website des Betriebs" — damit niemand denkt, du hättest
-  dich als der Betrieb selbst ausgegeben.
+- Jede Mail trägt eine vollständige Absenderkennzeichnung (`SENDER_IMPRESSUM`), den Hinweis,
+  dass eine kurze Antwort reicht, damit sich niemand mehr meldet, und die Auskunft, woher
+  die Daten stammen (Art. 14 DSGVO — die Adressaten sind oft Einzelunternehmer, ihre
+  Kontaktdaten sind damit personenbezogene Daten).
+- Eine **Sperrliste** (`blocklist`-Tabelle, Pflege im Dashboard) hält Widersprüche
+  dauerhaft fest. Der Versand prüft sie vor jeder Mail. Ein Widerspruch muss nachweisbar
+  beachtet werden — ihn nur im Postfach gelesen zu haben reicht nicht.
+- Ein täglicher Deckel (`MAX_EMAILS_PER_DAY`) verhindert Massenversand. **Steht der Wert
+  auf 0, geht gar nichts raus** — der sichere Ausgangszustand.
+- Die Demo-Sites tragen im Footer sichtbar "unverbindlicher Demo-Entwurf, keine offizielle
+  Website des Betriebs" und stehen auf `noindex`, tauchen also nicht bei Google neben der
+  echten Seite des Betriebs auf.
 
-Trotzdem: das eigentliche Risiko trägst du als Betreiber. Bei ernsthaftem Volumen lohnt
-sich eine kurze Rechtsberatung, bevor die Stückzahl signifikant wird. Diese Doku ist keine
-Rechtsberatung.
+Das eigentliche Risiko trägt der Betreiber. Diese Doku ist keine Rechtsberatung.
 
 ## Wie die Pipeline funktioniert
 
-1. **Leads finden** (`app/sources/overpass.py`): OpenStreetMap (Overpass API) pro
-   Stadt × Kategorie aus `SEARCH_CITIES` / `SEARCH_CATEGORIES`. Komplett kostenlos, kein
-   Account, kein Key — dafür inkonsistentere Daten als bei einem kommerziellen Anbieter
-   (kein Rating, Öffnungszeiten/Website nicht bei jedem Eintrag gepflegt).
-2. **Filtern** (`app/pipeline.py:phase_find_leads`): hat der Betrieb ein `website`-Tag →
-   sofort ausgeschlossen (`excluded_has_website`), unabhängig von der Qualität dieser
-   Website — es wird nie eine fremde Website besucht oder gescraped. Kein `website`-Tag,
-   aber auch kein direkt in OSM getaggtes `contact:email`/`email` → ebenfalls ausgeschlossen
-   (`excluded_no_email`), da kein automatisierter Kontaktweg vorgesehen ist. Nur die
-   Schnittmenge — keine Website, aber bekannte Mail — geht weiter (`email_found`).
-   Ausgeschlossene Leads bleiben nur intern in der DB (Dedup über `place_id`), tauchen im
-   Dashboard nicht auf.
-3. **Demo-Website generieren** (`app/sitegen/`): Groq-LLM schreibt individuelle Texte
-   (Tagline, Headline, About, 3 Highlights, 4-6 Leistungen mit Beschreibung, passender
-   CTA — keine erfundenen Fakten, keine Fake-Testimonials) und einen englischen
-   Bildsuchbegriff. Ein zu Name/Kategorie/Ort passendes Stockfoto (Hero + bis zu 3
-   Galeriebilder) kommt von der Pexels-API. Layout und Akzentfarbe werden deterministisch
-   aus der OSM-ID abgeleitet, je Kategorie aus 2 passenden von 4 grundverschiedenen
-   Design-Vorlagen (`app/sitegen/templates/*.html.j2`: clean-modern, warm-editorial,
-   dunkel-bold, elegant-boutique) × 6 Akzentfarben — zwei Betriebe sehen also so gut wie
-   nie identisch aus. Ergebnis liegt unter `data/sites/{slug}/index.html`, live erreichbar
-   unter `/sites/{slug}/`.
-4. **Mail entwerfen und senden** (`app/llm.py`, `app/outreach/`): Groq-LLM schreibt eine
-   kurze, persönliche Mail mit Link zur Demo, Versand per SMTP.
+Ein Durchlauf (`app/pipeline.py:run_pipeline`) arbeitet in dieser Reihenfolge:
 
-Der komplette Zustand jedes Leads steht in SQLite (`leads`-Tabelle, Status-Spalte) — nichts
-wird zweimal angeschrieben, `place_id` (die OSM-ID, z.B. `node/12345`) ist eindeutig.
+**1. Websites bauen** (`app/sitegen/`) — für Leads im Status `email_found`, 20 je Durchlauf.
+Das Groq-Modell schreibt in zwei Durchgängen individuelle Texte (Tagline, Headline, About,
+3 Highlights, 4–6 Leistungen, passender Call-to-Action) und einen englischen Bildsuchbegriff;
+dazu kommen Fotos von Pexels. Layout und Akzentfarbe werden deterministisch aus der OSM-ID
+abgeleitet — je Kategorie 2 passende aus 4 grundverschiedenen Vorlagen × 6 Farben, zwei
+Betriebe sehen also so gut wie nie gleich aus. Öffnungszeiten werden aus der OSM-Rohsyntax
+in lesbares Deutsch übersetzt (`app/sitegen/opening_hours.py`).
 
-## Was hier bewusst NICHT drin ist (Phase 2)
+**2. Veröffentlichen** (`app/publisher.py`) — spiegelt die Seiten nach `docs/` und lädt sie
+hoch, wenn ein `GITHUB_TOKEN` hinterlegt ist. Läuft **vor** dem Mailversand, damit nie eine
+Mail mit einem Link auf eine noch nicht veröffentlichte Seite rausgeht.
 
-- **Bezahlung/Checkout**: wenn ein Betrieb antwortet und kaufen will, läuft das aktuell
-  manuell (du verhandelst per Mail/Telefon). Ein Stripe-Payment-Link + automatisches
-  Deployment auf eine eigene Domain lässt sich später ergänzen, sobald der erste Verkauf
-  zeigt, dass die Ansprache funktioniert.
-- **Antwort-Erkennung**: Antworten landen aktuell in deinem normalen Postfach (`FROM_EMAIL`),
-  nicht automatisch im Dashboard. Für den Start reicht das.
-- **Follow-up-Sequenzen** (2. Anschreiben nach ein paar Tagen ohne Antwort) — bewusst nicht
-  in v1, um das Abmahnrisiko nicht durch wiederholte Kontaktaufnahme zu erhöhen.
+**3. Mails entwerfen** (`app/llm.py`) — kurzer, persönlicher Text ohne Preisnennung, aber
+mit dem Angebot, über Konditionen zu sprechen. Anrede, Grußformel, Impressum und
+Widerspruchshinweis setzt `app/outreach/mailer.py` beim Versand dazu, nicht das Sprachmodell.
 
-## 1. API-Zugänge besorgen
+**4. Mails versenden** — bis zum Tagesdeckel.
 
-Alle drei komplett kostenlos, keine Kreditkarte nötig (die Lead-Suche selbst über
-OpenStreetMap braucht gar keinen Account). Pexels ist optional — ohne Key entstehen die
-Demo-Sites trotzdem, nur ohne Fotos.
+**5. Neue Leads suchen** (`app/sources/overpass.py`) — pro Durchlauf nur ein Ausschnitt der
+Stadt/Kategorie-Liste (`FIND_COMBOS_PER_RUN`, Standard 12), die Position steht in
+`data/find_cursor.txt` und überlebt Neustarts. **Warum nicht alles auf einmal:** Ein voller
+Durchlauf über 56 Städte × 7 Kategorien sind 392 Abfragen und dauert rund 9 Stunden. Stünde
+die Suche vorne, käme der Rest nie an die Reihe.
 
-| Dienst | Kostenlos? | Wo bekommen |
+**Die Filterung** (`phase_find_leads`): Hat der Betrieb ein `website`-Tag → ausgeschlossen,
+unabhängig von der Qualität dieser Website; es wird nie eine fremde Website besucht. Kein
+`website`-Tag, aber auch kein `contact:email`/`email` in OSM → ebenfalls ausgeschlossen.
+Nur die Schnittmenge geht weiter. In der Praxis sind das rund 1 % der gefundenen Betriebe.
+
+Der Zustand jedes Leads steht in SQLite (`leads`-Tabelle). Nichts wird zweimal
+angeschrieben, die OSM-ID (`place_id`, z.B. `node/12345`) ist eindeutig.
+
+## Zwei Adressen, und warum
+
+| Variable | Zeigt auf | Wofür |
 |---|---|---|
-| Groq (Website-Texte + E-Mail-Entwürfe) | Ja, dauerhaft, keine Kreditkarte | [console.groq.com/keys](https://console.groq.com/keys) |
-| Pexels (Stockfotos, optional) | Ja, dauerhaft, keine Kreditkarte | [pexels.com/api](https://www.pexels.com/api/) → "Get Started", Key wird sofort angezeigt |
-| SMTP-Versand | Ja, z.B. Brevo 300 Mails/Tag gratis | [app.brevo.com/settings/keys/smtp](https://app.brevo.com/settings/keys/smtp) (oder ein Gmail-App-Passwort) |
+| `BASE_URL` | GitHub Pages | Die Links in den Mails. Bleibt erreichbar, auch wenn der Rechner aus ist. |
+| `API_BASE_URL` | Diese Anwendung (Tailscale Funnel) | Reservierungs-Formular und Dashboard. Läuft nur, solange der Rechner läuft. |
 
-## 2. Lokal einrichten und testen
+Die Demo-Seiten sind statisch und liegen auf GitHub Pages. Nur das Reservierungs-Popup
+braucht einen laufenden Server und ruft deshalb `API_BASE_URL` auf — dafür ist in
+`app/main.py` CORS eng auf diese beiden Adressen begrenzt. Schlägt der Aufruf fehl, sagt
+das Formular das ehrlich und nennt die Telefonnummer des Betriebs, statt einen Erfolg
+vorzutäuschen.
+
+## Einrichten
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate      # Windows
+.venv\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env      # dann die Keys eintragen
-uvicorn app.main:app --reload
+copy .env.example .env
 ```
 
-Dashboard unter `http://localhost:8000` öffnen — dort ein "Pipeline jetzt starten"-Button
-für einen manuellen Testlauf, statt auf das Scheduler-Intervall (`POLL_INTERVAL_PIPELINE_SEC`,
-Standard 6 Stunden) zu warten. `/healthz` sollte `{"status":"ok"}` liefern.
+Dann `.env` ausfüllen. Die Zugänge:
 
-**Empfehlung für den ersten Test:** `MAX_EMAILS_PER_DAY=0` setzen und dir im Dashboard erst
-ein paar generierte Demo-Sites + E-Mail-Entwürfe ansehen (Spalte "Demo" verlinkt die Seite),
-bevor der erste echte Versand läuft.
+| Dienst | Kostenlos? | Wo |
+|---|---|---|
+| Groq (Texte) | ja, dauerhaft | [console.groq.com/keys](https://console.groq.com/keys) |
+| Pexels (Fotos, optional) | ja, dauerhaft | [pexels.com/api](https://www.pexels.com/api/) |
+| Gmail-App-Passwort (Versand + Posteingang) | ja | [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) |
+| Stripe (Zahlungslinks, optional) | ja | [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys) |
+| GitHub-Token (automatisches Veröffentlichen, optional) | ja | [github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens), Contents: Read and write |
 
-## 3. Deployment auf einen 24/7-Server
+**Beim Mailversand muss die Absenderdomain zum Versandserver passen.** Eine
+gmail.com-Adresse über einen fremden Dienst wie Brevo zu verschicken funktioniert technisch,
+sieht für den Empfänger aber aus wie eine gefälschte Absenderadresse — gmail.com erlaubt per
+SPF nur Googles eigene Server. Die Mails landen dann zuverlässig im Spam. Deshalb:
+`smtp.gmail.com` mit App-Passwort, solange der Absender eine Gmail-Adresse ist. Mit eigener
+Domain ist ein Dienst wie Brevo die bessere Wahl (dort SPF und DKIM für die Domain
+eintragen). Prüfen lässt sich das kostenlos über [mail-tester.com](https://www.mail-tester.com).
+
+## Starten
 
 ```bash
-docker build -t local-biz-sites .
-docker run -d --env-file .env -v %cd%/data:/app/data -p 8000:8000 --restart unless-stopped local-biz-sites
+start-dashboard.bat
 ```
 
-Auf Railway/Render: Repo verbinden, `Dockerfile` wird automatisch erkannt, alle Variablen
-aus `.env.example` als Umgebungsvariablen eintragen, **persistenten Volume auf `/app/data`
-mounten** (sonst gehen Demo-Sites und die "schon kontaktiert"-Historie bei jedem Redeploy
-verloren).
+Startet den Server auf `127.0.0.1:8123` in einer Neustart-Schleife und schreibt nach
+`data/server.log`. Für den Autostart bei der Anmeldung liegt `start-dashboard-hidden.vbs`
+im Autostart-Ordner von Windows (`shell:startup`) und startet dasselbe ohne Fenster.
+
+Das Dashboard ist durch HTTP-Basic-Auth geschützt (`DASHBOARD_USER`, `DASHBOARD_PASSWORD`).
+**Ohne gesetztes Passwort ist es komplett gesperrt** — bewusst so, weil die Anwendung per
+Tunnel öffentlich erreichbar ist und sonst jeder mit der Adresse die Firmenkontakte,
+Mail-Entwürfe und den Posteingang abrufen könnte. Öffentlich bleiben nur `/sites/`,
+`/api/reservation/` und `/healthz`.
+
+**Öffentlich erreichbar** wird das Ganze über Tailscale Funnel:
+
+```bash
+tailscale funnel --bg 8123
+```
+
+## Dashboard
+
+Eine Mindmap mit drei Bereichen: **Neue Betriebe** (alle Leads mit Status und Link zur
+Demo), **E-Mails** (Entwürfe und der Posteingang per IMAP, beides je Mail aufklappbar) und
+**Zahlungen** (Verhandlungsstand je Lead, Stripe-Zahlungslink erzeugen).
+
+Über der Mindmap stehen zwei Statuszeilen: ob die Lead-Suche läuft und ob die
+Veröffentlichung durchkommt. Beide gab es anfangs nicht — und genau deshalb blieb einmal
+ein stundenlanger Ausfall der Datenquelle unbemerkt. Ein Ausfall, der nur im Log steht, ist
+ein Ausfall, den niemand bemerkt.
+
+## Veröffentlichen ohne Token
+
+Ist kein `GITHUB_TOKEN` hinterlegt, passiert Schritt 2 der Pipeline nicht. Dann von Hand:
+
+```bash
+.venv\Scripts\python.exe publish.py
+git add docs && git commit -m "Demo-Seiten aktualisiert" && git push
+```
+
+GitHub Pages muss einmalig eingeschaltet werden: Repository → Settings → Pages → Source
+"Deploy from a branch", Branch `main`, Ordner `/docs`.
 
 ## Konfiguration (`.env`)
 
-- `SEARCH_CITIES`: Komma-Liste, Städtenamen müssen exakt dem OSM-Verwaltungsgrenzen-Namen
-  entsprechen (mit Umlauten, z.B. `München` nicht `Muenchen`), sonst liefert die Suche für
-  diese Stadt nichts.
-- `SEARCH_CATEGORIES`: Komma-Liste aus `restaurant`, `hair_salon`, `bakery`, `cafe`, `bar`,
-  `gym`, `florist`. Neue Kategorie hinzufügen → Eintrag in `CATEGORY_OSM_TAGS` in
-  `app/sources/overpass.py` (Mapping auf den passenden OSM-Tag, siehe
-  [OSM Map Features](https://wiki.openstreetmap.org/wiki/Map_features)).
-- `MAX_LEADS_PER_RUN`: wie viele Treffer pro Stadt×Kategorie und Durchlauf maximal
-  übernommen werden.
-- `MAX_EMAILS_PER_DAY`: harter Versand-Deckel pro Kalendertag.
-- `SENDER_IMPRESSUM`: erscheint unter jeder Mail — vollständiger Name/Anschrift/Kontakt.
-- `PEXELS_API_KEY`: optional. Ohne Key entstehen Demo-Sites ohne Fotos (Templates fallen
-  auf eine schlichte Farbfläche statt Hero-Bild zurück) — sieht ordentlich, aber deutlich
-  weniger hochwertig aus. Für den in dieser Session gewünschten "sehr guten,
-  einzigartigen" Eindruck ist der Key empfehlenswert.
-- `POLL_INTERVAL_PIPELINE_SEC`: Mindestabstand zwischen Durchläufen. Bei der mitgelieferten
-  Städteliste (~55 Städte × 7 Kategorien = ~385 Kombinationen) dauert ein voller Durchlauf
-  deutlich länger als der Standardwert (60s) — APScheduler lässt keine Überlappung zu, der
-  nächste Durchlauf startet also direkt nach Ende des vorherigen. Effekt: die Pipeline sucht
-  praktisch durchgehend, nicht nur alle paar Stunden.
+- `SEARCH_CITIES` — Städtenamen müssen **exakt** dem OSM-Verwaltungsgrenzen-Namen
+  entsprechen, mit Umlauten (`München`, nicht `Muenchen`), sonst liefert die Suche nichts.
+- `SEARCH_CATEGORIES` — `restaurant`, `hair_salon`, `bakery`, `cafe`, `bar`, `gym`,
+  `florist`. Neue Kategorie → Eintrag in `CATEGORY_OSM_TAGS` in `app/sources/overpass.py`.
+- `MAX_LEADS_PER_RUN` (200) — Treffer je Abfrage. Overpass kennt keinen Offset und liefert
+  immer dieselben ersten N Treffer; mit einem kleinen Wert ist die Quelle nach einem
+  Durchlauf durch alle Städte erschöpft. 200 kostet kaum mehr Zeit als 20, 1000 läuft in
+  den Timeout.
+- `MAX_EMAILS_PER_DAY` — harter Deckel pro Kalendertag. 0 = kein Versand.
+- `SENDER_IMPRESSUM` — erscheint unter jeder Mail; daraus wird auch der Name für die
+  Grußformel gezogen.
+- `PEXELS_API_KEY` — optional, ohne Key entstehen Seiten ohne Fotos.
+- `POLL_INTERVAL_PIPELINE_SEC` (60) — Mindestabstand zwischen Durchläufen. APScheduler
+  lässt keine Überlappung zu, der nächste startet also direkt nach dem vorherigen.
+- `PUBLISH_MIN_INTERVAL_MIN` (60) — frühestens so oft wird hochgeladen, sonst entstünde
+  alle paar Minuten ein Commit.
 
 ## Bekannte Einschränkungen
 
-- Die strikte Filterung (nur OSM-eigene E-Mail-Tags, kein Scraping) ist bewusst konservativ
-  gewählt — dadurch ist der qualifizierte Lead-Pool pro Kombination klein (in ersten Tests
-  ca. 1% der gefundenen Betriebe). Ausgeglichen wird das über die große Städteliste und den
-  durchgehenden Betrieb, nicht über Scraping fremder Websites.
-- **Dauerbetrieb heißt Dauerlast auf einer kostenlosen, öffentlichen Infrastruktur**
-  (Overpass API) — bei ~385 Kombinationen pro Durchlauf und sofortigem Neustart können das
-  schnell mehrere zehntausend Anfragen pro Tag werden. Der eingebaute Backoff bei
-  `429 Too Many Requests` (siehe `overpass.py`) verhindert einen Absturz, aber bei
-  andauerndem Dauerbetrieb ist eine längere IP-Sperre durch den Betreiber der Overpass-
-  Instanz realistisch. Falls das passiert: `POLL_INTERVAL_PIPELINE_SEC` deutlich erhöhen
-  oder auf eine eigene Overpass-Instanz/einen bezahlten Dienst wechseln.
-- OpenStreetMap liefert keine Bewertungen/Speisekarten/Fotos, und Adress-/Öffnungszeiten-
-  Tags sind nicht bei jedem Eintrag gepflegt — die generierten Texte sind deshalb bewusst
-  allgemein gehalten, um keine falschen Fakten zu erfinden.
-- Kein Retry-Backoff wie im Krypto-Monitor-Projekt — ein Lead, der 3x fehlschlägt
-  (`error_count`), wird stillschweigend aus den weiteren Läufen ausgeschlossen.
-- Die Pexels-Fotos sind thematisch passende Stimmungsbilder, keine echten Fotos des
-  jeweiligen Betriebs — deshalb steht auf jeder Demo-Site ein Bildnachweis mit genau
-  diesem Hinweis im Footer, um niemanden in die Irre zu führen.
+- **Der Rechner läuft nicht durchgehend.** Schläft der Laptop, arbeitet die Pipeline nicht.
+  Der Autostart fängt Neustarts ab, den Ruhezustand nicht — das ist eine Einstellung im
+  Betriebssystem, keine im Programm.
+- **Groq deckelt das Tageskontingent** auf 200.000 Token, das reicht für ungefähr 60–70
+  neue Websites pro Tag. Danach schlagen die Versuche mit `429` fehl, die Leads bleiben in
+  der Warteschlange und kommen am Folgetag dran.
+- **Overpass ist wechselhaft.** Die Suche kennt drei Server und wechselt bei Ausfall
+  (`OVERPASS_ENDPOINTS`), trotzdem scheitert unter Last rund die Hälfte der Abfragen.
+  `overpass.osm.ch` ist bewusst **nicht** in der Liste: ein reiner Schweiz-Auszug, der für
+  deutsche Städte stillschweigend 0 Treffer liefert — schlimmer als ein ehrlicher Ausfall.
+- **Die strikte Filterung ist konservativ** und lässt nur ~1 % durch. Ausgeglichen wird das
+  über die große Städteliste und den Dauerbetrieb, nicht über Scraping fremder Seiten.
+- OSM liefert keine Bewertungen, Speisekarten oder echten Fotos. Die Texte sind deshalb
+  bewusst allgemein gehalten, und die Pexels-Bilder sind als Symbolbilder gekennzeichnet.
+- Ein Lead, dessen Verarbeitung wiederholt fehlschlägt, zählt `error_count` hoch, bleibt
+  aber im Status stehen und wird weiter versucht.

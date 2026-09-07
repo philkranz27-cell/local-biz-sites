@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from app import db
 from app.config import settings
-from app.models import DealUpdate, PaymentLinkRequest, ReservationRequest
+from app.models import BlockRequest, DealUpdate, PaymentLinkRequest, ReservationRequest
 from app.outreach.inbox import fetch_recent_messages
 from app.outreach.mailer import send_reservation_notification
 from app.payments import create_payment_link
@@ -67,6 +67,7 @@ def dashboard(request: Request):
             "imap_user": settings.imap_user,
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
+            "blocklist": db.get_blocklist(),
         },
     )
 
@@ -100,6 +101,20 @@ def api_reservation(slug: str, payload: ReservationRequest):
     except Exception:
         logger.exception("Konnte Reservierungs-Benachrichtigung nicht senden fuer %s", slug)
         raise HTTPException(status_code=502, detail="notification failed")
+    return {"status": "ok"}
+
+
+@router.post("/api/blocklist", dependencies=[Depends(require_admin)])
+def api_block(payload: BlockRequest):
+    """Widerspruch eintragen. Ab dann wird diese Adresse nicht mehr angeschrieben -
+    dauerhaft und nachweisbar, statt nur im Postfach zu stehen."""
+    neu = db.block_email(payload.email, payload.grund or "")
+    return {"status": "ok", "neu": neu}
+
+
+@router.delete("/api/blocklist/{email}", dependencies=[Depends(require_admin)])
+def api_unblock(email: str):
+    db.unblock_email(email)
     return {"status": "ok"}
 
 
