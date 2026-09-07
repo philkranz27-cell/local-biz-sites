@@ -29,6 +29,30 @@ NOINDEX = '<meta name="robots" content="noindex, nofollow">'
 ROBOTS = "User-agent: *\nDisallow: /sites/\n"
 
 _letzte_veroeffentlichung = 0.0
+# Zustand fuer die Anzeige im Dashboard. Ohne das faellt ein abgelaufener Schluessel
+# nur im Log auf - und dann zeigen die Links in den Mails auf Seiten, die es online
+# noch gar nicht gibt.
+_letzter_fehler: str = ""
+_fehler_in_folge = 0
+
+
+def publish_health() -> dict:
+    """Fuer die Anzeige im Dashboard: kommen die Seiten online an?"""
+    if not settings.publish_configured:
+        return {
+            "state": "off",
+            "text": "Veröffentlichung nicht eingerichtet – Seiten müssen von Hand hochgeladen werden",
+        }
+    if _fehler_in_folge:
+        wort = "Versuch" if _fehler_in_folge == 1 else "Versuche"
+        return {
+            "state": "down",
+            "text": f"Veröffentlichung fehlgeschlagen ({_fehler_in_folge} {wort}): {_letzter_fehler}",
+        }
+    if not _letzte_veroeffentlichung:
+        return {"state": "unknown", "text": "Noch nichts veröffentlicht seit dem Start"}
+    minuten = int((time.time() - _letzte_veroeffentlichung) / 60)
+    return {"state": "ok", "text": f"Zuletzt veröffentlicht vor {minuten} Min."}
 
 
 def _git(*args: str, timeout: int = 120) -> subprocess.CompletedProcess:
@@ -75,12 +99,20 @@ def veroeffentlichen() -> bool:
     Gibt True zurueck, wenn etwas veroeffentlicht wurde. Faellt bei jedem Problem
     leise zurueck: Ein Fehler hier darf die Pipeline nicht anhalten, die Seiten
     liegen ja weiterhin lokal vor."""
-    global _letzte_veroeffentlichung
+    global _letzte_veroeffentlichung, _letzter_fehler, _fehler_in_folge
+
+    def fehlschlag(grund: str, ausgabe: str = "") -> bool:
+        """Fehler festhalten, damit er im Dashboard auftaucht statt nur im Log."""
+        global _letzter_fehler, _fehler_in_folge
+        _fehler_in_folge += 1
+        _letzter_fehler = grund
+        logger.warning("Veroeffentlichung: %s %s", grund, _ohne_token(ausgabe.strip())[:200])
+        return False
 
     if not settings.publish_configured:
         return False
 
-    # Nicht bei jedem Durchlauf pushen - sonst entsteht alle paar Minuten ein Commit.
+    # Nicht bei jedem Durchlauf hochladen - sonst entsteht alle paar Minuten ein Commit.
     abstand = settings.publish_min_interval_min * 60
     if _letzte_veroeffentlichung and time.time() - _letzte_veroeffentlichung < abstand:
         return False
@@ -88,35 +120,36 @@ def veroeffentlichen() -> bool:
     try:
         anzahl = spiegeln()
         if not anzahl:
-            return False
+            return fehlschlag("keine Demo-Seiten gefunden")
 
         _git("add", "--", "docs")
         # --quiet gibt Rueckgabewert 1, wenn es nichts zu committen gibt.
         if _git("diff", "--cached", "--quiet", "--", "docs").returncode == 0:
+            # Keine Aenderung ist kein Fehler - alles ist bereits oben.
             _letzte_veroeffentlichung = time.time()
+            _fehler_in_folge = 0
             return False
 
         commit = _git("commit", "-m", f"Demo-Seiten aktualisiert ({anzahl} Seiten)", "--", "docs")
         if commit.returncode != 0:
-            logger.warning("Commit fehlgeschlagen: %s", _ohne_token(commit.stderr.strip())[:200])
-            return False
+            return fehlschlag("Commit abgelehnt", commit.stderr)
 
         push = _git("push", _push_url(), "HEAD:main", timeout=300)
         if push.returncode != 0:
-            # Meist: jemand hat in der Zwischenzeit selbst gepusht. Einmal nachziehen.
-            logger.info("Push abgelehnt, versuche rebase: %s", _ohne_token(push.stderr.strip())[:150])
+            # Meist: jemand hat in der Zwischenzeit selbst hochgeladen. Einmal nachziehen.
+            logger.info("Upload abgelehnt, versuche nachzuziehen: %s", _ohne_token(push.stderr.strip())[:150])
             if _git("pull", "--rebase", _push_url(), "main", timeout=300).returncode != 0:
-                logger.warning("Rebase fehlgeschlagen - Veroeffentlichung uebersprungen")
-                return False
+                return fehlschlag("Nachziehen fehlgeschlagen")
             push = _git("push", _push_url(), "HEAD:main", timeout=300)
             if push.returncode != 0:
-                logger.warning("Push endgueltig fehlgeschlagen: %s", _ohne_token(push.stderr.strip())[:200])
-                return False
+                return fehlschlag("Upload abgelehnt (Zugriffsschlüssel abgelaufen?)", push.stderr)
 
         _letzte_veroeffentlichung = time.time()
+        _fehler_in_folge = 0
+        _letzter_fehler = ""
         logger.info("Demo-Seiten veroeffentlicht (%d Seiten)", anzahl)
         return True
 
-    except Exception:
+    except Exception as exc:
         logger.exception("Veroeffentlichung fehlgeschlagen")
-        return False
+        return fehlschlag(type(exc).__name__)

@@ -13,6 +13,7 @@ from app.models import DealUpdate, PaymentLinkRequest, ReservationRequest
 from app.outreach.inbox import fetch_recent_messages
 from app.outreach.mailer import send_reservation_notification
 from app.payments import create_payment_link
+from app import publisher
 from app.pipeline import run_pipeline
 from app.sources import overpass
 
@@ -65,6 +66,7 @@ def dashboard(request: Request):
             "stripe_configured": settings.stripe_configured,
             "imap_user": settings.imap_user,
             "source_health": overpass.source_health(),
+            "publish_health": publisher.publish_health(),
         },
     )
 

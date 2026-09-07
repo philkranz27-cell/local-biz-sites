@@ -178,6 +178,11 @@
   .src-health.down .dot { background: #f87171; box-shadow: 0 0 8px #f87171; }
   .src-health.down span { color: #fca5a5; border-color: rgba(248,113,113,.35); }
   .src-health.unknown .dot { background: rgba(255,255,255,.35); }
+  /* "off" = bewusst nicht eingerichtet, also kein Alarm, nur ein Hinweis. */
+  .src-health.off .dot { background: rgba(255,255,255,.25); }
+  .src-health.off span { color: rgba(255,255,255,.5); }
+  /* Zweite Statuszeile sitzt direkt unter der ersten. */
+  .src-health + .src-health { margin-top: .4rem; }
 </style>
 </head>
 <body>
@@ -194,6 +199,9 @@
 <div id="mindmap-view" class="view active">
   <div class="src-health {{ source_health.state }}">
     <span><i class="dot"></i>{{ source_health.text }}</span>
+  </div>
+  <div class="src-health {{ publish_health.state }}">
+    <span><i class="dot"></i>{{ publish_health.text }}</span>
   </div>
   <div class="mindmap">
     <div class="mm-node orb mm-center">
