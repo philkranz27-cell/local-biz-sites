@@ -6,6 +6,7 @@ from app import db
 from app.config import settings
 from app.outreach.mailer import send_outreach_email
 from app.sitegen.generator import generate_site
+from app.publisher import veroeffentlichen
 from app.sources.overpass import find_leads
 from app.llm import generate_outreach_email
 
@@ -124,6 +125,10 @@ def run_pipeline() -> None:
     # Schueben von ein bis zwei Stunden. Wer zuerst sucht, verbraucht das ganze Zeitfenster
     # mit Suchen und liefert am Ende keine einzige fertige Website.
     phase_generate_sites()
+    # Erst veroeffentlichen, dann Mails entwerfen und verschicken: Der Link in einer
+    # Mail muss ab dem Moment funktionieren, in dem sie rausgeht - nicht erst beim
+    # naechsten Durchlauf.
+    veroeffentlichen()
     phase_draft_emails()
     phase_send_emails()
     phase_find_leads()

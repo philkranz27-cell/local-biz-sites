@@ -76,6 +76,18 @@ class Settings(BaseSettings):
     def api_base(self) -> str:
         return (self.api_base_url or self.base_url).rstrip("/")
 
+    # Automatisches Veroeffentlichen der Demo-Seiten auf GitHub Pages. Ohne Token
+    # passiert nichts - dann muss jemand publish.py aufrufen und selbst hochladen.
+    github_token: str = ""
+    github_repo: str = "philkranz27-cell/local-biz-sites"
+    # Nicht bei jedem Pipeline-Durchlauf hochladen, sonst entsteht alle paar Minuten
+    # ein Eintrag in der Versionsgeschichte.
+    publish_min_interval_min: int = 60
+
+    @property
+    def publish_configured(self) -> bool:
+        return bool(self.github_token and self.github_repo)
+
     # Mindestabstand zwischen Durchlaeufen. Ein voller Durchlauf ueber die ganze
     # Staedte-/Kategorienliste dauert bei dieser Listengroesse laenger als dieser Wert -
     # APScheduler laesst per Default keine Ueberlappung zu (max_instances=1), der naechste
