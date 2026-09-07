@@ -33,7 +33,13 @@ STYLE_HINTS = {
 
 STYLE_COMMON_RULE = (
     "Bleib durchgehend bei der foermlichen Anrede ('Sie') - auch im laessigen Stil kein "
-    "ploetzlicher Wechsel zu 'Du' oder Imperativ-Befehlen wie 'Komm vorbei'."
+    "ploetzlicher Wechsel zu 'Du' oder Imperativ-Befehlen wie 'Komm vorbei'. "
+    # Viele deutsche Strassennamen fangen selbst mit einer Praeposition an ("An der
+    # Radrunde", "Am Markt", "Zum Muehlenweg"). Ohne diese Regel entstand daraus
+    # "Ihr Friseur an der An der Radrunde 142" - auf einer Verkaufs-Demo peinlich.
+    "Setze vor eine Adresse oder einen Strassennamen NIE eine Praeposition wie 'an der', "
+    "'am' oder 'in der' - viele Strassennamen beginnen bereits selbst damit. Schreibe "
+    "die Adresse entweder unveraendert oder formuliere ohne Praeposition."
 )
 
 

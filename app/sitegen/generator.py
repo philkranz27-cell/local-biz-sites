@@ -8,6 +8,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from app.llm import STYLE_HINTS, generate_site_copy
 from app.sitegen.images import get_photos
+from app.sitegen.opening_hours import format_opening_hours
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -80,7 +81,11 @@ def generate_site(lead: sqlite3.Row) -> str:
     gallery_images = photos[1:4] if len(photos) > 1 else []
 
     slug = slugify(lead["name"], lead["city"], lead["place_id"])
-    opening_hours = json.loads(lead["opening_hours_json"]) if lead["opening_hours_json"] else None
+    # OSM-Rohsyntax ("Su-Th 17:00-23:30") in lesbares Deutsch uebersetzen, bevor sie
+    # auf der Seite eines potenziellen Kunden landet.
+    opening_hours = format_opening_hours(
+        json.loads(lead["opening_hours_json"]) if lead["opening_hours_json"] else None
+    )
 
     html = _env.get_template(template_name).render(
         name=lead["name"],
