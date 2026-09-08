@@ -51,7 +51,7 @@ def _send(to_email: str, subject: str, body: str) -> None:
 
     with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as smtp:
         smtp.starttls()
-        smtp.login(settings.smtp_user, settings.smtp_password)
+        smtp.login(settings.smtp_user, settings.smtp_pass)
         smtp.send_message(message)
 
 

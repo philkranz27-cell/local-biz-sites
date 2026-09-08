@@ -76,6 +76,20 @@ class Settings(BaseSettings):
     def api_base(self) -> str:
         return (self.api_base_url or self.base_url).rstrip("/")
 
+    @property
+    def smtp_pass(self) -> str:
+        """Passwort fuer den Versand, mit Rueckfall auf das IMAP-Passwort.
+
+        Beim Versand ueber Gmail ist es dasselbe App-Passwort wie fuer den Posteingang.
+        Stand es an zwei Stellen in der .env, brach beim Erneuern zuverlaessig eine der
+        beiden Haelften still weg - genau das ist einmal passiert. Jetzt reicht es,
+        IMAP_PASSWORD zu pflegen."""
+        if self.smtp_password:
+            return self.smtp_password
+        if "gmail" in (self.smtp_host or "") and self.smtp_user == self.imap_user:
+            return self.imap_password
+        return ""
+
     # Automatisches Veroeffentlichen der Demo-Seiten auf GitHub Pages. Ohne Token
     # passiert nichts - dann muss jemand publish.py aufrufen und selbst hochladen.
     github_token: str = ""
@@ -115,7 +129,7 @@ class Settings(BaseSettings):
 
     @property
     def mail_configured(self) -> bool:
-        return bool(self.smtp_host and self.smtp_user and self.smtp_password and self.from_email)
+        return bool(self.smtp_host and self.smtp_user and self.smtp_pass and self.from_email)
 
     @property
     def imap_configured(self) -> bool:
