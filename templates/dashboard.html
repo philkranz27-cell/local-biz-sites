@@ -196,6 +196,16 @@
   .live-marke.start, .live-marke.ende { color: var(--muted); }
   .live-text { color: #ddd8f0; word-break: break-word; }
 
+  /* Anfragen hervorheben - das ist das wertvollste Signal im ganzen Dashboard. */
+  .anfragen-card { margin-bottom: 1.4rem; border-color: rgba(52,211,153,.35);
+                   box-shadow: 0 0 40px -18px var(--green); }
+  .anfragen-card h3 { color: var(--green); }
+  .anfragen-liste { list-style: none; padding: 0; margin: .9rem 0 0; }
+  .anfragen-liste li { display: flex; justify-content: space-between; align-items: flex-start;
+                       gap: 1rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .anfragen-liste li:last-child { border-bottom: none; }
+  .anfrage-detail { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+
   .block-card { margin-bottom: 1rem; }
   .block-add { display: flex; flex-wrap: wrap; gap: .6rem; margin: .9rem 0; }
   .block-add input { flex: 1 1 200px; padding: .5rem .7rem; border-radius: 8px;
@@ -302,6 +312,34 @@
   <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
   <h2 class="section-title">🏪 Neue Betriebe</h2>
   <p class="section-sub">Sucht durchgehend im Hintergrund (~55 Städte × 7 Kategorien) nach Betrieben ohne Website mit bekannter Kontakt-Mail und generiert automatisch eine Demo-Site.</p>
+
+  {% if reservations %}
+  <div class="card anfragen-card">
+    <h3>✨ Anfragen über die Demo-Seiten · {{ reservations|length }}</h3>
+    <p class="inbox-sub">
+      Jemand hat das Formular auf einer Demo-Seite ausgefüllt – meist der Betrieb selbst
+      beim Ausprobieren. Das stärkste Signal, das hier entstehen kann: Melde dich bei diesen
+      zuerst.
+    </p>
+    <ul class="anfragen-liste">
+      {% for r in reservations %}
+      <li>
+        <div>
+          <b>{{ r.betrieb or r.site_slug }}</b>{% if r.stadt %} · {{ r.stadt }}{% endif %}
+          <div class="anfrage-detail">
+            {{ r.kundenname }} · {{ r.kontakt }}
+            {%- if r.datum %} · {{ r.datum }}{% endif %}{% if r.uhrzeit %} {{ r.uhrzeit }}{% endif %}
+            {%- if r.personen %} · {{ r.personen }} Pers.{% endif %}
+          </div>
+          {% if r.nachricht %}<div class="anfrage-detail">„{{ r.nachricht }}"</div>{% endif %}
+        </div>
+        <span class="status-chip">{{ 'benachrichtigt' if r.benachrichtigt else 'Mail fehlgeschlagen' }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
   <table>
     <thead>
       <tr><th>Betrieb</th><th>Kategorie</th><th>Stadt</th><th>Status</th><th>Kontakt</th><th>Demo</th></tr>

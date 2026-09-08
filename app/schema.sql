@@ -37,6 +37,24 @@ CREATE TABLE IF NOT EXISTS send_log (
     sent_at TEXT NOT NULL
 );
 
+-- Anfragen aus dem Formular auf den Demo-Seiten. Wurden frueher NUR per Mail
+-- verschickt und sonst nirgends festgehalten - faellt der Mailversand aus, war die
+-- Anfrage weg. Und das ist das wertvollste Signal im ganzen System: Ein Betrieb hat
+-- seine Demo ausprobiert. Deshalb zuerst speichern, dann verschicken.
+CREATE TABLE IF NOT EXISTS reservations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lead_id INTEGER REFERENCES leads(id),
+    site_slug TEXT NOT NULL,
+    kundenname TEXT NOT NULL,
+    kontakt TEXT NOT NULL,
+    datum TEXT,
+    uhrzeit TEXT,
+    personen TEXT,
+    nachricht TEXT,
+    benachrichtigt INTEGER NOT NULL DEFAULT 0,
+    erstellt_am TEXT NOT NULL
+);
+
 -- Widersprueche. Wer hier steht, wird nie (wieder) angeschrieben. Rechtlich wichtig:
 -- Ein Widerspruch muss dauerhaft und nachweisbar beachtet werden - ihn nur im Postfach
 -- zu lesen und im Kopf zu behalten reicht nicht.

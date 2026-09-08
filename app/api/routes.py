@@ -69,6 +69,7 @@ def dashboard(request: Request):
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
             "blocklist": db.get_blocklist(),
+            "reservations": db.get_reservations(),
         },
     )
 
@@ -119,11 +120,21 @@ def api_reservation(slug: str, payload: ReservationRequest):
     lead = db.get_lead_by_slug(slug)
     if lead is None:
         raise HTTPException(status_code=404, detail="unknown demo site")
+
+    # ZUERST speichern. Frueher wurde die Anfrage nur per Mail verschickt - faellt der
+    # Versand aus (gesperrtes Postfach, SMTP-Stoerung), war sie unwiederbringlich weg,
+    # und der Interessent sah nur eine Fehlermeldung. Dabei ist genau das das
+    # wertvollste Signal im ganzen System.
+    reservation_id = db.add_reservation(lead["id"], slug, payload)
+
     try:
         send_reservation_notification(lead["name"], slug, payload)
+        db.mark_reservation_notified(reservation_id)
     except Exception:
-        logger.exception("Konnte Reservierungs-Benachrichtigung nicht senden fuer %s", slug)
-        raise HTTPException(status_code=502, detail="notification failed")
+        # Kein Fehler nach aussen: Die Anfrage IST angekommen, nur die Benachrichtigung
+        # nicht. Sie steht im Dashboard und geht nicht verloren.
+        logger.exception("Reservierung %s gespeichert, Benachrichtigung fehlgeschlagen", reservation_id)
+
     return {"status": "ok"}
 
 

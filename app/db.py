@@ -201,6 +201,43 @@ def get_stats() -> dict:
     return {row["status"]: row["n"] for row in rows}
 
 
+# --- Anfragen von den Demo-Seiten -------------------------------------------------
+
+
+def add_reservation(lead_id: int | None, slug: str, req) -> int:
+    """Anfrage festhalten, BEVOR die Benachrichtigung versucht wird. Scheitert der
+    Mailversand, ist die Anfrage trotzdem da."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO reservations
+                (lead_id, site_slug, kundenname, kontakt, datum, uhrzeit, personen,
+                 nachricht, erstellt_am)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (lead_id, slug, req.customer_name, req.contact, req.date, req.time,
+             req.party_size, req.message, _now()),
+        )
+        return cur.lastrowid
+
+
+def mark_reservation_notified(reservation_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE reservations SET benachrichtigt = 1 WHERE id = ?", (reservation_id,))
+
+
+def get_reservations(limit: int = 50) -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT r.*, l.name AS betrieb, l.city AS stadt
+            FROM reservations r LEFT JOIN leads l ON l.id = r.lead_id
+            ORDER BY r.id DESC LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+
+
 # --- Sperrliste ------------------------------------------------------------------
 # Ein Widerspruch muss dauerhaft beachtet werden. Adressen immer klein vergleichen,
 # sonst schluepft "Info@X.de" an einem Eintrag "info@x.de" vorbei.
