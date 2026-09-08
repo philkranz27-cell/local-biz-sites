@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     smtp_user: str = ""
     smtp_password: str = ""
     from_email: str = ""
+    # Postfach, in dem Benachrichtigungen an uns selbst landen sollen. Bewusst getrennt
+    # von from_email: Eine Mail an die eigene Domain laeuft sonst noch einmal durch die
+    # eigene Weiterleitung (Brevo -> ImprovMX -> Postfach). Genau daran ist sie am
+    # 08.09.2026 gescheitert - Brevo nahm sie an und meldete danach Soft Bounce, bei
+    # ImprovMX kam sie nie an. Direkt zugestellt ist sie in Sekunden da.
+    notify_email: str = ""
     from_name: str = "Website-Angebot"
     sender_impressum: str = ""
 

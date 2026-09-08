@@ -76,4 +76,5 @@ def send_reservation_notification(business_name: str, slug: str, req: Reservatio
         lines.append(f"Personen: {req.party_size}")
     if req.message:
         lines.append(f"Nachricht: {req.message}")
-    _send(settings.from_email, f"Demo-Anfrage: {business_name}", "\n".join(lines))
+    _send(settings.notify_email or settings.from_email,
+          f"Demo-Anfrage: {business_name}", "\n".join(lines))
