@@ -22,7 +22,7 @@
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
     background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
     
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat;
     animation: kenburns 16s ease-in-out infinite alternate;
     
@@ -58,7 +58,7 @@
   .service h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
   .service p { margin: 0; font-size: .92rem; opacity: .75; }
   .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; }
-  .gallery a { display: block; border-radius: 12px; overflow: hidden; }
+  .gallery a { display: block; border-radius: 12px; overflow: hidden; background: var(--paper-alt); }
   .gallery img { width: 100%; height: 180px; object-fit: cover; display: block; transition: transform .5s ease; }
   .gallery a:hover img { transform: scale(1.08); }
   .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; background: var(--paper-alt); border-radius: 16px; padding: 1.8rem; }
@@ -66,6 +66,13 @@
   .hours-list { list-style: none; padding: 0; margin: 0; font-size: .95rem; }
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
+
+  @media (max-width: 680px) {
+    .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
+    .highlight { padding: .9rem 1.1rem; }
+    .services { grid-template-columns: 1fr; }
+    h1 { font-size: clamp(1.9rem, 10vw, 2.6rem); }
+  }
 
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.is-visible { opacity: 1; transform: none; }
@@ -201,8 +208,14 @@
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  setTimeout(function() {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+  }, 2500);
 
   function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
   function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }

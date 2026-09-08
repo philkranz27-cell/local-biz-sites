@@ -23,7 +23,7 @@
     position: relative; min-height: 82vh; display: flex; align-items: flex-end; padding: 3rem 1.5rem; overflow: hidden;
     background: linear-gradient(0deg, rgba(0,0,0,.88), rgba(0,0,0,.35)), #000;
     
-    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/33458438/pexels-photo-33458438.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
+    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/33458438/pexels-photo-33458438.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat;
     animation: kenburns 16s ease-in-out infinite alternate;
     
@@ -62,7 +62,7 @@
   .service h3 { margin: 0 0 .3rem; font-size: 1.05rem; }
   .service p { margin: 0; font-size: .9rem; color: #a3a3a3; }
   .gallery { display: grid; grid-template-columns: 1.3fr 1fr; gap: .8rem; grid-auto-rows: 140px; }
-  .gallery a { display: block; overflow: hidden; border-radius: 4px; }
+  .gallery a { display: block; overflow: hidden; border-radius: 4px; background: #18181b; }
   .gallery a:first-child { grid-row: span 2; height: 100%; }
   /* Das asymmetrische Raster oben braucht drei Bilder. Liefert Pexels weniger,
      wuerde eine Spalte leer bleiben - dann lieber gleichmaessig verteilen. */
@@ -76,6 +76,17 @@
   .hours-list { list-style: none; padding: 0; margin: 0; font-size: .95rem; color: #d8d8d8; }
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .78rem; color: #666; border-top: 1px solid #262626; margin-top: 3rem; }
   footer a { color: #888; }
+
+  @media (max-width: 680px) {
+    .highlight { flex: 1 1 100%; padding: 1rem .2rem; border-right: none;
+                 border-bottom: 1px solid #262626; }
+    .highlight:last-child { border-bottom: none; }
+    .highlight .num { display: inline; margin-right: .5rem; }
+    .gallery { grid-template-columns: 1fr; grid-auto-rows: auto; }
+    .gallery a:first-child { grid-row: auto; height: auto; }
+    .gallery img, .gallery a:first-child img { height: 200px; }
+    h1 { font-size: clamp(2rem, 11vw, 2.8rem); }
+  }
 
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.is-visible { opacity: 1; transform: none; }
@@ -209,8 +220,14 @@
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  setTimeout(function() {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+  }, 2500);
 
   function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
   function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }

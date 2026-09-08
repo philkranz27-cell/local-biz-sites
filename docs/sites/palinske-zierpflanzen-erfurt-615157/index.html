@@ -55,7 +55,7 @@
   .service-list h3 { margin: 0 0 .2rem; font-size: 1.05rem; font-weight: 700; }
   .service-list p { margin: 0; font-size: .9rem; opacity: .75; }
   .gallery-strip { display: flex; gap: .9rem; overflow-x: auto; padding-bottom: .5rem; }
-  .gallery-strip a { display: block; border-radius: 6px; overflow: hidden; flex: none; }
+  .gallery-strip a { display: block; border-radius: 6px; overflow: hidden; flex: none; background: var(--paper-alt); }
   .gallery-strip img { height: 190px; width: 260px; object-fit: cover; display: block; transition: transform .5s ease; }
   .gallery-strip a:hover img { transform: scale(1.08); }
   .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; background: var(--paper-alt); border-radius: 10px; padding: 1.8rem; }
@@ -188,8 +188,14 @@
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  setTimeout(function() {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+  }, 2500);
 
   function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
   function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }
