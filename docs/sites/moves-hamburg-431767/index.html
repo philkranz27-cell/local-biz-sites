@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All in 1 — Augsburg</title>
+<title>moves — Hamburg</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #c0392b; --accent-dark: #922b21; --ink: #f5f5f5; --paper: #0d0d0f; --paper-alt: #18181b; }
+  :root { --accent: #d35400; --accent-dark: #a84300; --ink: #f5f5f5; --paper: #0d0d0f; --paper-alt: #18181b; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   h1, .brand-font { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
@@ -23,7 +23,7 @@
     position: relative; min-height: 82vh; display: flex; align-items: flex-end; padding: 3rem 1.5rem; overflow: hidden;
     background: linear-gradient(0deg, rgba(0,0,0,.88), rgba(0,0,0,.35)), #000;
     
-    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/38082102/pexels-photo-38082102.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
+    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/703016/pexels-photo-703016.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');
     background-position: center; background-repeat: no-repeat;
     animation: kenburns 16s ease-in-out infinite alternate;
     
@@ -64,6 +64,8 @@
   .gallery { display: grid; grid-template-columns: 1.3fr 1fr; gap: .8rem; grid-auto-rows: 140px; }
   .gallery a { display: block; overflow: hidden; border-radius: 4px; }
   .gallery a:first-child { grid-row: span 2; height: 100%; }
+  /* Das asymmetrische Raster oben braucht drei Bilder. Liefert Pexels weniger,
+     wuerde eine Spalte leer bleiben - dann lieber gleichmaessig verteilen. */
   .gallery.gallery-few { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); grid-auto-rows: auto; }
   .gallery.gallery-few a:first-child { grid-row: auto; height: auto; }
   .gallery img { width: 100%; height: 140px; object-fit: cover; display: block; transition: transform .5s ease, filter .5s ease; }
@@ -102,35 +104,35 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Fotos sind Symbolbilder</span>
-    <div class="tagline">Ihr Anlaufpunkt für Drinks in Augsburg</div>
-    <h1>All in 1 – Bar</h1>
-    <p class="sub">Die All in 1 – Ihre Bar an der Ulmer Straße im pulsierenden Zentrum Augsburgs</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
+    <div class="tagline">moves – Ihr Fitness‑Spot in Hamburg</div>
+    <h1>moves – das Gym, das zu Ihnen passt</h1>
+    <p class="sub">Modernes Training im Zentrum Hamburgs, klar und fokussiert</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt Mitglied werden</a>
   </div>
 </header>
 <main>
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s"><span class="num">01</span>Zentrale Lage an der Ulmer Straße</div><div class="highlight reveal" style="transition-delay: 0.08s"><span class="num">02</span>Vielseitiges Getränkeangebot</div><div class="highlight reveal" style="transition-delay: 0.16s"><span class="num">03</span>Gemütliches, stilvolles Ambiente</div>
+    <div class="highlight reveal" style="transition-delay: 0.0s"><span class="num">01</span>Umfangreiche Geräteauswahl</div><div class="highlight reveal" style="transition-delay: 0.08s"><span class="num">02</span>Öffnungszeiten, die zu Ihrem Alltag passen</div><div class="highlight reveal" style="transition-delay: 0.16s"><span class="num">03</span>Individuelle Trainingspläne</div>
   </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Betreten Sie die All in 1 an der Ulmer Straße. Hier finden Sie ein durchdachtes Getränkeangebot – von zeitlosen Cocktail‑Klassikern bis zu eigenen Kreationen, von frisch gezapftem Regionalbier bis zu ausgewählten deutschen Weinen. Das stilvolle Interieur lädt Sie zum Verweilen ein, egal ob Sie den Feierabend ausklingen lassen oder einen spontanen Abend mit Freund*innen planen. Unser Team sorgt für einen lockeren, aber professionellen Service, der Ihre Wünsche im Blick hat.</p>
+    <p>Im Studio moves finden Sie eine umfassende Gerätelandschaft, die Sie jederzeit nutzen können. Unser Trainerteam erstellt ein persönliches Trainingskonzept, das exakt zu Ihrem Alltag passt. Die Atmosphäre ist offen, zielgerichtet und lässt jedes Training wie einen Schritt nach vorne wirken.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><span class="idx">01</span><div><h3>Cocktails</h3><p>Kreative Mixgetränke – von zeitlosen Klassikern bis zu eigenen Kreationen.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><span class="idx">01</span><div><h3>Personal Training</h3><p>Persönliche Begleitung für messbare Fortschritte.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.06s"><span class="idx">02</span><div><h3>Bier vom Fass</h3><p>Frisch gezapfte Biere aus der Region, ausgewählt für Qualität.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.06s"><span class="idx">02</span><div><h3>Group Classes</h3><p>Kursangebot für jedes Level, von HIIT bis Yoga.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.12s"><span class="idx">03</span><div><h3>Wein Auswahl</h3><p>Rot‑ und Weißweine aus deutschen Anbaugebieten, passend zu Ihrem Geschmack.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.12s"><span class="idx">03</span><div><h3>Functional Training</h3><p>Ganzkörper‑Workouts für Kraft, Mobilität und Stabilität.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.18s"><span class="idx">04</span><div><h3>Snacks</h3><p>Leichte, passende Häppchen, die Ihre Drinks perfekt ergänzen.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.18s"><span class="idx">04</span><div><h3>Wellness Area</h3><p>Sauna und Ruhezonen für Ihre Regeneration.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.24s"><span class="idx">05</span><div><h3>Live Musik</h3><p>Regelmäßige Auftritte lokaler Musiker für die passende Stimmung.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.24s"><span class="idx">05</span><div><h3>Nutrition Coaching</h3><p>Ernährungsberatung abgestimmt auf Ihr Training.</p></div></div>
       
     </div>
   </section>
@@ -140,16 +142,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/shelves-beams-and-lights-over-men-behind-a-bar-5865076/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/5865076/pexels-photo-5865076.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/reflection-of-men-working-out-at-the-gym-11183203/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/11183203/pexels-photo-11183203.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/bartender-mixing-cocktails-at-stylish-bar-34575937/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/34575937/pexels-photo-34575937.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/man-holding-black-barbell-703012/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/703012/pexels-photo-703012.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/bar-counter-filled-with-various-bottles-of-alcohol-9130342/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/9130342/pexels-photo-9130342.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/close-up-shot-of-a-barbell-6389516/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/6389516/pexels-photo-6389516.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="gym Impression" loading="lazy">
       </a>
       
     </div>
@@ -157,26 +159,22 @@
   
 
   <section class="meta-grid reveal">
-    <div class="meta-item"><b>Adresse</b>Ulmer Straße 116, 86156 Augsburg</div>
-    <div class="meta-item"><b>Telefon</b>+49 172 10 14 707</div>
     
+    <div class="meta-item"><b>Telefon</b>+494022625833</div>
     
-    <div class="meta-item"><b>Öffnungszeiten</b>
-      <ul class="hours-list"><li>Di–Do: 17:00–23:00 Uhr</li><li>Fr: 17:00–01:00 Uhr</li><li>Sa: 14:30–01:00 Uhr</li><li>So: 14:30–23:00 Uhr</li></ul>
-    </div>
     
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für All in 1, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
-  <br>Foto: <a href="https://www.pexels.com/photo/cozy-night-bar-in-katowice-poland-38082102/">Bohdan Hyrovych</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für moves, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  <br>Foto: <a href="https://www.pexels.com/photo/10-lb-rogue-weight-plate-near-people-gathered-703016/">Victor Freitas</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
   <div class="modal-box">
     <button class="modal-close" type="button" onclick="closeReservationModal()">&times;</button>
-    <h3>Anfrage an All in 1</h3>
-    <p class="modal-note">Unverbindliche Anfrage — All in 1 meldet sich zur Bestätigung bei Ihnen.</p>
+    <h3>Anfrage an moves</h3>
+    <p class="modal-note">Unverbindliche Anfrage — moves meldet sich zur Bestätigung bei Ihnen.</p>
     <form id="reservationForm">
       <label>Name<input type="text" name="customer_name" required></label>
       <label>Telefon oder E-Mail<input type="text" name="contact" required></label>
@@ -185,20 +183,18 @@
         <label>Uhrzeit<input type="time" name="time"></label>
       </div>
       
-      <label>Personen<input type="number" name="party_size" min="1" max="20" value="2"></label>
-      
       <label>Nachricht (optional)<textarea name="message" rows="2"></textarea></label>
       <button type="submit" class="modal-submit">Anfrage senden</button>
     </form>
     <div class="modal-success" id="reservationSuccess">
-      <p>✓ Danke, All in 1 hat Ihre Anfrage erhalten.</p>
+      <p>✓ Danke, moves hat Ihre Anfrage erhalten.</p>
       <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
     </div>
     <div class="modal-success" id="reservationError">
       <p>Die Anfrage konnte leider nicht übermittelt werden.</p>
-      <p class="modal-note">Bitte versuchen Sie es später noch einmal oder rufen Sie direkt an: +49 172 10 14 707.</p>
+      <p class="modal-note">Bitte versuchen Sie es später noch einmal oder rufen Sie direkt an: +494022625833.</p>
     </div>
-    <a class="modal-tel" href="tel:+49 172 10 14 707">oder direkt anrufen: +49 172 10 14 707</a>
+    <a class="modal-tel" href="tel:+494022625833">oder direkt anrufen: +494022625833</a>
   </div>
 </div>
 
@@ -216,7 +212,7 @@
   reservationForm.addEventListener('submit', function(ev) {
     ev.preventDefault();
     var data = Object.fromEntries(new FormData(ev.target));
-    fetch('https://philipplaptop.tail191c07.ts.net/api/reservation/all-in-1-augsburg-558200', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+    fetch('https://philipplaptop.tail191c07.ts.net/api/reservation/moves-hamburg-431767', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
       .then(function(res) {
         if (!res.ok) { throw new Error('HTTP ' + res.status); }
         reservationForm.style.display = 'none';
