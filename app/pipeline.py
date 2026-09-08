@@ -82,6 +82,7 @@ def phase_find_leads() -> None:
             "suche" if leads else "fehler",
             f"{city} / {category}: {len(leads)} Treffer, {inserted} neu"
             f"  ·  Position {position + 1} von {len(combos)}",
+            gruppe=None if leads else "suche:ohne-treffer",
         )
 
 
@@ -103,7 +104,8 @@ def phase_generate_sites() -> None:
         except Exception as exc:
             logger.exception("Site-Generierung fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
-            progress.log("fehler", f"Website fehlgeschlagen: {row['name']} – {type(exc).__name__}")
+            progress.log("fehler", f"Website fehlgeschlagen: {row['name']} – {type(exc).__name__}",
+                         gruppe=f"website:{type(exc).__name__}")
 
 
 def phase_draft_emails() -> None:
@@ -124,7 +126,8 @@ def phase_draft_emails() -> None:
         except Exception as exc:
             logger.exception("E-Mail-Entwurf fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
-            progress.log("fehler", f"Entwurf fehlgeschlagen: {row['name']} – {type(exc).__name__}")
+            progress.log("fehler", f"Entwurf fehlgeschlagen: {row['name']} – {type(exc).__name__}",
+                         gruppe=f"entwurf:{type(exc).__name__}")
 
 
 def phase_send_emails() -> None:
@@ -158,7 +161,8 @@ def phase_send_emails() -> None:
         except Exception as exc:
             logger.exception("Versand fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
-            progress.log("fehler", f"Versand fehlgeschlagen: {row['name']} – {type(exc).__name__}")
+            progress.log("fehler", f"Versand fehlgeschlagen: {row['name']} – {type(exc).__name__}",
+                         gruppe=f"versand:{type(exc).__name__}")
 
 
 def run_pipeline() -> None:

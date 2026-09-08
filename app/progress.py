@@ -77,12 +77,18 @@ def set_phase(phase: str, text: str) -> None:
     log(phase, text)
 
 
-def log(phase: str, text: str) -> None:
-    """Eine Meldung anhaengen. Wird aus dem Scheduler-Thread aufgerufen, deshalb gesperrt."""
+def log(phase: str, text: str, gruppe: str | None = None) -> None:
+    """Eine Meldung anhaengen. Wird aus dem Scheduler-Thread aufgerufen, deshalb gesperrt.
+
+    `gruppe` erlaubt dem Dashboard, aufeinanderfolgende gleichartige Meldungen zu einer
+    Zeile mit Zaehler zusammenzufassen. Gedacht fuer Fehler, die in Serie auftreten -
+    ein aufgebrauchtes Tageskontingent erzeugt sonst zwanzig fast identische Zeilen und
+    verdeckt alles andere."""
     global _counter
     with _lock:
         _counter += 1
-        _events.append({"id": _counter, "zeit": time.time(), "phase": phase, "text": text})
+        _events.append({"id": _counter, "zeit": time.time(), "phase": phase,
+                        "text": text, "gruppe": gruppe})
 
 
 def snapshot(seit_id: int = 0) -> dict:

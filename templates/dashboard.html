@@ -194,7 +194,9 @@
   .live-marke.veroeffentlichen { color: #f0abfc; }
   .live-marke.fehler { color: #fca5a5; }
   .live-marke.start, .live-marke.ende { color: var(--muted); }
-  .live-text { color: #ddd8f0; word-break: break-word; }
+  .live-text { color: #ddd8f0; word-break: break-word; flex: 1; }
+  .live-zaehler { flex: none; color: var(--muted); font-weight: 700; margin-left: auto;
+                  padding-left: .6rem; }
 
   /* Anfragen hervorheben - das ist das wertvollste Signal im ganzen Dashboard. */
   .anfragen-card { margin-bottom: 1.4rem; border-color: rgba(52,211,153,.35);
@@ -525,11 +527,25 @@
 
         var liste = document.getElementById('liveListe');
         d.events.forEach(function(e) {
+          // Meldungen mit gleicher Gruppe direkt hintereinander zu EINER Zeile mit
+          // Zähler zusammenfassen. Ein aufgebrauchtes Tageskontingent erzeugt sonst
+          // zwanzig fast identische Fehlerzeilen und verdeckt alles Wichtige.
+          var letzte = liste.lastElementChild;
+          if (e.gruppe && letzte && letzte.dataset.gruppe === e.gruppe) {
+            var n = (parseInt(letzte.dataset.anzahl, 10) || 1) + 1;
+            letzte.dataset.anzahl = n;
+            letzte.querySelector('.live-zeit').textContent =
+              new Date(e.zeit * 1000).toLocaleTimeString('de-DE');
+            letzte.querySelector('.live-zaehler').textContent = '×' + n;
+            return;
+          }
           var li = document.createElement('li');
+          if (e.gruppe) { li.dataset.gruppe = e.gruppe; li.dataset.anzahl = 1; }
           var zeit = new Date(e.zeit * 1000).toLocaleTimeString('de-DE');
           li.innerHTML = '<span class="live-zeit">' + esc(zeit) + '</span>'
             + '<span class="live-marke ' + esc(e.phase) + '">' + esc(PHASEN[e.phase] || e.phase) + '</span>'
-            + '<span class="live-text">' + esc(e.text) + '</span>';
+            + '<span class="live-text">' + esc(e.text) + '</span>'
+            + '<span class="live-zaehler"></span>';
           liste.appendChild(li);
         });
         if (d.events.length) {
