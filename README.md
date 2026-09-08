@@ -189,5 +189,8 @@ GitHub Pages muss einmalig eingeschaltet werden: Repository → Settings → Pag
   über die große Städteliste und den Dauerbetrieb, nicht über Scraping fremder Seiten.
 - OSM liefert keine Bewertungen, Speisekarten oder echten Fotos. Die Texte sind deshalb
   bewusst allgemein gehalten, und die Pexels-Bilder sind als Symbolbilder gekennzeichnet.
-- Ein Lead, dessen Verarbeitung wiederholt fehlschlägt, zählt `error_count` hoch, bleibt
-  aber im Status stehen und wird weiter versucht.
+- Ein Lead, dessen Verarbeitung dreimal fehlschlägt (`MAX_ERROR_COUNT`), wird nicht mehr
+  angefasst. **Vorübergehende Fehler zählen dabei nicht mit**: Ein aufgebrauchtes
+  Groq-Tageskontingent hatte einmal 40 völlig gesunde Leads dauerhaft aussortiert. Solche
+  Fälle brechen die Phase jetzt ab, statt dem einzelnen Betrieb einen Fehlversuch
+  anzurechnen.

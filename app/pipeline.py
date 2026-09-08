@@ -2,6 +2,8 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
+import groq
+
 from app import db
 from app.config import settings
 from app.outreach.mailer import send_outreach_email
@@ -101,6 +103,13 @@ def phase_generate_sites() -> None:
             progress.log("websites", f"Website fertig: {row['name']} ({row['city']})")
         except progress.Angehalten:
             break
+        except groq.RateLimitError:
+            # Vorübergehend, nicht der Fehler dieses Betriebs: NICHT als Fehlversuch
+            # zählen. Sonst sortiert ein aufgebrauchtes Tageskontingent nach drei
+            # Durchläufen völlig gesunde Leads dauerhaft aus.
+            progress.log("fehler", "Tageskontingent erschöpft – Rest wartet auf morgen",
+                         gruppe="websites:kontingent")
+            break
         except Exception as exc:
             logger.exception("Site-Generierung fehlgeschlagen fuer Lead %s", row["id"])
             db.mark_error(row["id"])
@@ -122,6 +131,10 @@ def phase_draft_emails() -> None:
             db.set_email_draft(row["id"], email.subject, email.body + f"\n\nHier die Demo: {demo_url}")
             progress.log("entwuerfe", f"Entwurf fertig: {row['name']}")
         except progress.Angehalten:
+            break
+        except groq.RateLimitError:
+            progress.log("fehler", "Tageskontingent erschöpft – Rest wartet auf morgen",
+                         gruppe="entwuerfe:kontingent")
             break
         except Exception as exc:
             logger.exception("E-Mail-Entwurf fehlgeschlagen fuer Lead %s", row["id"])
