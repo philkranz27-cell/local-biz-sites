@@ -4,6 +4,7 @@ deshalb steht auf jeder generierten Seite ein Bildnachweis samt Hinweis darauf.
 """
 
 import logging
+import re
 
 import httpx
 
@@ -12,6 +13,12 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 PEXELS_SEARCH_URL = "https://api.pexels.com/v1/search"
+
+# Die Bildadresse landet auch in einer CSS-Regel (url('...')). Dort darf sie weder
+# Anfuehrungszeichen noch Klammern oder Leerzeichen enthalten, sonst liesse sich aus
+# einer fremden Antwort CSS einschleusen. Deshalb hier streng pruefen statt im Template
+# darauf zu vertrauen - und nur Adressen von Pexels selbst zulassen.
+BILD_URL = re.compile(r"^https://images\.pexels\.com/[A-Za-z0-9/_.\-?&=%]+$")
 
 # Fallback-Suchbegriff pro Kategorie, falls die KI keinen brauchbaren image_query liefert
 # oder die Pexels-Suche dafuer nichts findet.
@@ -42,6 +49,7 @@ def _search(query: str, count: int) -> list[dict]:
             "source_url": p["url"],
         }
         for p in photos
+        if BILD_URL.match(p.get("src", {}).get("large2x", ""))
     ]
 
 
