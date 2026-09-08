@@ -14,19 +14,21 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { background-size: 110% auto; } to { background-size: 130% auto; } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
     background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/38896843/pexels-photo-38896843.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
-    background-position: center; background-repeat: no-repeat;
-    animation: kenburns 16s ease-in-out infinite alternate;
-    
     color: #fff; padding: 3rem 1.5rem;
+  }
+  header.hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/38896843/pexels-photo-38896843.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-position: center; background-repeat: no-repeat; background-size: cover;
+    animation: kenburns 16s ease-in-out infinite alternate;
+    will-change: transform;
   }
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
@@ -78,7 +80,7 @@
   .reveal.is-visible { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
-    header.hero, .blob { animation: none; }
+    header.hero, header.hero::before, .blob { animation: none; }
     .hero-inner > * { animation: none; opacity: 1; }
   }
 
