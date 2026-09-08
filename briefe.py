@@ -19,6 +19,7 @@ import html
 import re
 import sys
 from datetime import date
+import pathlib
 from pathlib import Path
 
 import segno
@@ -116,10 +117,20 @@ def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> 
 
 
 def main() -> int:
-    grenze = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    # Optional eine Auswahl-Datei (JSON-Liste von site_slug) - fuer einen kleinen
+    # Testlauf, statt gleich alle Briefe zu drucken. Ein Testlauf mit 20 Stueck kostet
+    # 20 Euro und beantwortet dieselbe Frage wie 100 Stueck: traegt das Angebot?
+    auswahl = None
+    argumente = [a for a in sys.argv[1:] if not a.startswith("--")]
+    for arg in sys.argv[1:]:
+        if arg.startswith("--auswahl="):
+            import json
+            auswahl = set(json.loads(pathlib.Path(arg.split("=", 1)[1]).read_text(encoding="utf-8")))
+    grenze = int(argumente[0]) if argumente else 0
 
     kandidaten = [l for l in db.get_all_leads(limit=1000)
-                  if l["site_slug"] and l["status"] in ("ready_to_send", "site_generated")]
+                  if l["site_slug"] and l["status"] in ("ready_to_send", "site_generated")
+                  and (auswahl is None or l["site_slug"] in auswahl)]
 
     # Nur vollstaendige Anschriften. Jeder Brief kostet Porto - eine Adresse ohne
     # Hausnummer oder ohne Ort kommt nicht an, das waere Geld zum Fenster raus.
