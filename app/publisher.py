@@ -144,6 +144,12 @@ def veroeffentlichen() -> bool:
             if push.returncode != 0:
                 return fehlschlag("Upload abgelehnt (Zugriffsschlüssel abgelaufen?)", push.stderr)
 
+        # Der Push geht ueber eine Adresse mit Token, nicht ueber den Remote "origin" -
+        # dadurch bleibt der lokale Merker refs/remotes/origin/main stehen und
+        # "git status" behauptet weiter, es sei etwas hochzuladen. Nachziehen, damit
+        # der lokale Stand die Wahrheit sagt.
+        _git("update-ref", "refs/remotes/origin/main", "HEAD")
+
         _letzte_veroeffentlichung = time.time()
         _fehler_in_folge = 0
         _letzter_fehler = ""
