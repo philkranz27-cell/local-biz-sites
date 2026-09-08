@@ -4,3 +4,6 @@ __pycache__/
 .env
 data/
 *.log
+
+# Erzeugte Briefe (enthalten Adressdaten, gehoeren nicht ins Repository)
+data/briefe.html

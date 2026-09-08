@@ -45,13 +45,19 @@ class Settings(BaseSettings):
     dashboard_password: str = ""
 
     search_cities: str = (
-        "Berlin,Hamburg,München,Köln,Frankfurt am Main,Stuttgart,Düsseldorf,Leipzig,"
-        "Dortmund,Essen,Bremen,Dresden,Hannover,Nürnberg,Duisburg,Bochum,Wuppertal,"
-        "Bielefeld,Bonn,Münster,Karlsruhe,Mannheim,Augsburg,Wiesbaden,Mönchengladbach,"
-        "Braunschweig,Chemnitz,Kiel,Aachen,Magdeburg,Freiburg im Breisgau,Krefeld,Lübeck,"
-        "Erfurt,Mainz,Rostock,Kassel,Potsdam,Saarbrücken,Oldenburg,Osnabrück,Leverkusen,"
-        "Heidelberg,Darmstadt,Regensburg,Paderborn,Ingolstadt,Würzburg,Wolfsburg,Trier,"
-        "Reutlingen,Koblenz,Jena,Erlangen,Siegen,Hildesheim"
+        "Berlin,Hamburg,München,Köln,Frankfurt am Main,Stuttgart,Düsseldorf,Leipzig,Dortmund,"
+        "Essen,Bremen,Dresden,Hannover,Nürnberg,Duisburg,Bochum,Wuppertal,Bielefeld,Bonn,"
+        "Münster,Karlsruhe,Mannheim,Augsburg,Wiesbaden,Mönchengladbach,Braunschweig,Chemnitz,"
+        "Kiel,Aachen,Magdeburg,Freiburg im Breisgau,Krefeld,Lübeck,Erfurt,Mainz,Rostock,Kassel,"
+        "Potsdam,Saarbrücken,Oldenburg,Osnabrück,Leverkusen,Heidelberg,Darmstadt,Regensburg,"
+        "Paderborn,Ingolstadt,Würzburg,Wolfsburg,Trier,Reutlingen,Koblenz,Jena,Erlangen,Siegen,"
+        "Hildesheim,Fürth,Offenbach am Main,Ulm,Heilbronn,Pforzheim,Göttingen,Bottrop,"
+        "Recklinghausen,Bremerhaven,Bergisch Gladbach,Remscheid,Moers,Salzgitter,Kaiserslautern,"
+        "Gütersloh,Witten,Hanau,Schwerin,Esslingen am Neckar,Ludwigsburg,Iserlohn,Zwickau,Düren,"
+        "Ratingen,Lünen,Marl,Velbert,Konstanz,Worms,Minden,Neumünster,Norderstedt,Delmenhorst,"
+        "Bamberg,Viersen,Rheine,Gladbeck,Troisdorf,Lüneburg,Dorsten,Detmold,Castrop-Rauxel,"
+        "Marburg,Landshut,Bocholt,Aschaffenburg,Celle,Fulda,Lippstadt,Dinslaken,Rosenheim,"
+        "Herford,Görlitz,Passau,Solingen,Herne,Neuss,Hamm,Ludwigshafen am Rhein"
     )
     search_categories: str = "restaurant,hair_salon,bakery,cafe,bar,gym,florist"
     # Obergrenze der Treffer je Stadt+Kategorie-Abfrage. Wichtig: Overpass liefert ohne
