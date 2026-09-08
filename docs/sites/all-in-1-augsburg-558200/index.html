@@ -255,8 +255,7 @@
         document.getElementById('reservationMailto').href =
           'mailto:kontakt@philswebsites.de'
           + '?subject=' + encodeURIComponent('Anfrage über ' + "All in 1")
-          + '&body=' + encodeURIComponent(zeilen.join('
-'));
+          + '&body=' + encodeURIComponent(zeilen.join('\n'));
         reservationForm.style.display = 'none';
         document.getElementById('reservationError').style.display = 'block';
       });

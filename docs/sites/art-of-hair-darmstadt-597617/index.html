@@ -221,8 +221,7 @@
         document.getElementById('reservationMailto').href =
           'mailto:kontakt@philswebsites.de'
           + '?subject=' + encodeURIComponent('Anfrage über ' + "Art of Hair")
-          + '&body=' + encodeURIComponent(zeilen.join('
-'));
+          + '&body=' + encodeURIComponent(zeilen.join('\n'));
         reservationForm.style.display = 'none';
         document.getElementById('reservationError').style.display = 'block';
       });
