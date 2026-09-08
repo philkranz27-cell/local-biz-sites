@@ -97,7 +97,7 @@ Dann `.env` ausfüllen. Die Zugänge:
 |---|---|---|
 | Groq (Texte) | ja, dauerhaft | [console.groq.com/keys](https://console.groq.com/keys) |
 | Pexels (Fotos, optional) | ja, dauerhaft | [pexels.com/api](https://www.pexels.com/api/) |
-| Gmail-App-Passwort (Versand + Posteingang) | ja | [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) |
+| App-Passwort bzw. SMTP-Schluessel fuer den Versand | ja | [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) |
 | Stripe (Zahlungslinks, optional) | ja | [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys) |
 | GitHub-Token (automatisches Veröffentlichen, optional) | ja | [github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens), Contents: Read and write |
 
@@ -122,7 +122,7 @@ im Autostart-Ordner von Windows (`shell:startup`) und startet dasselbe ohne Fens
 Das Dashboard ist durch HTTP-Basic-Auth geschützt (`DASHBOARD_USER`, `DASHBOARD_PASSWORD`).
 **Ohne gesetztes Passwort ist es komplett gesperrt** — bewusst so, weil die Anwendung per
 Tunnel öffentlich erreichbar ist und sonst jeder mit der Adresse die Firmenkontakte,
-Mail-Entwürfe und den Posteingang abrufen könnte. Öffentlich bleiben nur `/sites/`,
+Mail-Entwürfe und die Kontaktdaten der Betriebe abrufen könnte. Öffentlich bleiben nur `/sites/`,
 `/api/reservation/` und `/healthz`.
 
 **Öffentlich erreichbar** wird das Ganze über Tailscale Funnel:
@@ -134,7 +134,7 @@ tailscale funnel --bg 8123
 ## Dashboard
 
 Eine Mindmap mit drei Bereichen: **Neue Betriebe** (alle Leads mit Status und Link zur
-Demo), **E-Mails** (Entwürfe und der Posteingang per IMAP, beides je Mail aufklappbar) und
+Demo), **E-Mails** (die Entwürfe, je Mail aufklappbar) und
 **Zahlungen** (Verhandlungsstand je Lead, Stripe-Zahlungslink erzeugen).
 
 Über der Mindmap stehen zwei Statuszeilen: ob die Lead-Suche läuft und ob die

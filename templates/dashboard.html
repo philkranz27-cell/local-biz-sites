@@ -139,13 +139,7 @@
   .email-card .subject { font-weight: 700; margin: 0 0 .5rem; color: #fff; }
   .email-card .body { white-space: pre-wrap; font-size: .88rem; color: #d6d2ee; line-height: 1.6; }
 
-  .inbox-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem; }
-  .inbox-card h3 { margin: 0 0 .3rem; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: .5rem; }
-  .inbox-card .inbox-sub { font-size: .8rem; color: var(--muted); margin: 0 0 1rem; }
-  .inbox-msg { padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .85rem; }
-  .inbox-msg:last-child { border-bottom: none; }
-  .inbox-msg .from { font-weight: 600; color: #fff; }
-  .inbox-msg .date { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+  .card-sub { font-size: .8rem; color: var(--muted); margin: 0 0 1rem; }
 
   /* Aufklappbare Mails: zugeklappt eine Zeile pro Mail, angeklickt der ganze Text.
      Vorher standen alle Entwuerfe komplett ausgeschrieben untereinander - bei 43
@@ -153,7 +147,7 @@
   .mail-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start;
                cursor: pointer; width: 100%; background: none; border: none; padding: 0;
                font: inherit; color: inherit; text-align: left; }
-  .mail-head:hover .subject, .mail-head:hover .from { color: var(--purple-light, #c4b5fd); }
+  .mail-head:hover .subject { color: var(--purple-light, #c4b5fd); }
   /* Flex-Kinder gehen von sich aus nicht unter ihre Inhaltsbreite (min-width: auto).
      Ohne das schiebt die lange Vorschauzeile die Seite waagerecht auf. */
   .mail-head > span:first-child { min-width: 0; flex: 1; overflow: hidden; }
@@ -318,7 +312,7 @@
   {% if reservations %}
   <div class="card anfragen-card">
     <h3>✨ Anfragen über die Demo-Seiten · {{ reservations|length }}</h3>
-    <p class="inbox-sub">
+    <p class="card-sub">
       Jemand hat das Formular auf einer Demo-Seite ausgefüllt – meist der Betrieb selbst
       beim Ausprobieren. Das stärkste Signal, das hier entstehen kann: Melde dich bei diesen
       zuerst.
@@ -365,25 +359,11 @@
 <div id="emails-view" class="view">
   <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
   <h2 class="section-title">📧 E-Mails</h2>
-  <p class="section-sub">Entwürfe/Versand-Historie unten, Posteingang deines Geschäfts-Postfachs oben.</p>
-
-  <div class="card inbox-card">
-    <h3>📥 Posteingang{% if imap_user %} · {{ imap_user }}{% endif %}</h3>
-    {% if imap_configured %}
-      <p class="inbox-sub">Letzte Mails, live per IMAP abgerufen.</p>
-      <div id="inbox-list">Lade...</div>
-    {% else %}
-      <p class="not-configured">
-        Noch nicht verbunden. In <code>.env</code>: <code>IMAP_USER</code> und
-        <code>IMAP_PASSWORD</code> (App-Passwort, nicht das normale Passwort) eintragen —
-        Anleitung: <a class="site-link" href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>.
-      </p>
-    {% endif %}
-  </div>
+  <p class="section-sub">Entwürfe und Versand-Historie. Antworten der Betriebe kommen direkt in dein Postfach.</p>
 
   <div class="card block-card">
     <h3>🚫 Sperrliste{% if blocklist %} · {{ blocklist|length }}{% endif %}</h3>
-    <p class="inbox-sub">
+    <p class="card-sub">
       Wer hier steht, wird nicht mehr angeschrieben. Trag jeden Widerspruch sofort ein –
       ihn nur im Postfach gelesen zu haben reicht rechtlich nicht.
     </p>
@@ -480,7 +460,6 @@
     document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
     document.getElementById(id).classList.add('active');
     window.scrollTo({top: 0, behavior: 'smooth'});
-    if (id === 'emails-view') loadInbox();
   }
 
   // Absender, Betreff und Text stammen aus fremden E-Mails - also niemals ungeprueft
@@ -620,29 +599,6 @@
     if (!text) return;
     text.hidden = !text.hidden;
     karte.classList.toggle('mail-open', !text.hidden);
-  }
-
-  function loadInbox() {
-    var el = document.getElementById('inbox-list');
-    if (!el) return;
-    fetch('/api/inbox').then(function(r) { return r.json(); }).then(function(data) {
-      if (!data.configured) return;
-      if (data.error) { el.innerHTML = '<p class="not-configured">' + data.error + '</p>'; return; }
-      if (!data.messages.length) { el.innerHTML = '<p class="not-configured">Postfach leer.</p>'; return; }
-      el.innerHTML = data.messages.map(function(m) {
-        var body = (m.body || '').trim();
-        return '<div class="inbox-msg">'
-          + '<button type="button" class="mail-head" onclick="toggleMail(this)">'
-          +   '<span><div class="from">' + esc(m.from) + '</div>' + esc(m.subject)
-          +     (body ? '<div class="mail-preview">' + esc(body.slice(0, 120)) + '…</div>' : '')
-          +   '</span>'
-          +   '<span><span class="date">' + esc(m.date) + '</span> '
-          +   (body ? '<span class="mail-toggle">▶</span>' : '') + '</span>'
-          + '</button>'
-          + (body ? '<div class="mail-body" hidden>' + esc(body) + '</div>' : '')
-          + '</div>';
-      }).join('');
-    }).catch(function() { el.innerHTML = '<p class="not-configured">Abruf fehlgeschlagen.</p>'; });
   }
 
   function saveDeal(btn) {

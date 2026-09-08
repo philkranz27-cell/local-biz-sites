@@ -31,13 +31,6 @@ class Settings(BaseSettings):
     from_name: str = "Website-Angebot"
     sender_impressum: str = ""
 
-    # Posteingang im Dashboard (E-Mails-Ansicht) - IMAP mit App-Passwort, kein OAuth/Google-
-    # Cloud-Projekt noetig. Anleitung: https://myaccount.google.com/apppasswords (braucht
-    # 2-Faktor-Auth auf dem Google-Konto).
-    imap_host: str = "imap.gmail.com"
-    imap_user: str = ""
-    imap_password: str = ""
-
     # Stripe Payment Links fuer die Zahlungen-Ansicht - kostenloser Account, Test-Keys
     # funktionieren sofort ohne Geschaeftsverifizierung (fuer echte Auszahlungen muss der
     # Account spaeter bei Stripe verifiziert werden).
@@ -45,7 +38,7 @@ class Settings(BaseSettings):
 
     # Zugangsschutz fuer Dashboard + Verwaltungs-Endpunkte. Zwingend noetig, sobald die App
     # ueber einen Tunnel oeffentlich erreichbar ist - sonst kaeme jeder mit der Adresse an
-    # Firmenkontakte, Mail-Entwuerfe und den Posteingang. Leeres Passwort = Dashboard
+    # Firmenkontakte und Mail-Entwuerfe. Leeres Passwort = Dashboard
     # gesperrt (fail closed), die oeffentlichen Demo-Seiten bleiben davon unberuehrt.
     dashboard_user: str = "admin"
     dashboard_password: str = ""
@@ -90,17 +83,8 @@ class Settings(BaseSettings):
 
     @property
     def smtp_pass(self) -> str:
-        """Passwort fuer den Versand, mit Rueckfall auf das IMAP-Passwort.
-
-        Beim Versand ueber Gmail ist es dasselbe App-Passwort wie fuer den Posteingang.
-        Stand es an zwei Stellen in der .env, brach beim Erneuern zuverlaessig eine der
-        beiden Haelften still weg - genau das ist einmal passiert. Jetzt reicht es,
-        IMAP_PASSWORD zu pflegen."""
-        if self.smtp_password:
-            return self.smtp_password
-        if "gmail" in (self.smtp_host or "") and self.smtp_user == self.imap_user:
-            return self.imap_password
-        return ""
+        """Passwort fuer den Versand."""
+        return self.smtp_password
 
     # Automatisches Veroeffentlichen der Demo-Seiten auf GitHub Pages. Ohne Token
     # passiert nichts - dann muss jemand publish.py aufrufen und selbst hochladen.
@@ -142,10 +126,6 @@ class Settings(BaseSettings):
     @property
     def mail_configured(self) -> bool:
         return bool(self.smtp_host and self.smtp_user and self.smtp_pass and self.from_email)
-
-    @property
-    def imap_configured(self) -> bool:
-        return bool(self.imap_user and self.imap_password)
 
     @property
     def stripe_configured(self) -> bool:

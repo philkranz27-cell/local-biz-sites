@@ -10,7 +10,6 @@ from fastapi.templating import Jinja2Templates
 from app import db
 from app.config import settings
 from app.models import BlockRequest, DealUpdate, PaymentLinkRequest, ReservationRequest
-from app.outreach.inbox import fetch_recent_messages
 from app.outreach.mailer import send_reservation_notification
 from app.payments import create_payment_link
 from app import progress, publisher
@@ -30,7 +29,7 @@ _basic_auth = HTTPBasic(auto_error=True)
 def require_admin(credentials: HTTPBasicCredentials = Depends(_basic_auth)) -> str:
     """Schuetzt Dashboard und Verwaltungs-Endpunkte. Wichtig, weil die App per Tunnel
     oeffentlich erreichbar ist - ohne das koennte jeder mit der Adresse die Firmenkontakte,
-    Mail-Entwuerfe und sogar den Posteingang (/api/inbox) abrufen.
+    Mail-Entwuerfe und die Kontaktdaten der Betriebe abrufen.
 
     Faellt bewusst zu (deny), wenn kein Passwort gesetzt ist - lieber ausgesperrt als offen."""
     if not settings.dashboard_password:
@@ -63,9 +62,7 @@ def dashboard(request: Request):
             "emails_drafted": sum(1 for l in leads if l["email_subject"]),
             "emails_sent": sum(1 for l in leads if l["status"] == "emailed"),
             "deals_active": sum(1 for l in leads if l["deal_status"] not in ("offen", "abgelehnt")),
-            "imap_configured": settings.imap_configured,
             "stripe_configured": settings.stripe_configured,
-            "imap_user": settings.imap_user,
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
             "blocklist": db.get_blocklist(),
@@ -156,19 +153,6 @@ def api_unblock(email: str):
 def api_update_deal(lead_id: int, payload: DealUpdate):
     db.update_deal(lead_id, payload.deal_status, payload.deal_price, payload.deal_notes)
     return {"status": "ok"}
-
-
-@router.get("/api/inbox", dependencies=[Depends(require_admin)])
-def api_inbox():
-    """Fuer die E-Mails-Ansicht im Dashboard - zeigt die letzten Mails aus dem
-    Geschaefts-Postfach per IMAP, falls konfiguriert."""
-    if not settings.imap_configured:
-        return {"configured": False, "messages": []}
-    try:
-        return {"configured": True, "messages": fetch_recent_messages(15)}
-    except Exception:
-        logger.exception("IMAP-Abruf fehlgeschlagen")
-        return {"configured": True, "messages": [], "error": "Abruf fehlgeschlagen - App-Passwort pruefen"}
 
 
 @router.post("/api/lead/{lead_id}/payment-link", dependencies=[Depends(require_admin)])
