@@ -218,8 +218,10 @@
       <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
     </div>
     <div class="modal-success" id="reservationError">
-      <p>Die Anfrage konnte leider nicht übermittelt werden.</p>
-      <p class="modal-note">Bitte versuchen Sie es später noch einmal oder rufen Sie direkt an: +49 30 33846280.</p>
+      <p>Die Anfrage konnte gerade nicht übermittelt werden.</p>
+      <p class="modal-note">Schicken Sie sie als E-Mail – Ihre Angaben sind bereits eingetragen, oder rufen Sie an: +49 30 33846280.</p>
+      <a class="modal-submit" id="reservationMailto" href="mailto:kontakt@philswebsites.de"
+         style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">Als E-Mail senden</a>
     </div>
     <a class="modal-tel" href="tel:+49 30 33846280">oder direkt anrufen: +49 30 33846280</a>
   </div>
@@ -259,6 +261,17 @@
       })
       .catch(function() {
         // Ehrlich bleiben: Erfolg nur melden, wenn die Anfrage wirklich angekommen ist.
+        // Sie trotzdem nicht verfallen lassen - derselbe Inhalt als vorbereitete
+        // E-Mail. Der Server kann aus sein, das Postfach ist es nie.
+        var BEZEICHNUNG = {customer_name: 'Name', contact: 'Kontakt', date: 'Datum',
+                           time: 'Uhrzeit', party_size: 'Personen', message: 'Nachricht'};
+        var zeilen = Object.keys(data)
+          .filter(function(k) { return data[k]; })
+          .map(function(k) { return (BEZEICHNUNG[k] || k) + ': ' + data[k]; });
+        document.getElementById('reservationMailto').href =
+          'mailto:kontakt@philswebsites.de'
+          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Bodystreet')
+          + '&body=' + encodeURIComponent(zeilen.join('\n'));
         reservationForm.style.display = 'none';
         document.getElementById('reservationError').style.display = 'block';
       });
