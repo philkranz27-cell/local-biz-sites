@@ -104,6 +104,19 @@ def phase_generate_sites() -> None:
     if not settings.groq_configured:
         progress.set_phase("websites", "Websites übersprungen – kein Groq-Zugang hinterlegt")
         return
+    # Solange alte Seiten auf ihren neuen Text warten, wird nichts Neues gebaut.
+    # Grund: Das kostenlose Tageskontingent reicht fuer rund 60 Seiten - entweder neue
+    # bauen oder alte erneuern, nicht beides. Die vorhandenen Seiten haben Vorrang, denn
+    # auf sie zeigen die verschickten QR-Codes, und ihre Texte enthalten noch erfundene
+    # Behauptungen. Sobald neuschreiben.py durch ist, laeuft der Neubau von selbst wieder.
+    offen = db.zaehle_ohne_text()
+    if offen:
+        progress.set_phase("websites",
+                           f"Neubau ruht – {offen} vorhandene Seiten warten auf ihren neuen Text")
+        progress.log("websites", f"Neubau pausiert: {offen} Seiten brauchen erst neuen Text "
+                                 f"(neuschreiben.py)", gruppe="websites:neubau-ruht")
+        return
+
     wartend = db.get_leads_by_status("email_found", limit=20)
     progress.set_phase("websites", f"Websites bauen – {len(wartend)} Betriebe in der Warteschlange")
     for row in wartend:

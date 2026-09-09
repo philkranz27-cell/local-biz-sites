@@ -314,3 +314,15 @@ def zaehle_status() -> dict[str, int]:
     with get_connection() as conn:
         return {r["status"]: r["n"] for r in conn.execute(
             "SELECT status, COUNT(*) AS n FROM leads GROUP BY status")}
+
+
+def zaehle_ohne_text() -> int:
+    """Seiten, deren Text noch mit der alten Fassung des Prompts entstanden ist.
+
+    Erkennbar an site_copy_json IS NULL: der gespeicherte Text kam erst mit der
+    Verschaerfung dazu, aeltere Seiten haben ihn nicht."""
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT COUNT(*) FROM leads WHERE site_slug IS NOT NULL "
+            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette')"
+        ).fetchone()[0]
