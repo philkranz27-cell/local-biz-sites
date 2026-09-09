@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown(wait=False)
 
 
-app = FastAPI(title="Local Biz Sites", lifespan=lifespan)
+app = FastAPI(title="PhilsWebsites", lifespan=lifespan)
 
 # Die Demo-Seiten liegen jetzt statisch auf GitHub Pages, das Reservierungs-Formular
 # ruft von dort aus diese Anwendung auf - also eine andere Herkunft. Ohne CORS wuerde
