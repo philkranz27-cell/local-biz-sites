@@ -64,3 +64,25 @@ CREATE TABLE IF NOT EXISTS blocklist (
     grund TEXT,
     erstellt_am TEXT NOT NULL
 );
+
+-- Aufnahmebogen: was ein Betrieb nach der Zusage liefert, damit aus dem Demo-Entwurf
+-- seine echte Seite wird. Bisher endete alles bei der Zusage - die Anlage war komplett
+-- auf Akquise gebaut und hatte keinen Weg vom "Ja" zur fertigen Website.
+CREATE TABLE IF NOT EXISTS aufnahmen (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lead_id INTEGER,
+    site_slug TEXT NOT NULL,
+    ansprechpartner TEXT,
+    telefon TEXT,
+    email TEXT,
+    ueber_uns TEXT,
+    angebot TEXT,           -- eine Leistung je Zeile, optional "Name: Beschreibung"
+    highlights TEXT,        -- drei kurze Stichpunkte, je Zeile einer
+    oeffnungszeiten TEXT,   -- Korrektur, falls die Kartenangabe nicht stimmt
+    wunschadresse TEXT,     -- gewuenschte Internetadresse
+    farbwunsch TEXT,
+    sonstiges TEXT,
+    uebernommen INTEGER NOT NULL DEFAULT 0,
+    benachrichtigt INTEGER NOT NULL DEFAULT 0,
+    erstellt_am TEXT NOT NULL
+);

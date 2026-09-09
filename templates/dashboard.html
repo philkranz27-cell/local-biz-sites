@@ -263,6 +263,31 @@
                 border-radius: 6px; cursor: pointer; color: var(--ink);
                 background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); }
   .kopier-btn:hover { background: rgba(255,255,255,.13); }
+
+  /* Aufnahmebogen eines Kunden: seine echten Inhalte, bereit zur Uebernahme. */
+  .aufnahme-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem;
+                   border-color: rgba(124,108,245,.45); }
+  .aufnahme { border-top: 1px solid rgba(255,255,255,.07); padding: 1rem 0 .2rem; }
+  .aufnahme:first-of-type { border-top: none; }
+  .aufnahme-kopf { display: flex; justify-content: space-between; align-items: baseline;
+                   gap: 1rem; flex-wrap: wrap; }
+  .aufnahme-kopf b { color: #fff; font-size: 1rem; }
+  .aufnahme-zeit { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+  .aufnahme-feld { margin: .55rem 0 0; font-size: .85rem; }
+  .aufnahme-feld span { display: block; font-size: .72rem; text-transform: uppercase;
+                        letter-spacing: .06em; color: var(--muted); margin-bottom: .1rem; }
+  .aufnahme-feld p { margin: 0; white-space: pre-wrap; }
+  .aufnahme-aktion { margin-top: .9rem; display: flex; align-items: center; gap: .8rem;
+                     flex-wrap: wrap; }
+  .uebernehmen-btn { font: inherit; font-size: .85rem; padding: .45rem 1rem; border-radius: 8px;
+                     cursor: pointer; color: #fff; background: var(--accent, #7c6cf5);
+                     border: none; font-weight: 600; }
+  .uebernehmen-btn:hover { filter: brightness(1.12); }
+  .uebernehmen-btn:disabled { opacity: .55; cursor: default; }
+  .uebernahme-meldung { font-size: .8rem; color: var(--muted); }
+  .uebernahme-meldung.fehler { color: #ff9b9b; }
+  .erledigt-marke { font-size: .75rem; color: #9ae6b4; border: 1px solid rgba(154,230,180,.35);
+                    border-radius: 999px; padding: .15rem .6rem; }
 </style>
 </head>
 <body>
@@ -478,6 +503,43 @@
   <h2 class="section-title">💶 Zahlungen &amp; Deal-Status</h2>
   {% if stripe_configured %}
   <p class="section-sub">Preis eintragen und "Payment Link" klicken — erstellt einen echten Stripe-Zahlungslink, den du dem Betrieb schicken kannst.</p>
+
+  {% if aufnahmen %}
+  <div class="card aufnahme-card">
+    <h3>📋 Aufnahmebogen · {{ aufnahmen|length }}</h3>
+    <p class="card-sub">
+      Ein Betrieb hat seine echten Inhalte geliefert. „Angaben übernehmen“ schreibt sie in
+      seine Seite und baut sie neu – ohne KI, sofort, immer mit demselben Ergebnis.
+    </p>
+    {% for a in aufnahmen %}
+    <div class="aufnahme" data-aufnahme-id="{{ a.id }}">
+      <div class="aufnahme-kopf">
+        <b>{{ a.betrieb or a.site_slug }}</b>{% if a.stadt %} <span class="aufnahme-zeit">{{ a.stadt }}</span>{% endif %}
+        <span class="aufnahme-zeit">{{ a.erstellt_am[:16].replace('T', ' ') }}</span>
+      </div>
+      {% if a.ansprechpartner or a.telefon or a.email %}
+      <div class="aufnahme-feld"><span>Kontakt</span><p>{{ [a.ansprechpartner, a.telefon, a.email]|select|join(' · ') }}</p></div>
+      {% endif %}
+      {% if a.ueber_uns %}<div class="aufnahme-feld"><span>Über uns</span><p>{{ a.ueber_uns }}</p></div>{% endif %}
+      {% if a.angebot %}<div class="aufnahme-feld"><span>Angebot</span><p>{{ a.angebot }}</p></div>{% endif %}
+      {% if a.highlights %}<div class="aufnahme-feld"><span>Highlights</span><p>{{ a.highlights }}</p></div>{% endif %}
+      {% if a.oeffnungszeiten %}<div class="aufnahme-feld"><span>Öffnungszeiten</span><p>{{ a.oeffnungszeiten }}</p></div>{% endif %}
+      {% if a.wunschadresse %}<div class="aufnahme-feld"><span>Wunschadresse</span><p>{{ a.wunschadresse }}</p></div>{% endif %}
+      {% if a.farbwunsch %}<div class="aufnahme-feld"><span>Farben / Logo</span><p>{{ a.farbwunsch }}</p></div>{% endif %}
+      {% if a.sonstiges %}<div class="aufnahme-feld"><span>Sonstiges</span><p>{{ a.sonstiges }}</p></div>{% endif %}
+      <div class="aufnahme-aktion">
+        {% if a.uebernommen %}
+          <span class="erledigt-marke">übernommen</span>
+        {% else %}
+          <button type="button" class="uebernehmen-btn" onclick="aufnahmeUebernehmen(this)">Angaben übernehmen</button>
+        {% endif %}
+        <a class="site-link" href="/sites/{{ a.site_slug }}/" target="_blank">Seite ansehen</a>
+        <span class="uebernahme-meldung"></span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
   {% else %}
   <p class="not-configured" style="margin-bottom:1.5rem;">
     Stripe noch nicht verbunden — Status/Preis/Notizen lassen sich trotzdem manuell tracken.
@@ -665,6 +727,36 @@
     document.querySelectorAll('.gruppe-liste').forEach(function(l) {
       l.hidden = l.id !== schalter.dataset.ziel;
     });
+  }
+
+
+  function aufnahmeUebernehmen(btn) {
+    var block = btn.closest('.aufnahme');
+    var meldung = block.querySelector('.uebernahme-meldung');
+    btn.disabled = true;
+    btn.textContent = 'baue Seite …';
+    meldung.textContent = '';
+    meldung.classList.remove('fehler');
+
+    fetch('/api/aufnahme/' + block.dataset.aufnahmeId + '/uebernehmen', { method: 'POST' })
+      .then(function (r) {
+        return r.text().then(function (text) {
+          if (!r.ok) { throw new Error('(' + r.status + ') ' + text.slice(0, 160)); }
+          return JSON.parse(text);
+        });
+      })
+      .then(function (data) {
+        btn.replaceWith(Object.assign(document.createElement('span'),
+          { className: 'erledigt-marke', textContent: 'übernommen' }));
+        meldung.textContent = 'Seite neu gebaut. Veröffentlichen läuft mit dem nächsten Durchlauf.';
+      })
+      .catch(function (fehler) {
+        // Ehrlich bleiben statt stiller Knopf - dieselbe Regel wie beim Zahlungslink.
+        meldung.textContent = String(fehler.message || fehler);
+        meldung.classList.add('fehler');
+        btn.disabled = false;
+        btn.textContent = 'Angaben übernehmen';
+      });
   }
 
   function toggleMail(btn) {

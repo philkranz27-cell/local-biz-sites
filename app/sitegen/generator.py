@@ -100,7 +100,16 @@ def generate_site(lead: sqlite3.Row) -> str:
     if not gespeichert:
         db.speichere_site_copy(lead["id"], copy.model_dump_json())
 
-    photos = get_photos(copy.image_query, lead["category"], count=4)
+    # Einmal gewaehlte Bilder behalten. Sonst zieht jeder Neuaufbau andere Stockfotos -
+    # bei einem zahlenden Kunden darf sich seine Seite nicht veraendern, nur weil wir
+    # eine Vorlage angefasst haben.
+    gespeicherte_bilder = lead["site_photos_json"] if _hat(lead, "site_photos_json") else None
+    if gespeicherte_bilder:
+        photos = json.loads(gespeicherte_bilder)
+    else:
+        photos = get_photos(copy.image_query, lead["category"], count=4)
+        if photos:
+            db.speichere_site_photos(lead["id"], json.dumps(photos, ensure_ascii=False))
     hero_image = photos[0] if photos else None
     gallery_images = photos[1:4] if len(photos) > 1 else []
 
@@ -142,6 +151,7 @@ def generate_site(lead: sqlite3.Row) -> str:
         accent_dark=palette["accent_dark"],
         slug=slug,
         api_base=settings.api_base,
+        seite_status=(lead["seite_status"] if _hat(lead, "seite_status") else "demo"),
         fakten=fakten_liste,
         soziale_netze=soziale_netze,
     )

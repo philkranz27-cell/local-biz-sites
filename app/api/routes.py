@@ -8,9 +8,11 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 
 from app import db
+from app.uebernahme import uebernehmen
 from app.config import settings
-from app.models import BlockRequest, DealUpdate, PaymentLinkRequest, ReservationRequest
-from app.outreach.mailer import send_reservation_notification
+from app.models import (AufnahmeRequest, BlockRequest, DealUpdate, PaymentLinkRequest,
+                        ReservationRequest)
+from app.outreach.mailer import send_aufnahme_notification, send_reservation_notification
 from app.payments import create_payment_link
 from app import progress, publisher
 from app.pipeline import run_pipeline
@@ -65,6 +67,7 @@ def dashboard(request: Request):
             "stripe_configured": settings.stripe_configured,
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
+            "aufnahmen": db.get_aufnahmen(),
             "briefkandidaten": db.get_briefkandidaten(),
             "status_zaehler": db.zaehle_status(),
             "blocklist": db.get_blocklist(),
@@ -135,6 +138,39 @@ def api_reservation(slug: str, payload: ReservationRequest):
         logger.exception("Reservierung %s gespeichert, Benachrichtigung fehlgeschlagen", reservation_id)
 
     return {"status": "ok"}
+
+
+@router.post("/api/aufnahme/{slug}")
+def api_aufnahme(slug: str, payload: AufnahmeRequest):
+    """Der Betrieb liefert nach der Zusage seine echten Inhalte. Oeffentlich erreichbar
+    wie das Anfrageformular - der Kunde hat kein Passwort fuer das Dashboard."""
+    lead = db.get_lead_by_slug(slug)
+    if lead is None:
+        raise HTTPException(status_code=404, detail="unknown demo site")
+
+    felder = payload.model_dump()
+    # Erst speichern, dann benachrichtigen - siehe Reservierungen: eine Zulieferung des
+    # Kunden darf nicht an einer Mailstoerung verloren gehen.
+    aufnahme_id = db.add_aufnahme(lead["id"], slug, felder)
+    try:
+        send_aufnahme_notification(lead["name"], slug, felder)
+        db.mark_aufnahme_notified(aufnahme_id)
+    except Exception:
+        logger.exception("Aufnahmebogen %s gespeichert, Benachrichtigung fehlgeschlagen", aufnahme_id)
+    return {"status": "ok"}
+
+
+@router.post("/api/aufnahme/{aufnahme_id}/uebernehmen", dependencies=[Depends(require_admin)])
+def api_aufnahme_uebernehmen(aufnahme_id: int):
+    """Angaben in die Seite einarbeiten und sie neu bauen - ohne KI, sofort."""
+    try:
+        slug = uebernehmen(aufnahme_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except Exception:
+        logger.exception("Uebernahme von Aufnahmebogen %s fehlgeschlagen", aufnahme_id)
+        raise HTTPException(status_code=500, detail="Uebernahme fehlgeschlagen")
+    return {"status": "ok", "slug": slug}
 
 
 @router.post("/api/blocklist", dependencies=[Depends(require_admin)])

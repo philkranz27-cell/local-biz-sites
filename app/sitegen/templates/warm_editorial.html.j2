@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="robots" content="noindex, nofollow">
+{% if seite_status != "live" %}<meta name="robots" content="noindex, nofollow">{% endif %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ name }} — {{ city }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,7 +105,7 @@
   <div class="leaf leaf-1"></div>
   <div class="leaf leaf-2"></div>
   <header class="hero">
-    <span class="badge">Unverbindlicher Website-Entwurf · Texte{% if not (hero_image and hero_image.echt) %} und Fotos{% endif %} sind Beispiele</span>
+    {% if seite_status == "kundenentwurf" %}<span class="badge">Vorschau mit Ihren Angaben{% if not (hero_image and hero_image.echt) %} · Fotos noch als Symbolbilder{% endif %}</span>{% elif seite_status != "live" %}<span class="badge">Unverbindlicher Website-Entwurf · Texte{% if not (hero_image and hero_image.echt) %} und Fotos{% endif %} sind Beispiele</span>{% endif %}
     <div class="hero-grid">
       <div>
         <div class="tagline">{{ tagline }}</div>
@@ -165,8 +165,8 @@
   </section>
 
   <footer>
-    Dies ist ein unverbindlicher Demo-Entwurf für {{ name }}, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
-  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+    {% if seite_status == "kundenentwurf" %}Vorschau für {{ name }} mit den Angaben des Betriebs — noch nicht unter der eigenen Internetadresse veröffentlicht. Die Fotos sind noch Symbolbilder und werden durch eigene ersetzt.{% elif seite_status != "live" %}Dies ist ein unverbindlicher Demo-Entwurf für {{ name }}, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.{% else %}© {{ name }}, {{ city }}.{% endif %}
     {% if hero_image %}<br>Foto: <a href="{{ hero_image.source_url }}">{{ hero_image.photographer }}</a>{% if hero_image.echt %} via Wikimedia Commons{% if hero_image.lizenz %}, Lizenz {% if hero_image.lizenz_url %}<a href="{{ hero_image.lizenz_url }}">{{ hero_image.lizenz }}</a>{% else %}{{ hero_image.lizenz }}{% endif %}{% endif %}.{% else %} via Pexels (Symbolbild, kein echtes Foto des Betriebs).{% endif %}{% endif %}
   </footer>
 </div>

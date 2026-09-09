@@ -86,3 +86,20 @@ class ReservationRequest(BaseModel):
     time: Optional[str] = None
     party_size: Optional[str] = None
     message: Optional[str] = None
+
+
+class AufnahmeRequest(BaseModel):
+    """Aufnahmebogen: was ein Betrieb nach der Zusage liefert, damit aus dem
+    Demo-Entwurf seine echte Seite wird. Alle Felder freiwillig - wer nur die
+    Oeffnungszeiten korrigieren will, soll nicht den ganzen Bogen ausfuellen muessen."""
+
+    ansprechpartner: Optional[str] = None
+    telefon: Optional[str] = None
+    email: Optional[str] = None
+    ueber_uns: Optional[str] = None
+    angebot: Optional[str] = None
+    highlights: Optional[str] = None
+    oeffnungszeiten: Optional[str] = None
+    wunschadresse: Optional[str] = None
+    farbwunsch: Optional[str] = None
+    sonstiges: Optional[str] = None

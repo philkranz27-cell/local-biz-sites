@@ -54,6 +54,18 @@ def init_db() -> None:
             conn.execute("ALTER TABLE leads ADD COLUMN osm_image TEXT")
         if "osm_extras_json" not in existing_columns:
             conn.execute("ALTER TABLE leads ADD COLUMN osm_extras_json TEXT")
+        if "seite_status" not in existing_columns:
+            # In welchem Zustand die Seite ist: "demo" (unser Entwurf mit KI-Text),
+            # "kundenentwurf" (der Betrieb hat seine eigenen Inhalte geliefert) oder
+            # "live" (veroeffentlicht, bezahlt). Davon haengt ab, was fuer ein Hinweis
+            # oben auf der Seite steht - ein Kundentext darf nicht unter einem Banner
+            # stehen, das ihn als unverbindliches Beispiel bezeichnet.
+            conn.execute("ALTER TABLE leads ADD COLUMN seite_status TEXT NOT NULL DEFAULT 'demo'")
+        if "site_photos_json" not in existing_columns:
+            # Ohne gespeicherte Bildauswahl wuerde jeder Neuaufbau andere Stockfotos
+            # ziehen. Bei einem zahlenden Kunden waere das inakzeptabel: Seine Seite darf
+            # sich nicht veraendern, nur weil wir eine Vorlage angefasst haben.
+            conn.execute("ALTER TABLE leads ADD COLUMN site_photos_json TEXT")
         if "site_copy_json" not in existing_columns:
             # Ohne den gespeicherten Text laesst sich eine Seite nur neu bauen, indem die
             # KI den Text neu erfindet - jede Aenderung an der Vorlage wuerde also auch
@@ -326,3 +338,65 @@ def zaehle_ohne_text() -> int:
             "SELECT COUNT(*) FROM leads WHERE site_slug IS NOT NULL "
             "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette')"
         ).fetchone()[0]
+
+
+# --- Aufnahmebogen: vom "Ja" zur echten Seite ---------------------------------------
+
+
+def add_aufnahme(lead_id: int | None, slug: str, felder: dict) -> int:
+    """Angaben des Betriebs festhalten - zuerst speichern, dann benachrichtigen.
+    Dieselbe Reihenfolge wie bei den Reservierungen und aus demselben Grund: Faellt der
+    Mailversand aus, ist die Zulieferung des Kunden trotzdem da."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO aufnahmen
+                (lead_id, site_slug, ansprechpartner, telefon, email, ueber_uns, angebot,
+                 highlights, oeffnungszeiten, wunschadresse, farbwunsch, sonstiges, erstellt_am)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (lead_id, slug, felder.get("ansprechpartner"), felder.get("telefon"),
+             felder.get("email"), felder.get("ueber_uns"), felder.get("angebot"),
+             felder.get("highlights"), felder.get("oeffnungszeiten"),
+             felder.get("wunschadresse"), felder.get("farbwunsch"),
+             felder.get("sonstiges"), _now()),
+        )
+        conn.commit()
+        return cur.lastrowid
+
+
+def mark_aufnahme_notified(aufnahme_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE aufnahmen SET benachrichtigt = 1 WHERE id = ?", (aufnahme_id,))
+
+
+def mark_aufnahme_uebernommen(aufnahme_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE aufnahmen SET uebernommen = 1 WHERE id = ?", (aufnahme_id,))
+
+
+def get_aufnahmen() -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT a.*, l.name AS betrieb, l.city AS stadt FROM aufnahmen a "
+            "LEFT JOIN leads l ON l.id = a.lead_id ORDER BY a.id DESC"
+        ).fetchall()
+
+
+def get_aufnahme(aufnahme_id: int) -> sqlite3.Row | None:
+    with get_connection() as conn:
+        return conn.execute("SELECT * FROM aufnahmen WHERE id = ?", (aufnahme_id,)).fetchone()
+
+
+def speichere_site_photos(lead_id: int, photos_json: str) -> None:
+    """Die gewaehlten Bilder festhalten, damit ein Neuaufbau dieselbe Seite ergibt."""
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET site_photos_json = ? WHERE id = ?", (photos_json, lead_id))
+
+
+def setze_seiten_status(lead_id: int, status: str) -> None:
+    """demo -> kundenentwurf -> live. Steuert den Hinweis oben auf der Seite."""
+    if status not in ("demo", "kundenentwurf", "live"):
+        raise ValueError(f"unbekannter Seitenzustand: {status}")
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET seite_status = ? WHERE id = ?", (status, lead_id))

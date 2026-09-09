@@ -78,3 +78,24 @@ def send_reservation_notification(business_name: str, slug: str, req: Reservatio
         lines.append(f"Nachricht: {req.message}")
     _send(settings.notify_email or settings.from_email,
           f"Demo-Anfrage: {business_name}", "\n".join(lines))
+
+
+def send_aufnahme_notification(business_name: str, slug: str, felder: dict) -> None:
+    """Meldung an uns, sobald ein Betrieb seinen Aufnahmebogen abgeschickt hat.
+    Das ist der wichtigste Moment im ganzen Ablauf - ab hier gibt es einen Kunden."""
+    BEZEICHNUNG = {
+        "ansprechpartner": "Ansprechpartner", "telefon": "Telefon", "email": "E-Mail",
+        "ueber_uns": "Über uns", "angebot": "Angebot", "highlights": "Highlights",
+        "oeffnungszeiten": "Öffnungszeiten", "wunschadresse": "Wunschadresse",
+        "farbwunsch": "Farbwunsch", "sonstiges": "Sonstiges",
+    }
+    lines = [f"{business_name} hat den Aufnahmebogen ausgefüllt (/{slug}/).", ""]
+    for schluessel, titel in BEZEICHNUNG.items():
+        wert = (felder.get(schluessel) or "").strip()
+        if wert:
+            lines.append(f"{titel}:")
+            lines.extend("  " + z for z in wert.splitlines())
+            lines.append("")
+    lines.append("Im Dashboard unter Zahlungen: „Angaben übernehmen“ baut die Seite damit neu.")
+    _send(settings.notify_email or settings.from_email,
+          f"Aufnahmebogen: {business_name}", "\n".join(lines))
