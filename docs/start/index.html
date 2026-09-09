@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ihre Angaben für Ihre Website — philswebsites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1614; --muted: #6b625c; --paper: #fbf8f4; --card: #ffffff;
+    --line: #e8e0d6; --accent: #b4541f; --accent-dark: #8f4018; --soft: #f3ece2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink);
+         background: var(--paper); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 700; line-height: 1.15;
+           text-wrap: balance; }
+  a { color: var(--accent-dark); }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+  header { padding: 3.5rem 0 1.6rem; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: .74rem;
+             font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
+  h1 { font-size: clamp(1.8rem, 4.5vw, 2.5rem); margin: 0 0 .9rem; letter-spacing: -.02em; }
+  .lead { font-size: 1.05rem; color: var(--muted); margin: 0; }
+
+  .betrieb { background: var(--soft); border-radius: 12px; padding: 1rem 1.2rem;
+             margin: 1.8rem 0; font-size: .95rem; }
+  .betrieb b { display: block; font-size: 1.05rem; }
+
+  fieldset { border: 1px solid var(--line); border-radius: 14px; background: var(--card);
+             padding: 1.4rem 1.4rem 1.6rem; margin: 0 0 1.4rem; }
+  legend { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1.1rem;
+           padding: 0 .5rem; }
+  label { display: block; font-weight: 600; font-size: .92rem; margin: 1.1rem 0 .3rem; }
+  label:first-of-type { margin-top: .3rem; }
+  .hinweis { font-weight: 400; color: var(--muted); font-size: .84rem; display: block;
+             margin-top: .15rem; }
+  input, textarea { width: 100%; font: inherit; padding: .65rem .8rem; border-radius: 8px;
+                    border: 1px solid var(--line); background: #fff; color: var(--ink); }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px;
+                                border-color: transparent; }
+  textarea { min-height: 6.5rem; resize: vertical; line-height: 1.55; }
+  .zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  @media (max-width: 560px) { .zwei { grid-template-columns: 1fr; } }
+
+  .senden { display: block; width: 100%; margin-top: .5rem; padding: .95rem 1.5rem;
+            background: var(--accent); color: #fff; border: none; border-radius: 8px;
+            font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: background .15s; }
+  .senden:hover { background: var(--accent-dark); }
+  .senden:disabled { opacity: .6; cursor: default; }
+
+  .meldung { margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 10px; font-size: .95rem;
+             display: none; }
+  .meldung.gut { display: block; background: #eef6ee; border: 1px solid #cfe4cf; }
+  .meldung.schlecht { display: block; background: #fdf0ec; border: 1px solid #f2d3c8; }
+  .ersatzweg { display: inline-block; margin-top: .8rem; padding: .6rem 1.2rem;
+               background: var(--accent); color: #fff; text-decoration: none;
+               border-radius: 8px; font-weight: 600; font-size: .9rem; }
+
+  footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line);
+           padding-top: 1.4rem; margin-top: 2.5rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">philswebsites</div>
+    <h1>Ihre Angaben für Ihre Website</h1>
+    <p class="lead">
+      Damit aus dem Entwurf Ihre Seite wird, brauche ich Ihre eigenen Texte. Füllen Sie
+      nur aus, was Sie ändern möchten — alles Leergelassene bleibt, wie es ist. Fotos
+      schicken Sie mir am einfachsten per E-Mail.
+    </p>
+  </header>
+
+  <div class="betrieb" id="betrieb">
+    <b id="betriebName">Ihr Betrieb</b>
+    <span id="betriebHinweis">Der Entwurf, auf den sich Ihre Angaben beziehen.</span>
+  </div>
+
+  <form id="bogen">
+    <fieldset>
+      <legend>Kontakt</legend>
+      <div class="zwei">
+        <div>
+          <label for="ansprechpartner">Ansprechpartner</label>
+          <input type="text" id="ansprechpartner" name="ansprechpartner" autocomplete="name">
+        </div>
+        <div>
+          <label for="telefon">Telefon</label>
+          <input type="tel" id="telefon" name="telefon" autocomplete="tel">
+        </div>
+      </div>
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" name="email" autocomplete="email">
+    </fieldset>
+
+    <fieldset>
+      <legend>Inhalte</legend>
+
+      <label for="ueber_uns">Über uns
+        <span class="hinweis">Zwei bis vier Sätze über Ihren Betrieb, in Ihren Worten.</span>
+      </label>
+      <textarea id="ueber_uns" name="ueber_uns"></textarea>
+
+      <label for="angebot">Ihr Angebot
+        <span class="hinweis">Eine Leistung pro Zeile. Gern mit Doppelpunkt, zum Beispiel:
+          Mittagstisch: täglich ab 11:30 Uhr</span>
+      </label>
+      <textarea id="angebot" name="angebot"></textarea>
+
+      <label for="highlights">Drei Dinge, die Ihren Betrieb ausmachen
+        <span class="hinweis">Je Zeile eine, kurz.</span>
+      </label>
+      <textarea id="highlights" name="highlights" style="min-height:4.5rem"></textarea>
+
+      <label for="oeffnungszeiten">Öffnungszeiten
+        <span class="hinweis">Nur ausfüllen, falls die Angabe auf dem Entwurf nicht stimmt.
+          Je Zeile eine, zum Beispiel: Mo–Fr: 09:00–18:00 Uhr</span>
+      </label>
+      <textarea id="oeffnungszeiten" name="oeffnungszeiten" style="min-height:4.5rem"></textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>Wünsche</legend>
+      <label for="wunschadresse">Wunsch-Internetadresse
+        <span class="hinweis">Zum Beispiel ihr-betrieb.de — ich prüfe, ob sie frei ist.</span>
+      </label>
+      <input type="text" id="wunschadresse" name="wunschadresse">
+
+      <label for="farbwunsch">Farben, Logo, Vorbilder
+        <span class="hinweis">Haben Sie Hausfarben oder eine Seite, die Ihnen gefällt?</span>
+      </label>
+      <input type="text" id="farbwunsch" name="farbwunsch">
+
+      <label for="sonstiges">Sonstiges</label>
+      <textarea id="sonstiges" name="sonstiges" style="min-height:4.5rem"></textarea>
+    </fieldset>
+
+    <button type="submit" class="senden" id="sendenKnopf">Angaben senden</button>
+  </form>
+
+  <div class="meldung" id="meldung"></div>
+
+  <footer>
+    Fotos bitte an <a href="mailto:kontakt@philswebsites.de">kontakt@philswebsites.de</a> —
+    einfach als Anhang, ohne Bearbeitung.<br>
+    Philipp Kranz · Niederlandstraße 3 · 86972 Altenstadt · kontakt@philswebsites.de
+  </footer>
+
+</div>
+
+<script>
+  // Der Entwurf steht in der Adresse: /start/?b=slug. So muss der Betrieb nichts
+  // heraussuchen - er klickt den Link aus meiner Mail und legt los.
+  var slug = new URLSearchParams(location.search).get('b') || '';
+  if (slug) {
+    document.getElementById('betriebName').textContent = slug.replace(/-\d+$/, '').replace(/-/g, ' ');
+    var link = document.createElement('a');
+    link.href = 'https://philswebsites.de/sites/' + slug + '/';
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = 'Entwurf ansehen';
+    var hinweis = document.getElementById('betriebHinweis');
+    hinweis.textContent = 'Ihre Angaben beziehen sich auf diesen Entwurf: ';
+    hinweis.appendChild(link);
+  } else {
+    document.getElementById('betrieb').style.display = 'none';
+  }
+
+  var bogen = document.getElementById('bogen');
+  var knopf = document.getElementById('sendenKnopf');
+  var meldung = document.getElementById('meldung');
+
+  function melden(text, gut, mailto) {
+    meldung.className = 'meldung ' + (gut ? 'gut' : 'schlecht');
+    meldung.textContent = text;
+    if (mailto) {
+      var a = document.createElement('a');
+      a.className = 'ersatzweg';
+      a.href = mailto;
+      a.textContent = 'Als E-Mail senden';
+      meldung.appendChild(document.createElement('br'));
+      meldung.appendChild(a);
+    }
+    meldung.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  bogen.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (!slug) { melden('Der Link ist unvollständig. Bitte den Link aus meiner E-Mail benutzen.', false); return; }
+
+    var daten = Object.fromEntries(new FormData(bogen));
+    knopf.disabled = true;
+    knopf.textContent = 'wird gesendet …';
+
+    fetch('https://philipplaptop.tail191c07.ts.net/api/aufnahme/' + slug, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten)
+    }).then(function (r) {
+      if (!r.ok) { throw new Error('HTTP ' + r.status); }
+      bogen.style.display = 'none';
+      melden('Danke — Ihre Angaben sind angekommen. Ich melde mich mit der überarbeiteten Seite.', true);
+    }).catch(function () {
+      // Nichts verfallen lassen: derselbe Inhalt als vorbereitete E-Mail. Der Server
+      // kann aus sein, das Postfach ist es nie.
+      var BEZEICHNUNG = {
+        ansprechpartner: 'Ansprechpartner', telefon: 'Telefon', email: 'E-Mail',
+        ueber_uns: 'Über uns', angebot: 'Angebot', highlights: 'Highlights',
+        oeffnungszeiten: 'Öffnungszeiten', wunschadresse: 'Wunschadresse',
+        farbwunsch: 'Farbwunsch', sonstiges: 'Sonstiges'
+      };
+      var zeilen = Object.keys(daten).filter(function (k) { return daten[k]; })
+        .map(function (k) { return (BEZEICHNUNG[k] || k) + ':\n' + daten[k]; });
+      var mailto = 'mailto:kontakt@philswebsites.de'
+        + '?subject=' + encodeURIComponent('Angaben für meine Website (' + slug + ')')
+        + '&body=' + encodeURIComponent(zeilen.join('\n\n'));
+      melden('Das Senden hat gerade nicht geklappt. Schicken Sie Ihre Angaben als E-Mail — sie sind bereits eingetragen.', false, mailto);
+    }).then(function () {
+      knopf.disabled = false;
+      knopf.textContent = 'Angaben senden';
+    });
+  });
+</script>
+</body>
+</html>
