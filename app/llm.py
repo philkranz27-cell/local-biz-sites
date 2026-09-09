@@ -96,23 +96,27 @@ Basis oeffentlicher OpenStreetMap-Daten. Zwei Dinge sind entscheidend:
 1. EHRLICHKEIT: Der Betrieb liest diesen Text und weiss, was stimmt. Jede erfundene \
 Behauptung faellt sofort auf und macht den ganzen Entwurf unglaubwuerdig.
 
-VERBOTEN sind Aussagen ueber Dinge, die du nicht wissen kannst:
-- Ausstattung und Raeume: "hauseigene Backstube", "eigener Roester", "Gartenlounge"
+DIE GRUNDREGEL: Ueber die Ausstattung und die Leistungen dieses Betriebs weisst du \
+NUR das, was unter "Belegte Angaben" steht. Diese Angaben stammen aus der \
+Kartendatenbank, sind gesichert, und du sollst sie verwenden. Alles darueber hinaus \
+erfindest du - auch wenn es plausibel klingt.
+
+Steht "Plaetze im Freien" NICHT in den belegten Angaben, dann gibt es fuer dich \
+keine Terrasse, keinen Biergarten, keinen Innenhof und keinen Gartenblick. Steht \
+"Zum Mitnehmen" nicht dabei, dann kein Take-away und kein Lieferdienst. Das gilt \
+genauso fuer Raeume, Geraete, Oeffnungsbereiche und Zusatzleistungen jeder Art.
+
+Ebenfalls VERBOTEN, weil unbelegbar:
 - Herkunft und Verfahren: "regionale Zutaten", "nachhaltiger Anbau", "hausgemacht", \
-"taeglich frisch gemahlen"
-- Zusatzleistungen, die es geben kann oder nicht: "Catering", "Lieferdienst", \
-"Firmenfeiern", "Gutscheine", "Onlineshop"
-- Auszeichnungen, Jahreszahlen, Mitgliedschaften, Kundenzitate, Preisangaben
+"taeglich frisch gemahlen", "handgeschoepft"
+- Auszeichnungen, Jahreszahlen, Mitgliedschaften, Zertifikate, Kundenzitate, Preise
 - Personal und Geschichte: "unser Team aus Meistern", "Familienbetrieb in dritter \
 Generation"
 
-ERLAUBT ist, was fuer die Betriebsart selbstverstaendlich ist, ohne eine Eigenschaft \
-zu behaupten: bei einer Baeckerei "Brot und Broetchen", bei einem Friseur "Schnitt \
-und Farbe", bei einem Restaurant "Mittagstisch". Beschreibe, WAS es gibt - nicht WIE \
-es gemacht wird oder WOHER es kommt.
-
-Werden dir unter "Belegte Angaben" Eigenschaften genannt, stammen die aus der \
-Kartendatenbank und sind gesichert - die darfst und sollst du verwenden.
+ERLAUBT ist, was die Betriebsart selbst schon bedeutet, ohne eine Eigenschaft zu \
+behaupten: bei einer Baeckerei "Brot und Broetchen", bei einem Friseur "Schnitt und \
+Farbe", bei einem Restaurant "Mittagstisch". Beschreibe, WAS es gibt - nicht WIE es \
+gemacht wird, WOHER es kommt oder in welchen Raeumen.
 
 2. EINZIGARTIGKEIT: Jeder Text muss sich klar von einem austauschbaren Standard-Text \
 unterscheiden - nutze den konkreten Betriebsnamen, die Stadt und die Kategorie, um eine \
@@ -129,11 +133,14 @@ Entwurf als JSON. Deine Aufgabe: identifiziere jede Floskel und austauschbare Fo
 von X" falls Standardphrase) und schreibe den KOMPLETTEN Text neu, sodass er sich \
 erkennbar auf genau diesen Betrieb bezieht - Name, Ort, Kategorie und Sprachstil muessen \
 durchscheinen. Wenn ein Feld schon gut und konkret ist, darfst du es beibehalten - aber \
-sei kritisch, der Standard ist hoch. Streiche ausserdem jede Behauptung, die der Verfasser nicht wissen kann: \
-Ausstattung ("hauseigene Backstube"), Herkunft oder Verfahren ("regionale Zutaten", \
-"hausgemacht"), Zusatzleistungen ("Catering", "Lieferdienst"), Auszeichnungen, \
-Jahreszahlen, Zitate, Preise. Ersetze sie durch die schlichte Nennung dessen, was es \
-gibt. Der Betrieb liest diesen Text und merkt sofort, wenn etwas erfunden ist. Antworte NUR mit dem kompletten ueberarbeiteten JSON im exakt \
+sei kritisch, der Standard ist hoch. Streiche ausserdem jede Behauptung ueber Ausstattung oder Leistungen, die nicht \
+unter "Belegte Angaben" steht - Terrasse, Innenhof, Backstube, Lieferdienst, \
+Catering und dergleichen. Ebenso Herkunft und Verfahren ("regionale Zutaten", \
+"hausgemacht"), Auszeichnungen, Jahreszahlen, Zitate und Preise. Ersetze sie durch \
+die schlichte Nennung dessen, was es gibt. Achte dabei darauf, die Angebotstexte \
+nicht auszuhoehlen: "Taeglich wechselnde Gerichte zur Mittagszeit" ist gut, \
+"Gerichte, die wir zur Mittagszeit anbieten" sagt nichts mehr. Der Betrieb liest \
+diesen Text und merkt sofort, wenn etwas erfunden ist. Antworte NUR mit dem kompletten ueberarbeiteten JSON im exakt \
 gleichen Format wie der Entwurf."""
 
 
