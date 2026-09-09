@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frau Blume — München</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #b8860b; --accent-dark: #8a6508; --ink: #2a2523; --paper: #fbf7f4; --paper-alt: #f2e9e4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.7; overflow-x: hidden; }
+  h1, h2 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
+  .badge { display: inline-block; border: 1px solid var(--accent); color: var(--accent-dark); padding: .3rem .9rem; border-radius: 2px; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes drawRule { from { width: 0; } to { width: 60px; } }
+  @keyframes kenburns-img { from { transform: scale(1); } to { transform: scale(1.09); } }
+
+  header.hero { text-align: center; padding: 4rem 0 2.5rem; }
+  header.hero > * { opacity: 0; animation: fadeUp .8s ease forwards; }
+  header.hero .badge { animation-delay: .05s; }
+  header.hero .tagline { animation-delay: .2s; }
+  header.hero h1 { animation-delay: .35s; }
+  header.hero .rule { animation-delay: .5s; }
+  header.hero .sub { animation-delay: .6s; }
+  header.hero .cta { animation-delay: .75s; }
+  .tagline { text-transform: uppercase; letter-spacing: .28em; font-size: .78rem; color: var(--accent-dark); margin: 1.4rem 0 1rem; font-weight: 500; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); margin: 0 0 1rem; letter-spacing: .01em; }
+  .rule { width: 60px; height: 2px; background: var(--accent); margin: 1.2rem auto; animation-name: fadeUp, drawRule; animation-duration: .8s, .8s; }
+  .sub { font-size: 1.1rem; opacity: .8; max-width: 44ch; margin: 0 auto 2rem; }
+  .cta { display: inline-block; padding: .8rem 2.2rem; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; transition: all .2s; }
+  .cta:hover { background: var(--ink); color: #fff; letter-spacing: .16em; }
+  .hero-banner { margin: 2rem 0 0; overflow: hidden; opacity: 0; animation: fadeUp 1s ease .3s forwards; }
+  .hero-banner .frame { overflow: hidden; border: 10px solid #fff; box-shadow: 0 20px 50px -20px rgba(0,0,0,.3); display: block; }
+  .hero-banner img { width: 100%; height: 340px; object-fit: cover; display: block; animation: kenburns-img 20s ease-in-out infinite alternate; }
+  section { margin: 4.5rem 0; text-align: center; }
+  h2 { font-size: 1.9rem; margin-bottom: .8rem; }
+  .about p { font-size: 1.12rem; max-width: 62ch; margin: 0 auto; }
+  .highlights-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; }
+  @media (max-width: 640px) { .highlights-cols { grid-template-columns: 1fr; } }
+  .hcol { padding: 0 1rem; transition: transform .25s; }
+  .hcol:hover { transform: translateY(-4px); }
+  .hcol .mark { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--accent); display: block; margin-bottom: .5rem; transition: transform .3s; }
+  .hcol:hover .mark { transform: scale(1.3); }
+  .service-table { list-style: none; padding: 0; margin: 2rem auto 0; max-width: 620px; text-align: left; }
+  .service-table li { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1.1rem .4rem; border-bottom: 1px solid var(--paper-alt); align-items: baseline; position: relative; transition: padding .2s; }
+  .service-table li::before { content: ""; position: absolute; left: 0; bottom: -1px; width: 0; height: 1px; background: var(--accent); transition: width .3s; }
+  .service-table li:hover { padding-left: .9rem; }
+  .service-table li:hover::before { width: 100%; }
+  .service-table h3 { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; flex-shrink: 0; }
+  .service-table p { margin: 0; font-size: .88rem; opacity: .7; text-align: right; }
+  .gallery-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+  .gallery-row a { display: block; overflow: hidden; background: var(--paper-alt); }
+  .gallery-row img { width: 100%; height: 220px; object-fit: cover; display: block; transition: transform .6s ease; }
+  .gallery-row a:hover img { transform: scale(1.07); }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; background: var(--paper-alt); padding: 2rem; }
+  .meta-item b { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; opacity: .6; margin-bottom: .4rem; }
+  .hours-list { list-style: none; padding: 0; margin: 0; font-size: .95rem; }
+  footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .78rem; opacity: .55; margin-top: 1rem; }
+  footer a { color: inherit; }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    header.hero > *, .hero-banner, .hero-banner img { animation: none; opacity: 1; }
+    .rule { animation: none; width: 60px; }
+  }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--paper); color: var(--ink); border-radius: 4px; padding: 2.2rem; max-width: 420px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; text-align: left; }
+  .modal-close { position: absolute; top: .8rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; line-height: 1; }
+  .modal-box h3 { margin-top: 0; }
+  .modal-note { font-size: .82rem; opacity: .65; }
+  .modal-box form label { display: block; font-size: .78rem; font-weight: 600; margin: .9rem 0 .35rem; text-transform: uppercase; letter-spacing: .08em; }
+  .modal-box input, .modal-box textarea { width: 100%; padding: .6rem .7rem; border: 1px solid var(--paper-alt); background: var(--paper-alt); color: var(--ink); border-radius: 2px; font: inherit; }
+  .modal-row { display: flex; gap: 1rem; }
+  .modal-row label { flex: 1; }
+  .modal-submit { margin-top: 1.4rem; width: 100%; padding: .8rem; background: var(--ink); color: #fff; border: none; border-radius: 0; font-weight: 600; cursor: pointer; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; transition: background .2s; }
+  .modal-submit:hover { background: var(--accent-dark); }
+  .modal-success { display: none; text-align: center; }
+  .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="badge">Unverbindlicher Website-Entwurf · Fotos sind Symbolbilder</span>
+    <div class="tagline">Blumen für den feinen Moment</div>
+    <h1>Frau Blume – Florale Eleganz aus München</h1>
+    <div class="rule"></div>
+    <p class="sub">Frau Blume, Florist, Arnulfstraße 212, gestaltet für jeden Anlass ein durchdachtes Bouquet.</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Beratung vereinbaren</a>
+  </header>
+
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/19140920/pexels-photo-19140920.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Frau Blume"></a></div>
+
+  <section class="about reveal">
+    <h2>Über uns</h2>
+    <p>Arnulfstraße 212 – hier präsentiert Frau Blume ein sorgfältig kuratiertes Sortiment saisonaler Schnittblumen und Topfpflanzen. Jede Komposition wird mit Bedacht ausgewählt, um Ihrem Anlass eine dezente Note zu verleihen. Unser Team berät Sie gern bei der Auswahl von Farben und Formen, sodass Ihre Wünsche in ein harmonisches Bouquet übergehen. Diskretion und Qualität stehen bei uns im Mittelpunkt.</p>
+    <div class="highlights-cols">
+      <div class="hcol"><span class="mark">—</span>Persönliche Farb‑ und Formberatung</div><div class="hcol"><span class="mark">—</span>Täglich frisch geschnittene Blumen</div><div class="hcol"><span class="mark">—</span>Lage Arnulfstraße 212</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="reveal">Angebot</h2>
+    <ul class="service-table">
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Eventblumen</h3><p>Frau Blume kreiert für Firmenevents und private Feiern ein abgestimmtes Blumenarrangement, das den Rahmen Ihrer Veranstaltung subtil ergänzt.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Hochzeitsbouquets</h3><p>Maßgeschneiderte Brautsträuße, die exakt auf Ihren Hochzeitsstil und Ihre Farbwahl abgestimmt sind.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Firmenfloristik</h3><p>Regelmäßige Lieferung von frischen Pflanzen für Ihr Büro, um ein ruhiges und gepflegtes Arbeitsumfeld zu unterstützen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Gartenpflanzen</h3><p>Auswahl an robusten Stauden und Ziergehölzen, die sich harmonisch in Ihren Garten einfügen.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Pflanzenpflege</h3><p>Professionelle Pflege und individuelle Beratung für Ihre Topfpflanzen, damit diese lange ihre Schönheit bewahren.</p></li>
+    </ul>
+  </section>
+
+  
+  <section>
+    <h2 class="reveal">Impressionen</h2>
+    <div class="gallery-row">
+      
+      <a class="reveal" href="https://www.pexels.com/photo/charming-indoor-flower-arrangement-display-37309560/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37309560/pexels-photo-37309560.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37309564/pexels-photo-37309564.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/florist-putting-flowers-on-display-6764292/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/6764292/pexels-photo-6764292.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      </a>
+      
+    </div>
+  </section>
+  
+</div>
+
+<section class="meta-grid reveal">
+  <div class="meta-item"><b>Adresse</b>Arnulfstraße 212</div>
+  
+  
+  
+  <div class="meta-item"><b>Öffnungszeiten</b>
+    <ul class="hours-list"><li>Mo: 15:00–18:00 Uhr</li><li>Di, Do–Fr: 10:00–12:00 und 16:00–18:30 Uhr</li><li>Mi, So: geschlossen</li><li>Sa: 09:00–13:00 Uhr</li></ul>
+  </div>
+  
+</section>
+
+<footer>
+  Dies ist ein unverbindlicher Demo-Entwurf für Frau Blume, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  <br>Foto: <a href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/">Duygu</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+</footer>
+
+<div class="modal-overlay" id="reservationModal">
+  <div class="modal-box">
+    <button class="modal-close" type="button" onclick="closeReservationModal()">&times;</button>
+    <h3>Anfrage an Frau Blume</h3>
+    <p class="modal-note">Unverbindliche Anfrage — Frau Blume meldet sich zur Bestätigung bei Ihnen.</p>
+    <form id="reservationForm">
+      <label>Name<input type="text" name="customer_name" required></label>
+      <label>Telefon oder E-Mail<input type="text" name="contact" required></label>
+      <div class="modal-row">
+        <label>Datum<input type="date" name="date"></label>
+        <label>Uhrzeit<input type="time" name="time"></label>
+      </div>
+      
+      <label>Nachricht (optional)<textarea name="message" rows="2"></textarea></label>
+      <button type="submit" class="modal-submit">Anfrage senden</button>
+    </form>
+    <div class="modal-success" id="reservationSuccess">
+      <p>✓ Danke, Frau Blume hat Ihre Anfrage erhalten.</p>
+      <p class="modal-note">Hinweis: Dies ist eine Demo-Website zu Vorstellungszwecken.</p>
+    </div>
+    <div class="modal-success" id="reservationError">
+      <p>Die Anfrage konnte gerade nicht übermittelt werden.</p>
+      <p class="modal-note">Schicken Sie sie als E-Mail – Ihre Angaben sind bereits eingetragen.</p>
+      <a class="modal-submit" id="reservationMailto" href="mailto:kontakt@philswebsites.de"
+         style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">Als E-Mail senden</a>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.05, rootMargin: '300px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
+  setTimeout(function() {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+  }, 2500);
+
+  function openReservationModal(e) { if (e) e.preventDefault(); document.getElementById('reservationModal').classList.add('open'); }
+  function closeReservationModal() { document.getElementById('reservationModal').classList.remove('open'); }
+  var reservationForm = document.getElementById('reservationForm');
+  reservationForm.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var data = Object.fromEntries(new FormData(ev.target));
+    fetch('https://philipplaptop.tail191c07.ts.net/api/reservation/frau-blume-m-nchen-531824', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+      .then(function(res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationSuccess').style.display = 'block';
+      })
+      .catch(function() {
+        // Ehrlich bleiben: Erfolg nur melden, wenn die Anfrage wirklich angekommen ist.
+        // Sie trotzdem nicht verfallen lassen - derselbe Inhalt als vorbereitete
+        // E-Mail. Der Server kann aus sein, das Postfach ist es nie.
+        var BEZEICHNUNG = {customer_name: 'Name', contact: 'Kontakt', date: 'Datum',
+                           time: 'Uhrzeit', party_size: 'Personen', message: 'Nachricht'};
+        var zeilen = Object.keys(data)
+          .filter(function(k) { return data[k]; })
+          .map(function(k) { return (BEZEICHNUNG[k] || k) + ': ' + data[k]; });
+        document.getElementById('reservationMailto').href =
+          'mailto:kontakt@philswebsites.de'
+          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Frau Blume')
+          + '&body=' + encodeURIComponent(zeilen.join('\n'));
+        reservationForm.style.display = 'none';
+        document.getElementById('reservationError').style.display = 'block';
+      });
+  });
+</script>
+</body>
+</html>
