@@ -21,6 +21,12 @@ class Lead(BaseModel):
     Selten (in der Stichprobe 1 von 60), aber der einzige rechtlich saubere Weg zu
     einem Bild, das wirklich diesen Betrieb zeigt."""
 
+    osm_extras_json: Optional[str] = None
+    """Weitere OSM-Angaben als JSON: Barrierefreiheit, Aussenplaetze, Kueche, Ernaehrung,
+    WLAN, Zahlungsarten, Facebook/Instagram, Inhabername. Die stehen bei den meisten
+    Betrieben in der Karte und machen den Unterschied zwischen einer Seite, die zu diesem
+    Betrieb gehoert, und einer, die zu jedem passt."""
+
     osm_email: Optional[str] = None
     """Direkt aus OSM-Tags (contact:email/email) - falls vorhanden, sparen wir uns das
     Scraping der Impressum-Seite fuer diesen Lead."""

@@ -83,6 +83,9 @@ def _build_query(tag_key: str, tag_value: str, city: str, max_results: int) -> s
     """
 
 
+from app.sources.osm_extras import extras_json
+
+
 def _address_from_tags(tags: dict) -> str | None:
     parts = [
         " ".join(p for p in [tags.get("addr:street"), tags.get("addr:housenumber")] if p),
@@ -108,6 +111,7 @@ def _lead_from_element(element: dict, category: str, city: str) -> Lead | None:
         opening_hours_json=json.dumps([tags["opening_hours"]], ensure_ascii=False) if tags.get("opening_hours") else None,
         osm_email=tags.get("contact:email") or tags.get("email"),
         osm_image=tags.get("image") or tags.get("wikimedia_commons"),
+        osm_extras_json=extras_json(tags),
     )
 
 

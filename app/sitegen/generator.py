@@ -6,8 +6,10 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from app.llm import STYLE_HINTS, generate_site_copy
+from app import db
+from app.llm import STYLE_HINTS, GeneratedSiteCopy, generate_site_copy
 from app.config import settings
+from app.sources.osm_extras import fakten
 from app.sitegen.images import get_photos
 from app.sitegen.opening_hours import format_opening_hours
 from app.sitegen.osm_photo import hole_foto
@@ -62,13 +64,21 @@ def slugify(name: str, city: str, place_id: str) -> str:
     return f"{base}-{place_id[-6:]}"
 
 
+def _hat(lead: sqlite3.Row, spalte: str) -> bool:
+    return spalte in lead.keys() and lead[spalte]
+
+
 def generate_site(lead: sqlite3.Row) -> str:
     """Generates the static demo site for a lead, writes it to disk, returns its slug."""
     template_name = pick_template(lead["category"], lead["place_id"])
     palette = pick_palette(lead["place_id"])
     style_hint = STYLE_HINTS[template_name]
 
-    copy = generate_site_copy(
+    # Einmal geschriebenen Text behalten. Ohne ihn wuerde jede Aenderung an einer Vorlage
+    # auch den Inhalt neu wuerfeln - und kostet ein KI-Kontingent, das taeglich begrenzt
+    # ist. Mit ihm ist ein Neuaufbau kostenlos und liefert exakt dieselbe Seite.
+    gespeichert = lead["site_copy_json"] if _hat(lead, "site_copy_json") else None
+    copy = GeneratedSiteCopy.model_validate_json(gespeichert) if gespeichert else generate_site_copy(
         lead["name"],
         lead["category"],
         lead["city"],
@@ -77,6 +87,8 @@ def generate_site(lead: sqlite3.Row) -> str:
         lead["user_ratings_total"],
         style_hint,
     )
+    if not gespeichert:
+        db.speichere_site_copy(lead["id"], copy.model_dump_json())
 
     photos = get_photos(copy.image_query, lead["category"], count=4)
     hero_image = photos[0] if photos else None
@@ -90,6 +102,15 @@ def generate_site(lead: sqlite3.Row) -> str:
         if hero_image:
             gallery_images = ([hero_image] + gallery_images)[:3]
         hero_image = echtes_foto
+
+    # Angaben aus der Karte: die einzigen Inhalte auf der Seite, die nachweislich zu
+    # diesem Betrieb gehoeren. Erst ab zwei lohnt ein eigener Abschnitt - ein einzelnes
+    # "teilweise barrierefrei" unter einer Ueberschrift wirkt duenner als gar nichts.
+    extras = json.loads(lead["osm_extras_json"]) if _hat(lead, "osm_extras_json") else {}
+    fakten_liste = fakten(extras)
+    if len(fakten_liste) < 2:
+        fakten_liste = []
+    soziale_netze = extras.get("soziale_netze") or {}
 
     slug = slugify(lead["name"], lead["city"], lead["place_id"])
     # OSM-Rohsyntax ("Su-Th 17:00-23:30") in lesbares Deutsch uebersetzen, bevor sie
@@ -120,6 +141,8 @@ def generate_site(lead: sqlite3.Row) -> str:
         accent_dark=palette["accent_dark"],
         slug=slug,
         api_base=settings.api_base,
+        fakten=fakten_liste,
+        soziale_netze=soziale_netze,
     )
 
     site_dir = SITES_DIR / slug

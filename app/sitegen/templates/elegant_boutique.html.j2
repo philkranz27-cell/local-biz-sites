@@ -85,6 +85,18 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
@@ -105,6 +117,12 @@
     <p>{{ about }}</p>
     <div class="highlights-cols">
       {% for h in highlights %}<div class="hcol"><span class="mark">—</span>{{ h }}</div>{% endfor %}
+
+  {% if fakten %}
+  <div class="fakten reveal">
+    {% for f in fakten %}<span class="fakt">{{ f }}</span>{% endfor %}
+  </div>
+  {% endif %}
     </div>
   </section>
 
@@ -132,6 +150,7 @@
 <section class="meta-grid reveal">
   {% if address %}<div class="meta-item"><b>Adresse</b>{{ address }}</div>{% endif %}
   {% if phone %}<div class="meta-item"><b>Telefon</b>{{ phone }}</div>{% endif %}
+    {% if soziale_netze %}<div class="meta-item"><b>Im Netz</b>{% for titel, adresse in soziale_netze.items() %}<a href="{{ adresse }}" target="_blank" rel="noopener">{{ titel }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</div>{% endif %}
   {% if rating %}<div class="meta-item"><b>Bewertung</b>⭐ {{ rating }} ({{ review_count }})</div>{% endif %}
   {% if opening_hours %}
   <div class="meta-item"><b>Öffnungszeiten</b>
