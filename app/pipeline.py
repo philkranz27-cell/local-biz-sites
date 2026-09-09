@@ -5,6 +5,7 @@ from pathlib import Path
 import groq
 
 from app import db
+from app.anschrift import vollstaendig
 from app.config import settings
 from app.outreach.mailer import send_outreach_email
 from app.sitegen.generator import generate_site
@@ -79,6 +80,12 @@ def phase_find_leads() -> None:
                 db.set_status(lead_id, "excluded_kette")
             elif lead.osm_email:
                 db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
+            elif vollstaendig(lead.address):
+                # Keine Mailadresse, aber eine Anschrift, an die ein Brief ankommt.
+                # Frueher landeten diese Betriebe unter "excluded_no_email" und waren
+                # damit weg - das war die halbe Zielgruppe, denn der Briefweg braucht
+                # gar keine Mailadresse.
+                db.set_status(lead_id, "nur_anschrift")
             else:
                 db.set_status(lead_id, "excluded_no_email")
         logger.info(

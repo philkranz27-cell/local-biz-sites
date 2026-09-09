@@ -65,6 +65,8 @@ def dashboard(request: Request):
             "stripe_configured": settings.stripe_configured,
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
+            "briefkandidaten": db.get_briefkandidaten(),
+            "status_zaehler": db.zaehle_status(),
             "blocklist": db.get_blocklist(),
             "reservations": db.get_reservations(),
         },

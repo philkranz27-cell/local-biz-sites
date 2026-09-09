@@ -182,11 +182,16 @@ def set_payment_link(lead_id: int, url: str) -> None:
 
 
 def get_all_leads(limit: int = 500) -> list[sqlite3.Row]:
-    """Nur qualifizierte Leads (keine Website + bekannte Mail) - ausgeschlossene Leads
-    bleiben in der DB (fuer Dedup ueber place_id), tauchen aber nicht im Dashboard auf."""
+    """Nur qualifizierte Leads (keine Website + bekannte Mail).
+
+    Ausgeschlossene Leads bleiben in der DB (fuer Dedup ueber place_id), tauchen aber
+    nicht im Dashboard auf. "nur_anschrift" ebenfalls nicht: davon gibt es rund 9.000,
+    sie haben eine eigene Ansicht (get_briefkandidaten) und wuerden diese Liste sonst
+    vollstaendig verdraengen."""
     with get_connection() as conn:
         return conn.execute(
-            "SELECT * FROM leads WHERE status NOT LIKE 'excluded_%' ORDER BY id DESC LIMIT ?",
+            "SELECT * FROM leads WHERE status NOT LIKE 'excluded_%' AND status != 'nur_anschrift' "
+            "ORDER BY id DESC LIMIT ?",
             (limit,),
         ).fetchall()
 
@@ -205,7 +210,8 @@ def count_screened() -> int:
 def get_stats() -> dict:
     with get_connection() as conn:
         rows = conn.execute(
-            "SELECT status, COUNT(*) AS n FROM leads WHERE status NOT LIKE 'excluded_%' GROUP BY status"
+            "SELECT status, COUNT(*) AS n FROM leads "
+            "WHERE status NOT LIKE 'excluded_%' AND status != 'nur_anschrift' GROUP BY status"
         ).fetchall()
     return {row["status"]: row["n"] for row in rows}
 
@@ -288,3 +294,23 @@ def speichere_site_copy(lead_id: int, copy_json: str) -> None:
     KI-Aufruf identisch neu gebaut werden kann."""
     with get_connection() as conn:
         conn.execute("UPDATE leads SET site_copy_json = ? WHERE id = ?", (copy_json, lead_id))
+
+
+def get_briefkandidaten(limit: int = 150) -> list[sqlite3.Row]:
+    """Betriebe ohne Mailadresse, aber mit brieffaehiger Anschrift.
+
+    Bewusst begrenzt: davon gibt es rund 9.000, die gehoeren nicht alle in eine
+    HTML-Tabelle. Die Gesamtzahl liefert zaehle_status().
+    """
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT * FROM leads WHERE status = 'nur_anschrift' ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+
+
+def zaehle_status() -> dict[str, int]:
+    """Alle Status mit Anzahl - auch die aussortierten, anders als get_stats()."""
+    with get_connection() as conn:
+        return {r["status"]: r["n"] for r in conn.execute(
+            "SELECT status, COUNT(*) AS n FROM leads GROUP BY status")}

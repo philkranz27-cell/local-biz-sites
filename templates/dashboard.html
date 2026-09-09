@@ -240,6 +240,22 @@
   .src-health.off span { color: rgba(255,255,255,.5); }
   /* Zweite Statuszeile sitzt direkt unter der ersten. */
   .src-health + .src-health { margin-top: .4rem; }
+
+  /* Zwei Gruppen von Betrieben: mit Mailadresse und nur mit Anschrift. Als Schalter,
+     weil beide Listen lang sind und man immer nur eine davon liest. */
+  .gruppen { display: flex; gap: .8rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  .gruppe { flex: 1 1 220px; min-width: 0; text-align: left; cursor: pointer;
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 1rem 1.1rem; color: inherit;
+            font: inherit; transition: border-color .15s, background .15s; }
+  .gruppe:hover { border-color: rgba(255,255,255,.22); }
+  .gruppe.aktiv { border-color: var(--accent, #7c6cf5); background: rgba(124,108,245,.10); }
+  .gruppe-zahl { display: block; font-size: 1.6rem; font-weight: 700; color: #fff;
+                 line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .gruppe-name { display: block; font-size: .9rem; font-weight: 600; margin-top: .15rem; }
+  .gruppe-hinweis { display: block; font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+  .gruppe-liste[hidden] { display: none; }
+  .listen-fuss { font-size: .78rem; color: var(--muted); margin: .7rem 0 0; }
 </style>
 </head>
 <body>
@@ -307,7 +323,7 @@
 <div id="leads-view" class="view">
   <button class="back-link" onclick="showView('mindmap-view')">← Zurück zur Übersicht</button>
   <h2 class="section-title">🏪 Neue Betriebe</h2>
-  <p class="section-sub">Sucht durchgehend im Hintergrund (~55 Städte × 7 Kategorien) nach Betrieben ohne Website mit bekannter Kontakt-Mail und generiert automatisch eine Demo-Site.</p>
+  <p class="section-sub">Sucht durchgehend im Hintergrund (~55 Städte × 7 Kategorien) nach Betrieben ohne eigene Website. Wer eine Mailadresse hinterlegt hat, bekommt automatisch eine Demo-Seite. Wer keine hat, aber eine vollständige Anschrift, steht unter „Nur Anschrift“ – erreichbar nur per Brief.</p>
 
   {% if reservations %}
   <div class="card anfragen-card">
@@ -336,6 +352,21 @@
   </div>
   {% endif %}
 
+
+  <div class="gruppen">
+    <button type="button" class="gruppe aktiv" data-ziel="gruppe-mail" onclick="zeigeGruppe(this)">
+      <span class="gruppe-zahl">{{ leads|length }}</span>
+      <span class="gruppe-name">Mit Mailadresse</span>
+      <span class="gruppe-hinweis">Mail oder Brief möglich</span>
+    </button>
+    <button type="button" class="gruppe" data-ziel="gruppe-brief" onclick="zeigeGruppe(this)">
+      <span class="gruppe-zahl">{{ '{:,}'.format(status_zaehler.get('nur_anschrift', 0)).replace(',', '.') }}</span>
+      <span class="gruppe-name">Nur Anschrift</span>
+      <span class="gruppe-hinweis">kein Mailkontakt, nur per Brief</span>
+    </button>
+  </div>
+
+  <div class="gruppe-liste" id="gruppe-mail">
   <table>
     <thead>
       <tr><th>Betrieb</th><th>Kategorie</th><th>Stadt</th><th>Status</th><th>Kontakt</th><th>Demo</th></tr>
@@ -353,6 +384,33 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
+
+  <div class="gruppe-liste" id="gruppe-brief" hidden>
+    <table>
+      <thead>
+        <tr><th>Betrieb</th><th>Kategorie</th><th>Stadt</th><th>Anschrift</th><th>Demo</th></tr>
+      </thead>
+      <tbody>
+        {% for lead in briefkandidaten %}
+        <tr>
+          <td>{{ lead.name }}</td>
+          <td>{{ lead.category }}</td>
+          <td>{{ lead.city }}</td>
+          <td>{{ lead.address }}</td>
+          <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="listen-fuss">
+      Die neuesten {{ briefkandidaten|length }} von
+      {{ '{:,}'.format(status_zaehler.get('nur_anschrift', 0)).replace(',', '.') }}.
+      Diese Betriebe haben in OpenStreetMap keine Mailadresse, aber eine vollständige
+      Anschrift. Für sie wird noch keine Demo-Seite gebaut – das entscheidet das
+      Tageskontingent, siehe neuschreiben.py.
+    </p>
+  </div>
 </div>
 
 <!-- EMAILS VIEW -->
@@ -591,6 +649,16 @@
         if (!r.ok) { throw new Error('HTTP ' + r.status); }
         location.reload();
       }).catch(function() { alert('Aufheben fehlgeschlagen – bitte erneut versuchen.'); });
+  }
+
+
+  function zeigeGruppe(schalter) {
+    document.querySelectorAll('.gruppe').forEach(function(b) {
+      b.classList.toggle('aktiv', b === schalter);
+    });
+    document.querySelectorAll('.gruppe-liste').forEach(function(l) {
+      l.hidden = l.id !== schalter.dataset.ziel;
+    });
   }
 
   function toggleMail(btn) {
