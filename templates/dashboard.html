@@ -256,6 +256,14 @@
   .gruppe-hinweis { display: block; font-size: .78rem; color: var(--muted); margin-top: .1rem; }
   .gruppe-liste[hidden] { display: none; }
   .listen-fuss { font-size: .78rem; color: var(--muted); margin: .7rem 0 0; }
+
+  .pay-meldung { font-size: .78rem; margin-top: .4rem; color: var(--muted); }
+  .pay-meldung.fehler { color: #ff9b9b; }
+  .pay-meldung:empty { display: none; }
+  .kopier-btn { font: inherit; font-size: .75rem; margin-top: .35rem; padding: .25rem .6rem;
+                border-radius: 6px; cursor: pointer; color: var(--ink);
+                background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); }
+  .kopier-btn:hover { background: rgba(255,255,255,.13); }
 </style>
 </head>
 <body>
@@ -686,19 +694,77 @@
     });
   }
 
+  function zeileMelden(row, text, istFehler) {
+    var feld = row.querySelector('.pay-meldung');
+    if (!feld) {
+      feld = document.createElement('div');
+      feld.className = 'pay-meldung';
+      row.querySelector('.deal-notes').parentElement.appendChild(feld);
+    }
+    feld.textContent = text;
+    feld.classList.toggle('fehler', !!istFehler);
+  }
+
+  function zeigeZahlungslink(row, url) {
+    var behaelter = row.querySelector('.deal-notes').parentElement;
+    var alt = behaelter.querySelector('.pay-link');
+    if (alt) { alt.remove(); }
+    var link = document.createElement('a');
+    link.className = 'pay-link';
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = url;
+    behaelter.appendChild(link);
+
+    var kopieren = document.createElement('button');
+    kopieren.className = 'kopier-btn';
+    kopieren.type = 'button';
+    kopieren.textContent = 'Link kopieren';
+    kopieren.onclick = function() {
+      navigator.clipboard.writeText(url).then(function() {
+        kopieren.textContent = 'kopiert ✓';
+        setTimeout(function() { kopieren.textContent = 'Link kopieren'; }, 1500);
+      });
+    };
+    behaelter.appendChild(kopieren);
+  }
+
   function createPaymentLink(btn) {
     var row = btn.closest('.deal-row');
     var leadId = row.dataset.leadId;
-    var price = parseFloat(row.querySelector('.deal-price').value);
-    if (!price || price <= 0) { alert('Bitte zuerst einen Preis eintragen.'); return; }
+    var feld = row.querySelector('.deal-price');
+    // Komma als Dezimaltrennzeichen zulassen - "299,50" tippt man hier eher als "299.50".
+    var preis = parseFloat(String(feld.value).replace(',', '.').replace(/[^0-9.]/g, ''));
+    if (!preis || preis <= 0) {
+      zeileMelden(row, 'Erst einen Preis eintragen, dann den Link erzeugen.', true);
+      feld.focus();
+      return;
+    }
+
     btn.disabled = true;
-    btn.textContent = '...';
+    btn.textContent = 'erzeuge …';
+    zeileMelden(row, '', false);
+
     fetch('/api/lead/' + leadId + '/payment-link', {
-      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({amount_eur: price})
-    }).then(function(r) { return r.json(); }).then(function(data) {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({amount_eur: preis})
+    }).then(function(r) {
+      return r.text().then(function(text) {
+        if (!r.ok) { throw new Error('Stripe meldet einen Fehler (' + r.status + '): ' + text.slice(0, 160)); }
+        return JSON.parse(text);
+      });
+    }).then(function(data) {
+      if (!data.url) { throw new Error('Antwort ohne Link.'); }
+      zeigeZahlungslink(row, data.url);
+      zeileMelden(row, 'Zahlungslink über ' + preis.toFixed(2).replace('.', ',') + ' € erstellt.', false);
+    }).catch(function(fehler) {
+      // Ehrlich bleiben: lieber die Fehlermeldung zeigen als einen stillen Knopf.
+      zeileMelden(row, String(fehler.message || fehler), true);
+    }).then(function() {
       btn.disabled = false;
       btn.textContent = 'Payment Link';
-      if (data.url) { location.reload(); }
     });
   }
 </script>
