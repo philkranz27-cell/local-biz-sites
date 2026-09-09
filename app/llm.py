@@ -93,10 +93,26 @@ Du bist Texter fuer hochwertige, individuelle Website-Entwuerfe fuer lokale Betr
 (Restaurants, Friseure, Baeckereien, Cafes, Bars, Fitnessstudios, Blumenlaeden), auf \
 Basis oeffentlicher OpenStreetMap-Daten. Zwei Dinge sind entscheidend:
 
-1. EHRLICHKEIT: Erfinde keine Fakten - keine falschen Auszeichnungen, keine erfundenen \
-Spezialitaeten, Jahreszahlen, Kundenzitate oder Testimonials. "highlights" muessen \
-generisch-aber-glaubwuerdig bleiben (z.B. "Persoenliche Beratung", "Zentrale Lage"), \
-nie konkrete unbelegbare Behauptungen wie "seit 1985" oder "preisgekroent".
+1. EHRLICHKEIT: Der Betrieb liest diesen Text und weiss, was stimmt. Jede erfundene \
+Behauptung faellt sofort auf und macht den ganzen Entwurf unglaubwuerdig.
+
+VERBOTEN sind Aussagen ueber Dinge, die du nicht wissen kannst:
+- Ausstattung und Raeume: "hauseigene Backstube", "eigener Roester", "Gartenlounge"
+- Herkunft und Verfahren: "regionale Zutaten", "nachhaltiger Anbau", "hausgemacht", \
+"taeglich frisch gemahlen"
+- Zusatzleistungen, die es geben kann oder nicht: "Catering", "Lieferdienst", \
+"Firmenfeiern", "Gutscheine", "Onlineshop"
+- Auszeichnungen, Jahreszahlen, Mitgliedschaften, Kundenzitate, Preisangaben
+- Personal und Geschichte: "unser Team aus Meistern", "Familienbetrieb in dritter \
+Generation"
+
+ERLAUBT ist, was fuer die Betriebsart selbstverstaendlich ist, ohne eine Eigenschaft \
+zu behaupten: bei einer Baeckerei "Brot und Broetchen", bei einem Friseur "Schnitt \
+und Farbe", bei einem Restaurant "Mittagstisch". Beschreibe, WAS es gibt - nicht WIE \
+es gemacht wird oder WOHER es kommt.
+
+Werden dir unter "Belegte Angaben" Eigenschaften genannt, stammen die aus der \
+Kartendatenbank und sind gesichert - die darfst und sollst du verwenden.
 
 2. EINZIGARTIGKEIT: Jeder Text muss sich klar von einem austauschbaren Standard-Text \
 unterscheiden - nutze den konkreten Betriebsnamen, die Stadt und die Kategorie, um eine \
@@ -113,16 +129,24 @@ Entwurf als JSON. Deine Aufgabe: identifiziere jede Floskel und austauschbare Fo
 von X" falls Standardphrase) und schreibe den KOMPLETTEN Text neu, sodass er sich \
 erkennbar auf genau diesen Betrieb bezieht - Name, Ort, Kategorie und Sprachstil muessen \
 durchscheinen. Wenn ein Feld schon gut und konkret ist, darfst du es beibehalten - aber \
-sei kritisch, der Standard ist hoch. Erfinde weiterhin keine Fakten (keine Jahreszahlen, \
-Auszeichnungen, Zitate). Antworte NUR mit dem kompletten ueberarbeiteten JSON im exakt \
+sei kritisch, der Standard ist hoch. Streiche ausserdem jede Behauptung, die der Verfasser nicht wissen kann: \
+Ausstattung ("hauseigene Backstube"), Herkunft oder Verfahren ("regionale Zutaten", \
+"hausgemacht"), Zusatzleistungen ("Catering", "Lieferdienst"), Auszeichnungen, \
+Jahreszahlen, Zitate, Preise. Ersetze sie durch die schlichte Nennung dessen, was es \
+gibt. Der Betrieb liest diesen Text und merkt sofort, wenn etwas erfunden ist. Antworte NUR mit dem kompletten ueberarbeiteten JSON im exakt \
 gleichen Format wie der Entwurf."""
 
 
 def _draft_site_copy(
-    name: str, category: str, city: str, address: str | None, rating: float | None, review_count: int | None, style_hint: str
+    name: str, category: str, city: str, address: str | None, rating: float | None,
+    review_count: int | None, style_hint: str, fakten: list[str] | None = None
 ) -> dict:
     rating_line = f"Google-Bewertung: {rating} Sterne ({review_count} Bewertungen)." if rating else "Noch keine Bewertungen bekannt."
     address_line = f"Adresse: {address}" if address else ""
+    # Gesicherte Eigenschaften aus OpenStreetMap. Ohne sie erfindet das Modell welche -
+    # mit ihnen hat es echte, und der Text wird nebenbei spezifischer.
+    fakten_line = ("Belegte Angaben (gesichert, gern verwenden): " + ", ".join(fakten)
+                   if fakten else "Belegte Angaben: keine bekannt.")
     user_prompt = (
         f"Betrieb: {name}\nKategorie: {category}\nStadt: {city}\n{address_line}\n{rating_line}\n"
         f"Sprachstil fuer dieses Design: {style_hint} {STYLE_COMMON_RULE}\n\n"
@@ -161,10 +185,11 @@ def generate_site_copy(
     rating: float | None,
     review_count: int | None,
     style_hint: str,
+    fakten: list[str] | None = None,
 ) -> GeneratedSiteCopy:
     """Zweistufig: Entwurf, dann kritische Ueberarbeitung gegen Floskeln - mehr Aufwand
     pro Seite, damit sich Texte nicht wie maschinell durchgereicht anfuehlen."""
-    draft = _draft_site_copy(name, category, city, address, rating, review_count, style_hint)
+    draft = _draft_site_copy(name, category, city, address, rating, review_count, style_hint, fakten)
     refined = _refine_site_copy(draft, name, category, city, style_hint)
     return GeneratedSiteCopy.model_validate(refined)
 

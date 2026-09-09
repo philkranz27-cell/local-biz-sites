@@ -102,7 +102,7 @@
 <body>
 <div class="wrap">
   <header class="hero">
-    <span class="badge">Unverbindlicher Website-Entwurf{% if not (hero_image and hero_image.echt) %} · Fotos sind Symbolbilder{% endif %}</span>
+    <span class="badge">Unverbindlicher Website-Entwurf · Texte{% if not (hero_image and hero_image.echt) %} und Fotos{% endif %} sind Beispiele</span>
     <div class="tagline">{{ tagline }}</div>
     <h1>{{ headline }}</h1>
     <div class="rule"></div>
@@ -161,6 +161,7 @@
 
 <footer>
   Dies ist ein unverbindlicher Demo-Entwurf für {{ name }}, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
   {% if hero_image %}<br>Foto: <a href="{{ hero_image.source_url }}">{{ hero_image.photographer }}</a>{% if hero_image.echt %} via Wikimedia Commons{% if hero_image.lizenz %}, Lizenz {% if hero_image.lizenz_url %}<a href="{{ hero_image.lizenz_url }}">{{ hero_image.lizenz }}</a>{% else %}{{ hero_image.lizenz }}{% endif %}{% endif %}.{% else %} via Pexels (Symbolbild, kein echtes Foto des Betriebs).{% endif %}{% endif %}
 </footer>
 

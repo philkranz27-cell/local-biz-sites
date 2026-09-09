@@ -74,6 +74,15 @@ def generate_site(lead: sqlite3.Row) -> str:
     palette = pick_palette(lead["place_id"])
     style_hint = STYLE_HINTS[template_name]
 
+    # Angaben aus der Karte: die einzigen Inhalte auf der Seite, die nachweislich zu
+    # diesem Betrieb gehoeren. Erst ab zwei lohnt ein eigener Abschnitt - ein einzelnes
+    # "teilweise barrierefrei" unter einer Ueberschrift wirkt duenner als gar nichts.
+    extras = json.loads(lead["osm_extras_json"]) if _hat(lead, "osm_extras_json") else {}
+    fakten_liste = fakten(extras)
+    if len(fakten_liste) < 2:
+        fakten_liste = []
+    soziale_netze = extras.get("soziale_netze") or {}
+
     # Einmal geschriebenen Text behalten. Ohne ihn wuerde jede Aenderung an einer Vorlage
     # auch den Inhalt neu wuerfeln - und kostet ein KI-Kontingent, das taeglich begrenzt
     # ist. Mit ihm ist ein Neuaufbau kostenlos und liefert exakt dieselbe Seite.
@@ -86,6 +95,7 @@ def generate_site(lead: sqlite3.Row) -> str:
         lead["rating"],
         lead["user_ratings_total"],
         style_hint,
+        fakten_liste,
     )
     if not gespeichert:
         db.speichere_site_copy(lead["id"], copy.model_dump_json())
@@ -102,15 +112,6 @@ def generate_site(lead: sqlite3.Row) -> str:
         if hero_image:
             gallery_images = ([hero_image] + gallery_images)[:3]
         hero_image = echtes_foto
-
-    # Angaben aus der Karte: die einzigen Inhalte auf der Seite, die nachweislich zu
-    # diesem Betrieb gehoeren. Erst ab zwei lohnt ein eigener Abschnitt - ein einzelnes
-    # "teilweise barrierefrei" unter einer Ueberschrift wirkt duenner als gar nichts.
-    extras = json.loads(lead["osm_extras_json"]) if _hat(lead, "osm_extras_json") else {}
-    fakten_liste = fakten(extras)
-    if len(fakten_liste) < 2:
-        fakten_liste = []
-    soziale_netze = extras.get("soziale_netze") or {}
 
     slug = slugify(lead["name"], lead["city"], lead["place_id"])
     # OSM-Rohsyntax ("Su-Th 17:00-23:30") in lesbares Deutsch uebersetzen, bevor sie
