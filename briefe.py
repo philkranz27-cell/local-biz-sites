@@ -16,6 +16,7 @@ Aufruf:  .venv/Scripts/python.exe briefe.py [anzahl]
 from __future__ import annotations
 
 import html
+import json
 import re
 import sys
 from datetime import date
@@ -56,9 +57,23 @@ def _absender() -> tuple[str, list[str]]:
     return name, teile[1:]
 
 
+def _anrede(lead) -> str:
+    """Mit Namen ansprechen, wo OpenStreetMap den Inhaber nennt (bei rund jedem fuenften
+    Betrieb). Bewusst ohne "Herr"/"Frau": das Geschlecht steht nirgends, und eine falsche
+    Anrede ist schlimmer als eine neutrale."""
+    extras = json.loads(lead["osm_extras_json"]) if _hat(lead, "osm_extras_json") else {}
+    inhaber = extras.get("inhaber")
+    return f"Guten Tag, {inhaber}," if inhaber else "Guten Tag,"
+
+
+def _hat(lead, spalte: str) -> bool:
+    return spalte in lead.keys() and lead[spalte]
+
+
 def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> str:
     demo_url = f"{settings.base_url}/sites/{lead['site_slug']}/"
     anschrift = [t.strip() for t in (lead["address"] or "").split(",") if t.strip()]
+    anrede = _anrede(lead)
 
     return f"""
 <article class="brief">
@@ -78,7 +93,7 @@ def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> 
   <div class="datum">{html.escape(heute)}</div>
   <h1>Ein Website-Entwurf für {html.escape(lead['name'])} – unverbindlich</h1>
 
-  <p>Guten Tag,</p>
+  <p>{html.escape(anrede)}</p>
 
   <p>
     ich habe für {html.escape(lead['name'])} eine vollständige Website entworfen und ins

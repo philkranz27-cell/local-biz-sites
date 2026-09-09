@@ -113,10 +113,16 @@ def extras_aus_tags(tags: dict) -> dict:
 
     betreiber = (tags.get("operator") or "").strip()
     if betreiber and not _RECHTSFORM.search(betreiber) and _PERSONENNAME.match(betreiber):
+        # "Familie Klaus Olf" ist als Anrede unbeholfen, "Familie Olf" nicht.
+        if betreiber.startswith("Familie "):
+            betreiber = "Familie " + betreiber.split()[-1]
         e["inhaber"] = betreiber
 
     # Filialbetrieb: kauft keine Website bei uns, die Entscheidung faellt in der Zentrale.
-    if tags.get("brand") or tags.get("brand:wikidata"):
+    # Aber nur, wenn kein Inhaber genannt ist: Die Sonnenblumenwerkstatt in Berlin fuehrt
+    # brand=Fleurop und operator=Frank Spechert - ein eigenstaendiger Laden mit
+    # Partnerschaft, genau unsere Zielgruppe. Ein Kieser-Studio hat keinen solchen Namen.
+    if (tags.get("brand") or tags.get("brand:wikidata")) and not e.get("inhaber"):
         e["kette"] = tags.get("brand") or "ja"
 
     return e

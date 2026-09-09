@@ -72,6 +72,11 @@ def phase_find_leads() -> None:
             inserted += 1
             if lead.existing_website:
                 db.set_status(lead_id, "excluded_has_website")
+            elif lead.osm_extras_json and '"kette"' in lead.osm_extras_json:
+                # Filialbetrieb (Kieser, Clever fit, Blume 2000 ...). Ueber die Website
+                # entscheidet die Zentrale, nicht der Standort - ein Brief dorthin ist
+                # Porto ohne Aussicht.
+                db.set_status(lead_id, "excluded_kette")
             elif lead.osm_email:
                 db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
             else:
