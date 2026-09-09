@@ -98,6 +98,18 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 16px; border: none; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
@@ -117,6 +129,8 @@
   <div class="highlights">
     <div class="highlight reveal" style="transition-delay: 0.0s">Lage im Stadtzentrum von Bonn</div><div class="highlight reveal" style="transition-delay: 0.08s">Regionale Zutaten aus Bonn</div><div class="highlight reveal" style="transition-delay: 0.16s">Offene Küche</div>
   </div>
+  <div class="fakten reveal"><span class="fakt">italienische Küche</span><span class="fakt">Vegetarische Gerichte</span><span class="fakt">Plätze im Freien</span></div>
+
 
   <section class="about reveal">
     <h2>Über uns</h2>
@@ -163,6 +177,7 @@
 
   <section class="meta-grid reveal">
     <div class="meta-item"><b>Adresse</b>Kaiserplatz 20, 53113 Bonn</div>
+    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/casadelgattobonn/" target="_blank" rel="noopener">Facebook</a></div>
     
     
     

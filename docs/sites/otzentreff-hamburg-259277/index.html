@@ -121,6 +121,18 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: #a3a3a3; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 4px; border: 1px solid #262626; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
@@ -184,6 +196,7 @@
   <section class="meta-grid reveal">
     <div class="meta-item"><b>Adresse</b>Otzenstraße 4, 22767 Hamburg</div>
     <div class="meta-item"><b>Telefon</b>+49 151 10226184</div>
+    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/Otzentreff-122658841124331" target="_blank" rel="noopener">Facebook</a></div>
     
     
   </section>
