@@ -30,7 +30,6 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .8rem; padding: 1.1rem 1.6rem; border-bottom: 1px solid var(--card-border); background: rgba(10,8,22,.6); }
   .topbar h1 { margin: 0; font-size: 1.2rem; font-weight: 700; background: linear-gradient(90deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .actions { display: flex; align-items: center; gap: .7rem; }
-  .actions .hint { font-size: .78rem; color: var(--muted); max-width: 260px; line-height: 1.35; }
   button.btn { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #0a0714; border: none; padding: .6rem 1.2rem; border-radius: 10px; cursor: pointer; font-size: .85rem; font-weight: 700; transition: transform .15s, box-shadow .15s; }
   button.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(167,139,250,.6); }
   /* Stopp-Knopf zurueckhaltender als der Start-Knopf - er ist die Ausnahme,
@@ -271,7 +270,6 @@
 <div class="topbar">
   <h1>◈ Local Biz Sites</h1>
   <div class="actions">
-    <span class="hint">"Pipeline jetzt starten" löst sofort einen kompletten Durchlauf aus (Leads suchen → prüfen → Website + Mail erzeugen), statt auf den nächsten automatischen Zyklus zu warten. Läuft sonst schon durchgehend im Hintergrund.</span>
     <button class="btn" onclick="pipelineStarten()">Pipeline jetzt starten</button>
     <button class="btn btn-stop" id="pauseBtn" onclick="pipelineUmschalten()">Pipeline stoppen</button>
   </div>
