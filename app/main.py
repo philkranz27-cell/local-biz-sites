@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 from contextlib import asynccontextmanager
 from urllib.parse import urlsplit
 from pathlib import Path
@@ -14,7 +15,19 @@ from app.scheduler import create_scheduler
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+# Der Server laeuft unsichtbar im Hintergrund. Ohne Logdatei war jede Ausnahme verloren -
+# so geschehen am 10.09.: Ein Seitentext scheiterte in der Pipeline nach 7 Sekunden, und
+# der Grund liess sich nicht mehr feststellen.
+_LOG_DATEI = Path(settings.db_path).parent / "logs" / "server.log"
+_LOG_DATEI.parent.mkdir(parents=True, exist_ok=True)
+logging.basicConfig(
+    level=settings.log_level,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        RotatingFileHandler(_LOG_DATEI, maxBytes=2_000_000, backupCount=3, encoding="utf-8"),
+    ],
+)
 
 SITES_DIR = PROJECT_ROOT / "data" / "sites"
 SITES_DIR.mkdir(parents=True, exist_ok=True)
