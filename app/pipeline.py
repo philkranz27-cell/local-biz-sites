@@ -109,13 +109,14 @@ def phase_generate_sites() -> None:
     # Grund: Das kostenlose Tageskontingent reicht fuer rund 60 Seiten - entweder neue
     # bauen oder alte erneuern, nicht beides. Die vorhandenen Seiten haben Vorrang, denn
     # auf sie zeigen die verschickten QR-Codes, und ihre Texte enthalten noch erfundene
-    # Behauptungen. Sobald neuschreiben.py durch ist, laeuft der Neubau von selbst wieder.
+    # Behauptungen. Sobald phase_rewrite_texts alle erneuert hat, laeuft der Neubau von
+    # selbst wieder.
     offen = db.zaehle_ohne_text()
     if offen:
         progress.set_phase("websites",
                            f"Neubau ruht – {offen} vorhandene Seiten warten auf ihren neuen Text")
-        progress.log("websites", f"Neubau pausiert: {offen} Seiten brauchen erst neuen Text "
-                                 f"(neuschreiben.py)", gruppe="websites:neubau-ruht")
+        progress.log("websites", f"Neubau pausiert: {offen} Seiten brauchen erst neuen Text",
+                     gruppe="websites:neubau-ruht")
         return
 
     wartend = db.get_leads_by_status("email_found", limit=20)
