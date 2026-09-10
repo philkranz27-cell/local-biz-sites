@@ -489,7 +489,7 @@
         </span>
         <span class="mail-toggle">▶</span>
       </button>
-      <div class="mail-body" hidden>{{ lead.email_body }}</div>
+      <div class="mail-body" hidden>{{ mail_texte.get(lead.id, lead.email_body) }}</div>
     </div>
     {% endif %}
   {% else %}

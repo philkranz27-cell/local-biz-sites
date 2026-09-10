@@ -12,7 +12,8 @@ from app.uebernahme import uebernehmen
 from app.config import settings
 from app.models import (AufnahmeRequest, BlockRequest, DealUpdate, PaymentLinkRequest,
                         ReservationRequest)
-from app.outreach.mailer import send_aufnahme_notification, send_reservation_notification
+from app.outreach.mailer import (akquise_mail_fuer_lead, send_aufnahme_notification,
+                                send_reservation_notification)
 from app.payments import create_payment_link
 from app import progress, publisher
 from app.pipeline import run_pipeline
@@ -72,6 +73,9 @@ def dashboard(request: Request):
             "status_zaehler": db.zaehle_status(),
             "blocklist": db.get_blocklist(),
             "reservations": db.get_reservations(),
+            # Der komplette Text, wie er beim Betrieb ankaeme - nicht nur der von der KI
+            # geschriebene Teil. Sonst sieht man hier etwas anderes, als rausgeht.
+            "mail_texte": {l["id"]: akquise_mail_fuer_lead(l) for l in leads if l["email_body"]},
         },
     )
 

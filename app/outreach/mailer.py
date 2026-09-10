@@ -1,8 +1,11 @@
+import json
+import re
 import smtplib
 from email.message import EmailMessage
 
 from app.config import settings
 from app.models import ReservationRequest
+from app.outreach.vorteile import vorteile
 
 # Art. 14 DSGVO: Wer Daten nicht bei der betroffenen Person selbst erhebt, muss ihr
 # mitteilen, woher sie stammen. Viele Adressaten sind Einzelunternehmer, ihre
@@ -55,8 +58,47 @@ def _send(to_email: str, subject: str, body: str) -> None:
         smtp.send_message(message)
 
 
-def send_outreach_email(to_email: str, subject: str, body: str) -> None:
-    _send(to_email, subject, GREETING + body + PHOTO_NOTE + _signature() + OPT_OUT_NOTE)
+def akquise_mail_text(body: str, kategorie: str | None = None, stadt: str | None = None,
+                      extras: dict | None = None) -> str:
+    """Der komplette Text, wie er beim Betrieb ankommt.
+
+    Eine Funktion fuer Versand UND Vorschau im Dashboard - sonst zeigt das Dashboard
+    etwas anderes, als tatsaechlich rausgeht. Der Vorteile-Block steht nach dem
+    eigentlichen Anschreiben: erst "hier ist Ihr Entwurf", dann "darum lohnt es sich"."""
+    punkte = vorteile(kategorie, stadt, extras)
+    block = "\n\nWas Ihnen eine eigene Website bringt:\n" + "\n".join(f"– {p}" for p in punkte)
+    return GREETING + _ohne_anrede(body) + block + PHOTO_NOTE + _signature() + OPT_OUT_NOTE
+
+
+# Die KI beginnt ihren Text trotz Anweisung manchmal selbst mit "Hallo," - zusammen mit
+# der festen Anrede davor stand dann "Guten Tag, Hallo, ich habe ..." in der Mail
+# (gesehen bei der Baeckerei Schladitz). Nur eine Anrede ganz am Anfang wird entfernt.
+_ANREDE_AM_ANFANG = re.compile(
+    r"^\s*(?:hallo|guten tag|guten morgen|sehr geehrte[rs]?(?: damen und herren)?|liebe[rs]?)"
+    # Entweder hoechstens ein Wort ("Hallo zusammen,") oder eine Anrede an ein Team, die
+    # beliebig viele Woerter haben darf ("Hallo Amie Nails Team,"). Eine Anrede an eine
+    # Person ("Hallo Herr Mueller,") bleibt stehen - lieber doppelt als ein halber Name.
+    r"(?:\s+[^\s,!]+|\s+[^,!\n]{1,50}?[-\s]team)?\s*[,!]\s*",
+    re.IGNORECASE,
+)
+
+
+def _ohne_anrede(body: str) -> str:
+    # Nur entfernen, Gross- und Kleinschreibung nicht anfassen: Nach "Hallo," schreibt die
+    # KI ohnehin klein weiter, und steht dort ein Name ("Troy Salon ..."), waere ein
+    # erzwungener Kleinbuchstabe falsch.
+    return _ANREDE_AM_ANFANG.sub("", body or "", count=1)
+
+
+def send_outreach_email(to_email: str, subject: str, body: str, kategorie: str | None = None,
+                        stadt: str | None = None, extras: dict | None = None) -> None:
+    _send(to_email, subject, akquise_mail_text(body, kategorie, stadt, extras))
+
+
+def akquise_mail_fuer_lead(lead) -> str:
+    """Kompletter Mailtext fuer einen Lead aus der Datenbank - fuer die Dashboard-Vorschau."""
+    extras = json.loads(lead["osm_extras_json"]) if lead["osm_extras_json"] else None
+    return akquise_mail_text(lead["email_body"] or "", lead["category"], lead["city"], extras)
 
 
 def send_reservation_notification(business_name: str, slug: str, req: ReservationRequest) -> None:

@@ -194,7 +194,9 @@ def phase_send_emails() -> None:
             logger.info("Uebersprungen, Adresse gesperrt: %s", row["contact_email"])
             continue
         try:
-            send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"])
+            extras = json.loads(row["osm_extras_json"]) if row["osm_extras_json"] else None
+            send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"],
+                                row["category"], row["city"], extras)
             db.mark_emailed(row["id"])
             logger.info("Mail gesendet an Lead %s (%s)", row["id"], row["contact_email"])
             progress.log("versand", f"Mail gesendet an {row['name']} <{row['contact_email']}>")

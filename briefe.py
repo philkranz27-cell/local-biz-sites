@@ -71,9 +71,18 @@ def _hat(lead, spalte: str) -> bool:
 
 
 def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> str:
+    from app.outreach.vorteile import vorteile
+
     demo_url = f"{settings.base_url}/sites/{lead['site_slug']}/"
     anschrift = [t.strip() for t in (lead["address"] or "").split(",") if t.strip()]
     anrede = _anrede(lead)
+    # Warum sich eine Website lohnt - bisher stand im Brief nur, dass der Entwurf fertig
+    # ist. Dieselben drei Punkte wie in der Mail, siehe app/outreach/vorteile.py.
+    extras = json.loads(lead["osm_extras_json"]) if _hat(lead, "osm_extras_json") else {}
+    vorteile_html = "".join(
+        f'<li style="margin:0 0 1.5mm">{html.escape(p)}</li>'
+        for p in vorteile(lead["category"], lead["city"], extras)
+    )
 
     return f"""
 <article class="brief">
@@ -110,10 +119,12 @@ def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> 
   </div>
 
   <p>
-    Die Seite zeigt Ihr Angebot, Ihre Öffnungszeiten und ein Formular für Anfragen.
     Die Fotos darauf sind Platzhalter – Ihre eigenen Bilder, Texte und Farben setze ich
     ein, sobald Sie mir sagen, wie Sie es haben möchten.
   </p>
+
+  <p style="margin:0 0 1.5mm"><strong>Was eine eigene Website für {html.escape(lead['name'])} bringt:</strong></p>
+  <ul style="margin:0 0 4mm;padding-left:5mm">{vorteile_html}</ul>
 
   <p>
     Wenn Ihnen der Entwurf gefällt, bringe ich die Seite unter Ihre Wunschadresse und
@@ -202,9 +213,9 @@ VORLAGE = """<!DOCTYPE html>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Helvetica Neue", Arial, sans-serif; color: #111;
-         font-size: 11pt; line-height: 1.55; background: #f4f4f5; }
+         font-size: 11pt; line-height: 1.45; background: #f4f4f5; }
 
-  .brief { width: 210mm; min-height: 297mm; padding: 20mm 20mm 15mm 25mm;
+  .brief { width: 210mm; min-height: 297mm; padding: 20mm 20mm 28mm 25mm;
            background: #fff; margin: 0 auto 10mm; position: relative; page-break-after: always; }
   .brief:last-child { page-break-after: auto; }
 
@@ -215,13 +226,13 @@ VORLAGE = """<!DOCTYPE html>
   .absender { font-style: normal; font-size: 9pt; color: #444; text-align: right;
               margin-top: 4mm; white-space: nowrap; }
 
-  .datum { text-align: right; margin: 12mm 0 8mm; font-size: 10pt; }
-  h1 { font-size: 12.5pt; margin: 0 0 6mm; }
-  p { margin: 0 0 4mm; }
+  .datum { text-align: right; margin: 5mm 0 4mm; font-size: 10pt; }
+  h1 { font-size: 12.5pt; margin: 0 0 4mm; }
+  p { margin: 0 0 2.5mm; }
 
-  .qr-block { display: flex; align-items: center; gap: 6mm; margin: 6mm 0;
-              padding: 4mm; border: .4pt solid #ccc; border-radius: 2mm; }
-  .qr svg { width: 28mm; height: 28mm; display: block; shape-rendering: crispEdges; }
+  .qr-block { display: flex; align-items: center; gap: 6mm; margin: 3mm 0;
+              padding: 3mm; border: .4pt solid #ccc; border-radius: 2mm; }
+  .qr svg { width: 24mm; height: 24mm; display: block; shape-rendering: crispEdges; }
   .qr-text { font-size: 10pt; }
   .qr-text strong { display: block; margin-bottom: 1.5mm; }
   .url { font-size: 7.5pt; color: #555; word-break: break-all; }
