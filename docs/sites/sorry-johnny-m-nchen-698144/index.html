@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sorry Johnny — München</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/29046154/pexels-photo-29046154.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/6612636/pexels-photo-6612636.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,10 +124,10 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Kaffee, der zu Ihnen passt – Sorry Johnny</div>
-    <h1>Sorry Johnny</h1>
-    <p class="sub">Direkt an der Preysingstraße, in zentraler Lage von München</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt bestellen</a>
+    <div class="eyebrow">Frühstück und Kaffee in München</div>
+    <h1>Sorry Johnny Café</h1>
+    <p class="sub">Ihr Café in München</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
 <main>
@@ -127,31 +135,33 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Preysingstraße 12, München</div><div class="highlight reveal" style="transition-delay: 0.08s">Täglich frische Backwaren</div><div class="highlight reveal" style="transition-delay: 0.16s">Zügige Bedienung</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">Frühstück</span><span class="fakt">Kaffeespezialitäten</span><span class="fakt">Vegetarische Gerichte</span><span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Espresso</div><div class="highlight reveal" style="transition-delay: 0.08s">Cappuccino</div><div class="highlight reveal" style="transition-delay: 0.16s">Veggie-Bowl</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">Frühstück</span><span class="fakt">Kaffeespezialitäten</span><span class="fakt">Vegetarische Gerichte</span><span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Bei Sorry Johnny erhalten Sie Espresso aus fair gehandelten Bohnen, die wir täglich frisch mahlen. Unser Angebot umfasst täglich frisch gebackene Croissants, hausgemachte Marmelade und ein wechselndes Sortiment an Kuchen, die wir aus regionalen Zutaten zubereiten. Die lichtdurchfluteten Sitzbereiche eignen sich sowohl für einen kurzen Kaffee als auch für konzentriertes Arbeiten. Wir legen Wert auf zügige Bedienung und klare Preisangaben.</p>
+    <p>Im Sorry Johnny Café können Sie den Tag mit einer Ihrer Kaffeespezialitäten beginnen und anschließend ein leichtes Frühstück genießen. Das Angebot umfasst vegetarische Gerichte, die sich gut für eine Mittagspause eignen.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Espresso</h3><p>Klarer, intensiver Espresso aus fair gehandelten Bohnen, sofort nach dem Mahlen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Espresso</h3><p>Ein kurzer, kräftiger Kaffee.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Cappuccino</h3><p>Cremiger Cappuccino mit feinporigem Milchschaum, zubereitet aus frischer Vollmilch.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Cappuccino</h3><p>Cappuccino mit cremigem Milchschaum.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Frühstück</h3><p>Frische Croissants, hausgemachte Marmelade und weitere Frühstücksvarianten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Veggie-Bowl</h3><p>Bunte Bowl mit frischem Gemüse.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Kuchen</h3><p>Tagesfrische Kuchenstücke, hergestellt aus regionalen Zutaten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Frühstücksteller</h3><p>Frühstück mit Brot, Aufstrichen und Obst.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Salat &amp; Wraps</h3><p>Leichte Snacks, die schnell sättigen und aus frischen Zutaten bestehen.</p></div>
-      
-      <div class="service reveal" style="transition-delay: 0.35000000000000003s"><h3>Take‑Away</h3><p>Getränke und Snacks, die wir für Sie praktisch verpacken.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Kuchen</h3><p>Stück Kuchen für den Nachmittag.</p></div>
       
     </div>
   </section>
@@ -161,16 +171,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/charming-cafe-with-breakfast-and-coffee-setup-30855411/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/30855411/pexels-photo-30855411.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/beverage-in-paper-cup-on-table-18617715/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/18617715/pexels-photo-18617715.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/a-man-in-a-cafe-11091298/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/11091298/pexels-photo-11091298.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/cozy-cafe-corner-with-coffee-in-monochrome-37044985/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37044985/pexels-photo-37044985.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/interior-design-of-coffee-shop-11287941/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/11287941/pexels-photo-11287941.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/cup-on-wooden-table-12884335/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/12884335/pexels-photo-12884335.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="cafe Impression" loading="lazy">
       </a>
       
     </div>
@@ -190,8 +200,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Sorry Johnny, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/cozy-cafe-interior-with-neon-macaron-sign-29046154/">Ana  Dolidze</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Sorry Johnny, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/a-coffee-in-a-glass-6612636/">Pavel Danilyuk</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -227,6 +238,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -234,6 +248,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

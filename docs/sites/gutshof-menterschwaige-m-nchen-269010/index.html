@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gutshof Menterschwaige — München</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/7454888/pexels-photo-7454888.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/36422979/pexels-photo-36422979.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,9 +124,9 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Bayerische Küche im Grünen</div>
-    <h1>Gutshof Menterschwaige</h1>
-    <p class="sub">Restaurant an der Menterschwaigstraße in München</p>
+    <div class="eyebrow">Vegetarische Küche im Gutshof Menterschwaige</div>
+    <h1>Gutshof Menterschwaige – Restaurant</h1>
+    <p class="sub">Vegetarisches Restaurant am Gutshof Menterschwaige, München</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
@@ -127,29 +135,33 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Frische Regionalprodukte</div><div class="highlight reveal" style="transition-delay: 0.08s">Garten‑Innenhof mit Sitzgelegenheiten</div><div class="highlight reveal" style="transition-delay: 0.16s">Zentrale Lage an der Menterschwaigstraße</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">Vegetarische Gerichte</span><span class="fakt">WLAN für Gäste</span><span class="fakt">Kartenzahlung möglich</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Mittagsmenü</div><div class="highlight reveal" style="transition-delay: 0.08s">Dessertauswahl</div><div class="highlight reveal" style="transition-delay: 0.16s">Vegetarische Hauptgerichte</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">Vegetarische Gerichte</span><span class="fakt">WLAN für Gäste</span><span class="fakt">Kartenzahlung möglich</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Im Gutshof Menterschwaige kombinieren wir bayerische Küche mit saisonalen Einflüssen. Der Innenhof ist von Bäumen umgeben und bietet ruhige Sitzplätze für ein entspanntes Essen. Wir verwenden ausschließlich frische, regionale Zutaten aus dem Umland, die täglich für Sie zubereitet werden.</p>
+    <p>Im Gutshof Menterschwaige bieten wir Ihnen eine Auswahl vegetarischer Gerichte für Mittag‑ und Abendessen. Jede Speise ist darauf ausgerichtet, Ihnen einen entspannten Moment zu ermöglichen.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Frühstück</h3><p>Unser Frühstücksbuffet enthält regionale Spezialitäten und saisonale Optionen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Mittagsmenü</h3><p>Ein leichtes vegetarisches Menü, passend für die Mittagspause.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Mittagsmenü</h3><p>Leichte Gerichte und saisonale Spezialitäten für die Mittagspause.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Vegetarische Hauptgerichte</h3><p>Auswahl an Hauptgerichten, zubereitet aus frischem Gemüse.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Abendessen</h3><p>Ausgewählte Hauptgerichte aus der regionalen Küche, passend zu Ihrem Geschmack.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Dessertauswahl</h3><p>Süße Optionen, die das Essen abrunden.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Hausgemachte Kuchen</h3><p>Täglich frisch gebackene Kuchen aus unserer hauseigenen Bäckerei.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Weinkarte</h3><p>Auswahl an Weinen, die zu den Gerichten passen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Weinangebot</h3><p>Ausgewähltes Sortiment lokaler Weine, abgestimmt auf die Speisen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Vorspeisen</h3><p>Kleine, vegetarische Vorspeisen zum Einstieg.</p></div>
       
     </div>
   </section>
@@ -159,16 +171,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/a-tree-lined-street-with-tables-and-chairs-27419356/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/27419356/pexels-photo-27419356.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-couple-dining-in-a-restaurant-7244274/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7244274/pexels-photo-7244274.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/traditional-bavarian-meal-with-sausages-and-potatoes-37275048/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37275048/pexels-photo-37275048.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/glasses-on-table-in-restaurant-15113069/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/15113069/pexels-photo-15113069.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/lively-summer-gathering-at-munich-beer-garden-37773716/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37773716/pexels-photo-37773716.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-restaurant-table-setup-for-dining-30322394/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/30322394/pexels-photo-30322394.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
     </div>
@@ -180,6 +192,7 @@
     
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>Mo–So, Feiertage: 11:30–22:00 Uhr</li></ul>
     </div>
@@ -187,8 +200,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Gutshof Menterschwaige, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/facade-of-a-building-7454888/">Viesturs Davidčuks</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Gutshof Menterschwaige, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/stylish-modern-restaurant-dining-interior-36422979/">Dominik Schmid</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -224,6 +238,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -231,6 +248,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

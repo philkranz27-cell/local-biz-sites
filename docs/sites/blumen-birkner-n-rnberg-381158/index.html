@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blumen Birkner — Nürnberg</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Blumen in Harmonie</div>
+    <div class="tagline">Blumen Birkner – Florist aus Nürnberg</div>
     <h1>Blumen Birkner</h1>
     <div class="rule"></div>
-    <p class="sub">Ihr Florist für anspruchsvolle Blumenarrangements in Nürnberg.</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Beratung vereinbaren</a>
+    <p class="sub">Florist in Nürnberg</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Bestellen Sie Ihre Blumen</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/charming-indoor-flower-arrangement-display-37309560/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/37309560/pexels-photo-37309560.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumen Birkner"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/colorful-street-market-facade-with-grocery-display-39332602/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/39332602/pexels-photo-39332602.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumen Birkner"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Bei Blumen Birkner kombinieren wir sorgfältig ausgewählte Schnittblumen und Topfpflanzen zu Kompositionen, die den Charakter Ihres Anlasses unterstreichen. Unser Sortiment umfasst saisonale Schnittblumen, ausgewählte Topfpflanzen sowie individuell gestaltete Gestecke. Wir nehmen uns Zeit, Ihre Vorstellungen zu besprechen und eine passende Lösung zu erarbeiten. Darüber hinaus bieten wir dezente Dekorationen für Veranstaltungen und Geschäftsräume an.</p>
+    <p>Blumen Birkner stellt individuelle Blumenarrangements für private und geschäftliche Anlässe zusammen. Dabei legt das Haus besonderen Wert auf frische Schnittblumen und harmonische Farbkombinationen. Jede Kreation wird mit Sorgfalt nach den Vorgaben der Kundinnen und Kunden gestaltet.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Zentrale Lage in Nürnberg</div><div class="hcol"><span class="mark">—</span>Persönliche Beratung</div><div class="hcol"><span class="mark">—</span>Tägliche Frischlieferungen</div>
+      <div class="hcol"><span class="mark">—</span>Schnittblumen</div><div class="hcol"><span class="mark">—</span>Individuelle Gestecke</div><div class="hcol"><span class="mark">—</span>Blumen für Feiern</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Sorgfältig komponierter Strauß, abgestimmt auf Ihren Anlass und Ihre Farbvorlieben.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Hochzeitsfloristik</h3><p>Individuell gestaltete Arrangements, die das Konzept Ihrer Hochzeit ergänzen.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Firmenpräsenz</h3><p>Ausgewählte Pflanzen, die Empfangs- und Arbeitsbereiche stilvoll ergänzen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Pflanzenpflege</h3><p>Beratung und Service für die langfristige Pflege Ihrer Pflanzen.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Saisonale Dekoration</h3><p>Gestecke, die sich nach den Jahreszeiten richten und Ihrem Raum eine dezente Note verleihen.</p></li><li class="reveal" style="transition-delay: 0.3s"><h3>Lieferung</h3><p>Zuverlässige Zustellung innerhalb Nürnbergs und Umgebung.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Ein Strauß, abgestimmt auf Ihren Anlass.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Gesteck</h3><p>Ein Gesteck, das nach Ihren Vorstellungen zusammengestellt wird.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Hochzeitsfloristik</h3><p>Blumenarrangements für Ihren Hochzeitstag, nach Ihren Vorgaben.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Pflanzenlieferung</h3><p>Lieferung Ihrer Wunschpflanze zu Ihrer Adresse.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37309564/pexels-photo-37309564.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
-      </a>
-      
-      <a class="reveal" href="https://www.pexels.com/photo/vibrant-indoor-flower-arrangement-display-35981805/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+      <a class="reveal" href="https://www.pexels.com/photo/vibrant-indoor-flower-arrangement-display-35981805/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
         <img src="https://images.pexels.com/photos/35981805/pexels-photo-35981805.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/bouquet-of-flowers-in-vase-1827131/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/1827131/pexels-photo-1827131.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/black-and-white-floral-shop-interior-with-motion-blur-30630894/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/30630894/pexels-photo-30630894.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-floral-arrangement-in-luxurious-setting-37155355/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37155355/pexels-photo-37155355.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -138,8 +152,9 @@
 </div>
 
 <section class="meta-grid reveal">
-  
+  <div class="meta-item"><b>Adresse</b>Johannisstraße 48, 90419 Nürnberg</div>
   <div class="meta-item"><b>Telefon</b>+49 911 330378</div>
+    
   
   
   <div class="meta-item"><b>Öffnungszeiten</b>
@@ -149,8 +164,9 @@
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Blumen Birkner, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/charming-indoor-flower-arrangement-display-37309560/">Pew Nguyen</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Blumen Birkner, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/colorful-street-market-facade-with-grocery-display-39332602/">Rahela Ulici</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -184,6 +200,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -191,6 +210,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
