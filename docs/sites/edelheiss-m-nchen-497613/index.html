@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/5491011/pexels-photo-5491011.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/16247197/pexels-photo-16247197.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,9 +124,9 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Alpenflair in München</div>
-    <h1>Edelheiss – Ihre Bar in München</h1>
-    <p class="sub">Im Zentrum Münchens verbinden wir moderne Drinks mit alpiner Atmosphäre.</p>
+    <div class="eyebrow">Bar Edelheiss – Münchner Bar mit Außenplätzen</div>
+    <h1>Edelheiss</h1>
+    <p class="sub">Die Bar Edelheiss liegt in München und bietet ein vielfältiges Angebot.</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
@@ -127,29 +135,33 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Frische Cocktailkreationen</div><div class="highlight reveal" style="transition-delay: 0.08s">Auswahl Craft‑Biere</div><div class="highlight reveal" style="transition-delay: 0.16s">Zentrale Lage</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Cocktails</div><div class="highlight reveal" style="transition-delay: 0.08s">Weine</div><div class="highlight reveal" style="transition-delay: 0.16s">Biere vom Fass</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Bei Edelheiss erhalten Sie Cocktails und ausgewählte Craft‑Biere in einem stilvollen Ambiente. Wir setzen auf regionale Zutaten und kreative Mixe, die klassische und moderne Geschmäcker zusammenbringen. Ergänzend bieten wir kleine Snacks, die gut zu Ihrem Getränk passen. Unser Team berät Sie gern bei der Auswahl.</p>
+    <p>Bei Edelheiss können Sie abends Cocktails, Weine oder Biere bestellen und tagsüber einen Aperitif genießen. Die Getränkekarte umfasst klassische Cocktails, Longdrinks, Weine aus unserem Sortiment und frisch gezapfte Biere. Zusätzlich gibt es eine kleine Snackplatte zum Teilen.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktails</h3><p>Klassische und eigens kreierte Drinks aus regionalen Zutaten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktailklassiker</h3><p>Wir mixen klassische Cocktails nach Ihren Wünschen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Craft Beer</h3><p>Rot‑ und Weißbiere von bayerischen Brauereien.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Weinflatrate</h3><p>Ein Glas ausgewählter Wein ergänzt Ihr Getränkekonzept.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Wein</h3><p>Ausgewählte Weiß‑ und Rotweine aus europäischen Anbaugebieten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Bier vom Fass</h3><p>Frisch gezapftes Bier wird Ihnen serviert.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Snacks</h3><p>Kleine Gerichte und Tapas zum Teilen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Snackplatte</h3><p>Eine kleine Auswahl an Snacks steht zum Teilen bereit.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Alpen-Atmosphäre</h3><p>Gemütliches Interieur mit alpinen Akzenten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Live‑Music‑Abend</h3><p>Live‑Music‑Abende bringen musikalische Untermalung.</p></div>
       
     </div>
   </section>
@@ -159,16 +171,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/alcoholic-drink-on-a-cocktail-glass-10499359/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/10499359/pexels-photo-10499359.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/illuminated-bar-reflecting-in-the-window-12478607/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/12478607/pexels-photo-12478607.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/cozy-ambient-bar-interior-with-wooden-decor-36964863/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/36964863/pexels-photo-36964863.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/cozy-cafe-evening-in-a-european-cityscape-28551374/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/28551374/pexels-photo-28551374.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/elegant-cocktail-on-wooden-table-in-dimly-lit-bar-34575931/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/34575931/pexels-photo-34575931.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/drop-lights-hanging-from-the-ceiling-7518774/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7518774/pexels-photo-7518774.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
     </div>
@@ -180,6 +192,7 @@
     <div class="meta-item"><b>Telefon</b>+49 89 265453</div>
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>So–Do: 15:00–01:00 Uhr</li><li>Fr–Sa: 15:00–03:00 Uhr</li></ul>
     </div>
@@ -187,8 +200,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Edelheiss, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/cocktails-served-on-wooden-table-5491011/">Rachel Claire</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Edelheiss, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/tables-on-the-sidewalk-in-front-of-the-restaurant-16247197/">Ece Kocaman</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -224,6 +238,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -231,6 +248,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
