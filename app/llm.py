@@ -137,9 +137,14 @@ sei kritisch, der Standard ist hoch. Streiche ausserdem jede Behauptung ueber Au
 unter "Belegte Angaben" steht - Terrasse, Innenhof, Backstube, Lieferdienst, \
 Catering und dergleichen. Ebenso Herkunft und Verfahren ("regionale Zutaten", \
 "hausgemacht"), Auszeichnungen, Jahreszahlen, Zitate und Preise. Ersetze sie durch \
-die schlichte Nennung dessen, was es gibt. Achte dabei darauf, die Angebotstexte \
-nicht auszuhoehlen: "Taeglich wechselnde Gerichte zur Mittagszeit" ist gut, \
-"Gerichte, die wir zur Mittagszeit anbieten" sagt nichts mehr. Der Betrieb liest \
+das, was die Betriebsart selbst bedeutet - ohne den Text dabei zu verflachen. Waerme \
+und Einladung sind erwuenscht, verboten sind nur Tatsachenbehauptungen. "Ein Kaffee am \
+Morgen, ein Stueck Kuchen am Nachmittag" ist gut; "Sie erhalten ein Fruehstueck" oder \
+"Kartenzahlung ist moeglich" als Werbetext sind schlecht. Ausstattung (Sitzplaetze, \
+Barrierefreiheit, WLAN, Zahlungsarten) gehoert weder ins Angebot noch in die \
+Highlights - sie steht auf der Seite bereits in einer eigenen Zeile. Achte darauf, die \
+Angebotstexte nicht auszuhoehlen: "Taeglich wechselnde Gerichte zur Mittagszeit" ist \
+gut, "Gerichte, die wir zur Mittagszeit anbieten" sagt nichts mehr. Der Betrieb liest \
 diesen Text und merkt sofort, wenn etwas erfunden ist. Antworte NUR mit dem kompletten ueberarbeiteten JSON im exakt \
 gleichen Format wie der Entwurf."""
 
@@ -156,6 +161,7 @@ def _draft_site_copy(
                    if fakten else "Belegte Angaben: keine bekannt.")
     user_prompt = (
         f"Betrieb: {name}\nKategorie: {category}\nStadt: {city}\n{address_line}\n{rating_line}\n"
+        f"{fakten_line}\n"
         f"Sprachstil fuer dieses Design: {style_hint} {STYLE_COMMON_RULE}\n\n"
         "Schreibe:\n"
         "- tagline: 2-5 Woerter, sehr kurzer einpraegsamer Claim\n"
@@ -163,10 +169,20 @@ def _draft_site_copy(
         "Erklaerungssatz nach Gedankenstrich, keine Adresse, kein Willkommensgruss, und die "
         "Stadt NICHT wiederholen - die steht bereits in der subheadline\n"
         "- subheadline: 1 Satz, stellt Kategorie und Stadt klar heraus (lokaler Bezug wichtig)\n"
-        "- about: 3-4 Saetze, einladend und konkret fuer diese Betriebsart, keine Floskeln\n"
-        "- highlights: genau 3 kurze, glaubwuerdige USP-Stichpunkte (je 2-4 Woerter)\n"
-        "- services: 4-6 Eintraege mit name (kurz) und description (ein knapper Satz), "
-        "typisch fuer diese Betriebsart\n"
+        "- about: 3-4 Saetze in warmem, einladendem Ton: was man dort tut und warum man "
+        "vorbeikommt, passend zur Betriebsart (etwa 'Ein Kaffee am Morgen, ein Stueck Kuchen "
+        "am Nachmittag'). Waerme ist erwuenscht - verboten sind nur Tatsachenbehauptungen. "
+        "Zaehle die belegten Angaben NICHT auf: die stehen auf der Seite schon in einer eigenen "
+        "Zeile. Keine Aussagen ueber Raeume und Einrichtung ('gemuetlich', 'modern', 'ruhig', "
+        "'stilvoll', 'lichtdurchflutet')\n"
+        "- highlights: genau 3 kurze, einladende Stichpunkte (je 2-4 Woerter) ueber das "
+        "Angebot, etwa 'Kaffee und Kuchen' oder 'Schnitt und Farbe'. Nicht wortgleich mit den "
+        "belegten Angaben, keine Ausstattung (Barrierefreiheit, WLAN, Kartenzahlung, "
+        "Sitzplaetze), niemals Strasse oder Stadtname\n"
+        "- services: 4-6 Eintraege dessen, was man dort bestellen oder buchen kann, mit name "
+        "(kurz) und description (ein lebendiger Satz - nicht 'Sie erhalten ein ...'). "
+        "Ausstattung wie Sitzplaetze, Barrierefreiheit, WLAN oder Zahlungsarten ist KEINE "
+        "Leistung und gehoert nicht in diese Liste\n"
         "- cta_text: kurzer Call-to-Action-Button-Text passend zur Kategorie "
         "(z.B. 'Tisch reservieren', 'Termin vereinbaren', 'Jetzt anrufen')\n"
         "- image_query: 3-5 englische Suchbegriffe fuer ein stimmungsvolles, thematisch "
@@ -176,9 +192,15 @@ def _draft_site_copy(
     return _structured(SITE_COPY_SYSTEM_PROMPT, user_prompt, GeneratedSiteCopy, temperature=0.9)
 
 
-def _refine_site_copy(draft: dict, name: str, category: str, city: str, style_hint: str) -> dict:
+def _refine_site_copy(draft: dict, name: str, category: str, city: str, style_hint: str,
+                      fakten: list[str] | None = None) -> dict:
+    # Das Lektorat soll alles streichen, was nicht belegt ist - dafuer muss es die Belege
+    # auch kennen. Ohne sie streicht es entweder zu wenig oder alles Konkrete.
+    fakten_line = ("Belegte Angaben (gesichert): " + ", ".join(fakten)
+                   if fakten else "Belegte Angaben: keine bekannt.")
     user_prompt = (
-        f"Betrieb: {name}\nKategorie: {category}\nStadt: {city}\nSprachstil: {style_hint} {STYLE_COMMON_RULE}\n\n"
+        f"Betrieb: {name}\nKategorie: {category}\nStadt: {city}\n{fakten_line}\n"
+        f"Sprachstil: {style_hint} {STYLE_COMMON_RULE}\n\n"
         f"Entwurf:\n{json.dumps(draft, ensure_ascii=False)}"
     )
     return _structured(REFINE_SYSTEM_PROMPT, user_prompt, GeneratedSiteCopy, temperature=0.7)
@@ -197,8 +219,41 @@ def generate_site_copy(
     """Zweistufig: Entwurf, dann kritische Ueberarbeitung gegen Floskeln - mehr Aufwand
     pro Seite, damit sich Texte nicht wie maschinell durchgereicht anfuehlen."""
     draft = _draft_site_copy(name, category, city, address, rating, review_count, style_hint, fakten)
-    refined = _refine_site_copy(draft, name, category, city, style_hint)
+    refined = _refine_site_copy(draft, name, category, city, style_hint, fakten)
     return GeneratedSiteCopy.model_validate(refined)
+
+
+REPAIR_SYSTEM_PROMPT = """\
+Du ueberarbeitest einen Website-Text fuer einen lokalen Betrieb, den eine automatische \
+Pruefung beanstandet hat. Du bekommst den Text als JSON und die woertlichen \
+Beanstandungen. Behebe genau diese Beanstandungen; was nicht beanstandet ist, bleibt, \
+wie es ist. Schreibe warm und einladend, aber ohne Behauptungen ueber Raeume, Stimmung, \
+Personal, Herkunft oder Zusatzleistungen. Verboten sind Formulierungen wie "Sie \
+erhalten", "erhalten Sie", "ist moeglich", "steht zur Verfuegung", "wird angeboten". \
+Ausstattung (WLAN, Barrierefreiheit, Kartenzahlung, Sitzplaetze) gehoert weder in \
+about noch in services noch in highlights - sie steht auf der Seite bereits separat. \
+about braucht mindestens drei Saetze, services mindestens vier Eintraege mit je einem \
+lebendigen Satz als Beschreibung, highlights genau drei. Antworte NUR mit dem \
+kompletten JSON im exakt gleichen Format."""
+
+
+def repair_site_copy(copy_dict: dict, beanstandungen: list[str], name: str, category: str,
+                     city: str, style_hint: str, fakten: list[str] | None = None) -> GeneratedSiteCopy:
+    """Gezielter zweiter Versuch mit den Beanstandungen der Textpruefung.
+
+    Ein blinder Neuversuch mit demselben Prompt liefert erfahrungsgemaess dieselben Fehler -
+    am 10.09. brach jede Runde andere Regeln. Die Beanstandungen woertlich mitzugeben,
+    trifft sie gezielt und kostet nur fuer die Texte einen Aufruf, die ihn brauchen."""
+    fakten_line = ("Belegte Angaben (gesichert): " + ", ".join(fakten)
+                   if fakten else "Belegte Angaben: keine bekannt.")
+    user_prompt = (
+        f"Betrieb: {name}\nKategorie: {category}\nStadt: {city}\n{fakten_line}\n"
+        f"Sprachstil: {style_hint} {STYLE_COMMON_RULE}\n\n"
+        "Beanstandungen:\n" + "\n".join(f"- {b}" for b in beanstandungen) + "\n\n"
+        f"Text:\n{json.dumps(copy_dict, ensure_ascii=False)}"
+    )
+    return GeneratedSiteCopy.model_validate(
+        _structured(REPAIR_SYSTEM_PROMPT, user_prompt, GeneratedSiteCopy, temperature=0.6))
 
 
 EMAIL_SYSTEM_PROMPT = """\

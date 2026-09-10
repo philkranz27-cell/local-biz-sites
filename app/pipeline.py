@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
@@ -203,6 +204,53 @@ def phase_send_emails() -> None:
                          gruppe=f"versand:{type(exc).__name__}")
 
 
+# Pro Durchlauf nur ein Stueck: Die Pipeline laeuft jede Minute, und ein Durchlauf soll
+# nicht eine halbe Stunde lang an Texten haengen, waehrend Suche und Veroeffentlichung
+# warten.
+TEXTE_PRO_DURCHLAUF = 10
+_AUSWAHL_DATEI = Path(settings.db_path).parent / "auswahl.json"
+
+
+def phase_rewrite_texts() -> None:
+    """Erneuert die Texte bestehender Seiten mit der aktuellen Fassung des Prompts.
+
+    Lief frueher als taeglich geplante Aufgabe - die konnte nie funktionieren: Sie
+    brauchte fuer jeden Lauf eine Freigabe, die beim automatischen Start niemand
+    erteilt, und lief nur bei geoeffneter App. Hier laeuft es im Server, der ohnehin
+    durchgehend arbeitet, das Kontingent kennt und keine Freigaben braucht.
+
+    Briefempfaenger zuerst: Wer angeschrieben wird, soll die bessere Seite sehen.
+    """
+    offen = db.get_leads_ohne_text()
+    if not offen:
+        return
+    try:
+        bevorzugt = set(json.loads(_AUSWAHL_DATEI.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        bevorzugt = set()
+    offen.sort(key=lambda l: (l["site_slug"] not in bevorzugt, l["id"]))
+
+    progress.set_phase("websites", f"Texte erneuern – {len(offen)} Seiten offen")
+    for row in offen[:TEXTE_PRO_DURCHLAUF]:
+        if progress.is_paused():
+            break
+        try:
+            generate_site(row)
+            progress.log("websites", f"Text erneuert: {row['name']} ({row['city']})")
+        except progress.Angehalten:
+            break
+        except groq.RateLimitError:
+            # Wie beim Neubau: kein Fehler des Betriebs, also nicht mitzaehlen.
+            progress.log("fehler", "Tageskontingent erschöpft – Texte erneuern geht morgen weiter",
+                         gruppe="texte:kontingent")
+            break
+        except Exception:
+            logger.exception("Text erneuern fehlgeschlagen fuer Lead %s", row["id"])
+            db.text_fehlgeschlagen(row["id"])
+            progress.log("fehler", f"Text erneuern fehlgeschlagen: {row['name']}",
+                         gruppe="texte:fehler")
+
+
 def run_pipeline() -> None:
     # Verarbeitung zuerst, Suche zuletzt: der Rechner laeuft nicht durchgehend, sondern in
     # Schueben von ein bis zwei Stunden. Wer zuerst sucht, verbraucht das ganze Zeitfenster
@@ -212,6 +260,9 @@ def run_pipeline() -> None:
 
     progress.start_run()
     try:
+        phase_rewrite_texts()
+        if progress.is_paused():
+            return
         phase_generate_sites()
         if progress.is_paused():
             return

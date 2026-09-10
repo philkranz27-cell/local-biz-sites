@@ -7,9 +7,10 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from app import db
-from app.llm import STYLE_HINTS, GeneratedSiteCopy, generate_site_copy
+from app.llm import STYLE_HINTS, GeneratedSiteCopy, generate_site_copy, repair_site_copy
 from app.config import settings
 from app.sources.osm_extras import fakten
+from app.sitegen.textpruefung import TextAbgelehnt, pruefe
 from app.sitegen.images import get_photos
 from app.sitegen.opening_hours import format_opening_hours
 from app.sitegen.osm_photo import hole_foto
@@ -98,6 +99,21 @@ def generate_site(lead: sqlite3.Row) -> str:
         fakten_liste,
     )
     if not gespeichert:
+        # Jeden neuen Text pruefen, bevor er auf eine Seite kommt. Warum das im Code steht
+        # und nicht im Prompt: siehe app/sitegen/textpruefung.py. Die Pruefung repariert,
+        # was sich reparieren laesst (auch eine zu lange Schlagzeile); bleibt danach zu
+        # wenig uebrig, gibt es genau einen gezielten Reparaturversuch mit den woertlichen
+        # Beanstandungen. Scheitert auch der, wird der Text abgelehnt - die Seite behaelt
+        # dann ihren bisherigen Text, statt einen schlechten zu bekommen.
+        original = copy.model_dump()
+        ergebnis = pruefe(copy, fakten_liste, stadt=lead["city"], name=lead["name"])
+        if not ergebnis.in_ordnung:
+            copy = repair_site_copy(original, ergebnis.reparaturen + ergebnis.probleme,
+                                    lead["name"], lead["category"], lead["city"],
+                                    style_hint, fakten_liste)
+            ergebnis = pruefe(copy, fakten_liste, stadt=lead["city"], name=lead["name"])
+            if not ergebnis.in_ordnung:
+                raise TextAbgelehnt("; ".join(ergebnis.probleme))
         db.speichere_site_copy(lead["id"], copy.model_dump_json())
 
     # Einmal gewaehlte Bilder behalten. Sonst zieht jeder Neuaufbau andere Stockfotos -

@@ -336,7 +336,7 @@ def zaehle_ohne_text() -> int:
     with get_connection() as conn:
         return conn.execute(
             "SELECT COUNT(*) FROM leads WHERE site_slug IS NOT NULL "
-            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette')"
+            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette') AND error_count < 3"
         ).fetchone()[0]
 
 
@@ -400,3 +400,19 @@ def setze_seiten_status(lead_id: int, status: str) -> None:
         raise ValueError(f"unbekannter Seitenzustand: {status}")
     with get_connection() as conn:
         conn.execute("UPDATE leads SET seite_status = ? WHERE id = ?", (status, lead_id))
+
+
+def get_leads_ohne_text() -> list[sqlite3.Row]:
+    """Seiten, deren Text noch aus der alten Fassung des Prompts stammt und erneuert
+    werden soll. Seiten, die dreimal gescheitert sind, bleiben aussen vor - sonst
+    verbrennt ein einziger kaputter Betrieb jeden Durchlauf Kontingent."""
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT * FROM leads WHERE site_slug IS NOT NULL AND site_copy_json IS NULL "
+            "AND status NOT IN ('excluded_kette') AND error_count < 3 ORDER BY id"
+        ).fetchall()
+
+
+def text_fehlgeschlagen(lead_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET error_count = error_count + 1 WHERE id = ?", (lead_id,))
