@@ -15,21 +15,27 @@
   h1, .brand-font { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
   .badge { display: inline-block; background: var(--paper-alt); border: 1px solid #333; color: #ccc; padding: .35rem .9rem; border-radius: 999px; font-size: .75rem; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.14); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes scanline { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
-    position: relative; min-height: 82vh; display: flex; align-items: flex-end; padding: 3rem 1.5rem; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.88), rgba(0,0,0,.35)), #000;
+    position: relative; min-height: 82vh; display: flex; align-items: flex-end; padding: 3rem 1.5rem;
+    overflow: hidden; background: #000;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/11538286/pexels-photo-11538286.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(5,5,5,.9), rgba(5,5,5,.3)), url('https://images.pexels.com/photos/38082102/pexels-photo-38082102.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   header.hero::after {
     content: ""; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
     background: linear-gradient(100deg, transparent, rgba(255,255,255,.05), transparent);
@@ -79,11 +85,15 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .78rem; color: #666; border-top: 1px solid #262626; margin-top: 3rem; }
   footer a { color: #888; }
 
+  /* Handy: Die Stichpunkte stehen gestapelt statt nebeneinander - dann ist eine
+     RECHTE Trennlinie sinnlos und erscheint als abgeschnittener Strich. Waagerecht
+     trennen und enger setzen, damit Nummer und Text zusammengehoerig wirken. */
   @media (max-width: 680px) {
     .highlight { flex: 1 1 100%; padding: 1rem .2rem; border-right: none;
                  border-bottom: 1px solid #262626; }
     .highlight:last-child { border-bottom: none; }
     .highlight .num { display: inline; margin-right: .5rem; }
+    /* Das asymmetrische Bildraster braucht Breite - auf dem Handy untereinander. */
     .gallery { grid-template-columns: 1fr; grid-auto-rows: auto; }
     .gallery a:first-child { grid-row: auto; height: auto; }
     .gallery img, .gallery a:first-child img { height: 200px; }
@@ -129,39 +139,39 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Cocktails mit Biss – Crönlein</div>
-    <h1>Crönlein – Ihre Bar für markante Drinks</h1>
-    <p class="sub">Im Nockherberg servieren wir Ihnen Drinks, die Eindruck hinterlassen.</p>
+    <div class="tagline">Crönlein – Bar mit freiem Außenbereich</div>
+    <h1>Crönlein</h1>
+    <p class="sub">Entspannte Abende in München, drinnen oder im Freien</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
 <main>
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s"><span class="num">01</span>Nockherberg‑Lage</div><div class="highlight reveal" style="transition-delay: 0.08s"><span class="num">02</span>Eigenkreationen</div><div class="highlight reveal" style="transition-delay: 0.16s"><span class="num">03</span>Kompetente Beratung</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s"><span class="num">01</span>Cocktails &amp; Longdrinks</div><div class="highlight reveal" style="transition-delay: 0.08s"><span class="num">02</span>Fassbier</div><div class="highlight reveal" style="transition-delay: 0.16s"><span class="num">03</span>Rot‑ und Weißweine</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">Plätze im Freien</span><span class="fakt">Teilweise barrierefrei</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Im Crönlein an der Nockherberg‑Lokalität trifft ein erfahrenes Barteam klassische Rezepte mit eigenem Twist. Jeder Drink wird präzise gemixt, damit die Aromen klar zur Geltung kommen. Die lockere Atmosphäre lässt Sie sofort entspannen, und die zügige Bedienung sorgt dafür, dass Ihr Abend reibungslos verläuft.</p>
+    <p>Bei Crönlein schließen Sie den Tag mit einem Drink ab. Die Bar liegt im Münchner Stadtteil und bietet einen einladenden Außenbereich zum Verweilen. Hier finden Sie ein breites Angebot an Getränken, das zu entspannten Momenten einlädt.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><span class="idx">01</span><div><h3>Cocktailklassiker</h3><p>Zeitlose Rezepte, neu interpretiert – perfekt ausbalanciert.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><span class="idx">01</span><div><h3>Cocktails</h3><p>Kreative Cocktails, kunstvoll gemixt für ein besonderes Geschmackserlebnis.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.06s"><span class="idx">02</span><div><h3>Hausmix-Drinks</h3><p>Exklusive Eigenmixes, die Sie nur im Crönlein finden.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.06s"><span class="idx">02</span><div><h3>Bier vom Fass</h3><p>Frisch gezapftes Fassbier, das mit seiner Klarheit begeistert.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.12s"><span class="idx">03</span><div><h3>Wein &amp; Champagner</h3><p>Ausgewählte Weine und Champagner, passend zu Ihren Drinks.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.12s"><span class="idx">03</span><div><h3>Wein</h3><p>Ausgewählte Rot‑ und Weißweine, die jeden Moment veredeln.</p></div></div>
       
-      <div class="service reveal" style="transition-delay: 0.18s"><span class="idx">04</span><div><h3>Snack-Auswahl</h3><p>Kleine, salzige Snacks, die den Geschmack Ihrer Getränke unterstützen.</p></div></div>
-      
-      <div class="service reveal" style="transition-delay: 0.24s"><span class="idx">05</span><div><h3>Happy Hour</h3><p>Tägliche Preisvorteile für ausgewählte Cocktails.</p></div></div>
-      
-      <div class="service reveal" style="transition-delay: 0.3s"><span class="idx">06</span><div><h3>Event-Booking</h3><p>Privatfeiern im stilvollen Ambiente – wir organisieren nach Ihren Wünschen.</p></div></div>
+      <div class="service reveal" style="transition-delay: 0.18s"><span class="idx">04</span><div><h3>Longdrinks</h3><p>Erfrischende Longdrinks, perfekt abgestimmt auf Ihren Wunsch.</p></div></div>
       
     </div>
   </section>
@@ -171,16 +181,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/cozy-ambient-bar-interior-with-wooden-decor-36964863/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/36964863/pexels-photo-36964863.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/man-drinking-in-bar-17801446/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/17801446/pexels-photo-17801446.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/bottles-of-alcohol-on-shelves-in-bar-5192163/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/5192163/pexels-photo-5192163.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/people-sitting-in-the-restaurant-at-night-6463751/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/6463751/pexels-photo-6463751.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/alcohol-bottles-in-bar-in-dark-13722817/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/13722817/pexels-photo-13722817.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/people-in-a-bar-2209519/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/2209519/pexels-photo-2209519.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
     </div>
@@ -200,8 +210,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Crönlein, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/a-wine-glass-with-ice-on-the-counter-11538286/">Olena Bohovyk</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Crönlein, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/cozy-night-bar-in-katowice-poland-38082102/">Bohdan Hyrovych</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -237,6 +248,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -244,6 +258,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

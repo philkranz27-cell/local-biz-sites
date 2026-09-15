@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/26626726/pexels-photo-26626726.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/38082102/pexels-photo-38082102.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -98,15 +106,27 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 16px; border: none; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Cocktails mit Charakter, Atmosphäre zum Verweilen</div>
-    <h1>Monroes – Ihre Bar für kreative Cocktails in Stuttgart</h1>
-    <p class="sub">Ihre Bar im Zentrum von Stuttgart</p>
+    <div class="eyebrow">Abendliche Drinks in Stuttgart</div>
+    <h1>Monroes – Ihre Bar für den Abend</h1>
+    <p class="sub">Monroes ist eine Bar in Stuttgart.</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
@@ -115,29 +135,29 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Eigenkreationen</div><div class="highlight reveal" style="transition-delay: 0.08s">Zentrale Lage im Stadtzentrum</div><div class="highlight reveal" style="transition-delay: 0.16s">Lokale Craft‑Getränke</div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Vielfältige Cocktails</div><div class="highlight reveal" style="transition-delay: 0.08s">Ausgewählte Biere</div><div class="highlight reveal" style="transition-delay: 0.16s">Erfrischende Longdrinks</div>
+
+  
   </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Monroes serviert klassische und moderne Cocktails, gemixt mit ausgewählten Spirituosen. Die Getränkekarte enthält neben bekannten Marken lokale Craft‑Getränke. Im Interieur sorgt dezente Beleuchtung für eine angenehme Stimmung, während Sie an der offenen Theke den Barkeeper bei der Zubereitung beobachten können. Perfekt, um nach der Arbeit zu entspannen oder gesellige Runden zu genießen.</p>
+    <p>In Monroes können Sie den Abend mit einem Drink beginnen. Die Getränkekarte umfasst Cocktails, ausgewählte Biere, Longdrinks und alkoholfreie Optionen.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktails</h3><p>Klassische und innovative Mixgetränke, frisch zubereitet.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktail</h3><p>Sie können einen Cocktail nach Ihrer Wahl bestellen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Longdrinks</h3><p>Erfrischende Longdrinks mit Premium‑Spirituosen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Wein</h3><p>Sie können ein Glas Rot- oder Weißwein auswählen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Craft Bier</h3><p>Auswahl lokaler und internationaler Craft‑Biere vom Fass.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Bier vom Fass</h3><p>Sie können ein kühles Fassbier genießen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Wein</h3><p>Kuratiertes Sortiment an Rot‑ und Weißweinen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Longdrink</h3><p>Sie können einen Longdrink nach Ihrem Geschmack erhalten.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Snacks</h3><p>Kleine Snacks, die den Drink begleiten.</p></div>
-      
-      <div class="service reveal" style="transition-delay: 0.35000000000000003s"><h3>Private Events</h3><p>Bar‑Reservierung für private Feiern und Firmen‑Events.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Alkoholfreier Drink</h3><p>Sie können eine alkoholfreie Alternative wählen.</p></div>
       
     </div>
   </section>
@@ -147,16 +167,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/interior-design-of-bar-4818319/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/4818319/pexels-photo-4818319.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-cocktail-glass-in-dimly-lit-tokyo-bar-34989165/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/34989165/pexels-photo-34989165.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/shelves-beams-and-lights-over-men-behind-a-bar-5865076/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/5865076/pexels-photo-5865076.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-wine-glass-with-ice-on-the-counter-11538286/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/11538286/pexels-photo-11538286.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/illuminated-bar-in-the-evening-12049548/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/12049548/pexels-photo-12049548.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/martini-glass-3092967/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/3092967/pexels-photo-3092967.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
     </div>
@@ -168,6 +188,7 @@
     <div class="meta-item"><b>Telefon</b>+49 711 2262770</div>
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>Mo–Sa: 12:00–05:00 Uhr</li><li>So, Feiertage: 15:00–05:00 Uhr</li></ul>
     </div>
@@ -175,8 +196,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Monroes, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/glamour-illuminated-bar-26626726/">Cristhian  David Duarte</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Monroes, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/cozy-night-bar-in-katowice-poland-38082102/">Bohdan Hyrovych</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -212,6 +234,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -219,6 +244,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

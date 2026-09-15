@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Friseursalon Barbara Hammerschmidt — Frankfurt am Main</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,6 +86,18 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 6px; border: none; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
@@ -96,28 +108,30 @@
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
     <div class="hero-grid">
       <div>
-        <div class="tagline">Barbara Hammerschmidt – Ihr persönlicher Friseursalon im Frankfurter Westend</div>
+        <div class="tagline">Ihr Friseur für individuelle Haarträume in Frankfurt</div>
         <h1>Friseursalon Barbara Hammerschmidt</h1>
-        <p class="sub">Im Frankfurter Westend, nahe der Bockenheimer Straße, bieten wir Ihnen maßgeschneiderte Haarkunst für jede Lebenslage.</p>
-        <a class="cta" href="#" onclick="openReservationModal(event)">Termin vereinbaren</a>
+        <p class="sub">Friseursalon Barbara Hammerschmidt – Frankfurt am Main</p>
+        <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt Termin vereinbaren</a>
       </div>
-      <div class="hero-image"><img src="https://images.pexels.com/photos/9146943/pexels-photo-9146943.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Friseursalon Barbara Hammerschmidt"></div>
+      <div class="hero-image"><img src="https://images.pexels.com/photos/35844834/pexels-photo-35844834.png?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Friseursalon Barbara Hammerschmidt"></div>
     </div>
   </header>
 
   <section class="about-block reveal">
     <div class="dropcap">„</div>
-    <p>Im Friseursalon Barbara Hammerschmidt erwartet Sie ein stilvoll eingerichteter Salon mit warmen Holzakzenten, leiser Hintergrundmusik und dezenten Duftnoten, die sofort ein Gefühl von Geborgenheit erzeugen. Barbara Hammerschmidt und ihr Team nehmen sich ausgiebig Zeit, um Ihre Vorstellungen zu verstehen und gemeinsam mit Ihnen ein Ergebnis zu planen, das Ihre Persönlichkeit unterstreicht. Dabei verwenden wir nur ausgewählte Pflege- und Farbprodukte, die wir nach Ihrer individuellen Haarstruktur und Ihren Wünschen zusammenstellen. Lassen Sie sich von einer ruhigen Atmosphäre umhüllen, während wir Ihr Haar behutsam in Form bringen und ihm natürlichen Glanz verleihen.</p>
+    <p>Im Friseursalon Barbara Hammerschmidt finden Sie eine persönliche Beratung, die Ihre Vorstellungen berücksichtigt. Jeder Schnitt wird mit Sorgfalt gestaltet, um Ihren individuellen Stil zu betonen.</p>
   </section>
 
   <div class="highlights-row">
-    <span class="chip reveal" style="transition-delay: 0.0s">Nur wenige Schritte von der Bockenheimer Straße entfernt</span><span class="chip reveal" style="transition-delay: 0.08s">Umfangreiche Stil- und Farbberatung inklusive Haartypanalyse</span><span class="chip reveal" style="transition-delay: 0.16s">Ruhige Atmosphäre mit leiser Musik, Kerzenlicht und bequemen Wartebereich</span>
+    <span class="chip reveal" style="transition-delay: 0.0s">Individueller Haarschnitt</span><span class="chip reveal" style="transition-delay: 0.08s">Individuelle Farbberatung</span><span class="chip reveal" style="transition-delay: 0.16s">Pflege für gesunde Haare</span>
   </div>
+
+  
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-list">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Damenhaarschnitt</h3><p>Individuell abgestimmter Schnitt, der Ihre Gesichtsform betont und Ihren persönlichen Stil reflektiert.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Herrenhaarschnitt</h3><p>Präziser Schnitt, der klassische Eleganz mit modernen Akzenten verbindet – exakt nach Ihren Vorgaben.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Coloration</h3><p>Schonende Farbtechniken, die Ihren natürlichen Ton verfeinern und langanhaltende, lebendige Nuancen sichern.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Styling für Anlässe</h3><p>Feines Hochzeits- oder Eventstyling, das Ihre Persönlichkeit hervorhebt und den gesamten Look abrundet.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Haarpflegebehandlung</h3><p>Intensive Pflegekur, die die Haarstruktur stärkt, Feuchtigkeit spendet und einen gesunden Glanz erzeugt.</p></li><li class="reveal" style="transition-delay: 0.3s"><h3>Beratung &amp; Schnittberatung</h3><p>Umfassende Analyse von Haarbeschaffenheit und Lifestyle, gefolgt von konkreten Empfehlungen für Ihren optimalen Look.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Haarschnitt</h3><p>Präziser Schnitt, abgestimmt auf Ihre Gesichtsform und Ihren Stil.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Färbung</h3><p>Farbgestaltung, die zu Ihrem Typ und Ihren Wünschen passt.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Styling</h3><p>Styling, das Ihren Alltag oder besonderen Anlass ergänzt.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Pflegebehandlung</h3><p>Behandlung, die das Haar geschmeidig macht und die natürliche Struktur unterstützt.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Brautfrisur</h3><p>Brautfrisur, abgestimmt auf Ihr Hochzeitsoutfit und Ihren Stil.</p></li>
     </ul>
   </section>
 
@@ -126,16 +140,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-strip">
       
-      <a class="reveal" href="https://www.pexels.com/photo/vintage-barber-shop-interior-with-classic-chairs-37764947/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37764947/pexels-photo-37764947.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-man-wearing-eyeglasses-in-the-barbershop-7518738/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7518738/pexels-photo-7518738.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/black-leather-chair-in-front-of-the-mirror-7195803/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+      <a class="reveal" href="https://www.pexels.com/photo/a-barber-cutting-a-client-s-hair-7518731/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7518731/pexels-photo-7518731.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/black-leather-chair-in-front-of-the-mirror-7195803/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
         <img src="https://images.pexels.com/photos/7195803/pexels-photo-7195803.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
-      </a>
-      
-      <a class="reveal" href="https://www.pexels.com/photo/beauty-salon-7750120/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/7750120/pexels-photo-7750120.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
     </div>
@@ -147,6 +161,7 @@
     <div class="meta-item"><b>Telefon</b>+4969533893</div>
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>Di–Do: 10:00–19:00 Uhr</li><li>Fr: 09:00–19:00 Uhr</li><li>Sa: 09:00–14:00 Uhr</li></ul>
     </div>
@@ -154,8 +169,9 @@
   </section>
 
   <footer>
-    Dies ist ein unverbindlicher Demo-Entwurf für Friseursalon Barbara Hammerschmidt, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-    <br>Foto: <a href="https://www.pexels.com/photo/interior-of-hairdresser-saloon-9146943/">Лена Gromakova</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+    Dies ist ein unverbindlicher Demo-Entwurf für Friseursalon Barbara Hammerschmidt, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+    <br>Foto: <a href="https://www.pexels.com/photo/modern-hair-salon-interior-at-night-35844834/">Emirhan Sayar</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
   </footer>
 </div>
 
@@ -190,6 +206,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -197,6 +216,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
