@@ -55,6 +55,26 @@ def test_komplette_mail_hat_genau_eine_anrede():
     assert "Was Ihnen eine eigene Website bringt:" in mail
 
 
+
+ANREDE = "Guten Tag," + chr(10) * 2
+
+
+def test_erstes_wort_nach_anrede_wird_klein():
+    """Nach der Anrede geht der Satz klein weiter - die KI schreibt trotzdem gross."""
+    mail = akquise_mail_text("Für die CINE BAR habe ich eine Seite gebaut.", "bar", "Dortmund")
+    assert ANREDE + "für die CINE BAR" in mail
+    mail = akquise_mail_text("Ich habe für Schulz eine Seite gebaut.", "bar", "Bochum")
+    assert ANREDE + "ich habe" in mail
+
+
+def test_name_am_satzanfang_bleibt_gross():
+    """Nur Funktionswörter werden klein - ein Betriebsname oder "Sie" nicht."""
+    mail = akquise_mail_text("Troy Salon hat jetzt eine Seite.", "hair_salon", "Bonn")
+    assert ANREDE + "Troy Salon" in mail
+    mail = akquise_mail_text("Sie finden hier einen Entwurf.", "cafe", "Bonn")
+    assert ANREDE + "Sie finden" in mail
+
+
 if __name__ == "__main__":
     fehler = 0
     for name, funktion in list(globals().items()):

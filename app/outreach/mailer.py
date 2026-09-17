@@ -67,7 +67,8 @@ def akquise_mail_text(body: str, kategorie: str | None = None, stadt: str | None
     eigentlichen Anschreiben: erst "hier ist Ihr Entwurf", dann "darum lohnt es sich"."""
     punkte = vorteile(kategorie, stadt, extras)
     block = "\n\nWas Ihnen eine eigene Website bringt:\n" + "\n".join(f"– {p}" for p in punkte)
-    return GREETING + _ohne_anrede(body) + block + PHOTO_NOTE + _signature() + OPT_OUT_NOTE
+    return (GREETING + _satz_klein_beginnen(_ohne_anrede(body)) + block + PHOTO_NOTE
+            + _signature() + OPT_OUT_NOTE)
 
 
 # Die KI beginnt ihren Text trotz Anweisung manchmal selbst mit "Hallo," - zusammen mit
@@ -81,6 +82,22 @@ _ANREDE_AM_ANFANG = re.compile(
     r"(?:\s+[^\s,!]+|\s+[^,!\n]{1,50}?[-\s]team)?\s*[,!]\s*",
     re.IGNORECASE,
 )
+
+
+# Nach der Anrede geht der Satz klein weiter ("Guten Tag,\n\nfuer die CINE BAR ..."). Die
+# KI schreibt ihren ersten Satz aber gross, weil sie ihn fuer den Anfang haelt - in 17 von
+# 20 Mails stand deshalb "Guten Tag,\n\nFuer die ...". Nur diese Funktionswoerter werden
+# kleingeschrieben: Bei "Sie", einem Namen oder einem Substantiv waere es falsch.
+_KLEIN_NACH_ANREDE = {
+    "für", "ich", "hier", "bei", "mit", "auf", "in", "zu", "nach", "seit", "unter", "über",
+    "um", "vor", "als", "wenn", "weil", "damit", "gern", "gerne", "anbei", "was", "wie",
+    "vielen", "danke", "kurz", "es", "am", "an", "aus", "beim", "im", "vom", "zum", "zur",
+}
+
+
+def _satz_klein_beginnen(text: str) -> str:
+    wort = text.split(" ", 1)[0].strip(",.;:!?")
+    return text[0].lower() + text[1:] if wort.lower() in _KLEIN_NACH_ANREDE else text
 
 
 def _ohne_anrede(body: str) -> str:
