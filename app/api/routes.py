@@ -1,9 +1,11 @@
+import hashlib
+import hmac
 import logging
 import secrets
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 
@@ -26,10 +28,29 @@ templates = Jinja2Templates(directory=str(PROJECT_ROOT / "templates"))
 
 router = APIRouter()
 
-_basic_auth = HTTPBasic(auto_error=True)
+# auto_error aus: Fehlt der Basic-Login, darf noch das Anmelde-Cookie greifen.
+_basic_auth = HTTPBasic(auto_error=False)
+
+# Der eingebaute Browser der Claude-App zeigt bei Basic-Auth keinen Login-Dialog, nur
+# {"detail":"Not authenticated"}. Deshalb zusaetzlich eine Anmeldeseite mit Cookie.
+# Der Cookie-Wert ist ein HMAC ueber das Passwort: kein Sitzungsspeicher noetig, und
+# ein neues Passwort macht alle alten Cookies automatisch ungueltig.
+SITZUNGS_COOKIE = "pw_sitzung"
 
 
-def require_admin(credentials: HTTPBasicCredentials = Depends(_basic_auth)) -> str:
+def _sitzungswert() -> str:
+    return hmac.new(settings.dashboard_password.encode(), b"philswebsites-dashboard",
+                    hashlib.sha256).hexdigest()
+
+
+def _zugang_ok(user: str, passwort: str) -> bool:
+    user_ok = secrets.compare_digest(user.encode(), settings.dashboard_user.encode())
+    pass_ok = secrets.compare_digest(passwort.encode(), settings.dashboard_password.encode())
+    return user_ok and pass_ok
+
+
+def require_admin(request: Request,
+                  credentials: HTTPBasicCredentials | None = Depends(_basic_auth)) -> str:
     """Schuetzt Dashboard und Verwaltungs-Endpunkte. Wichtig, weil die App per Tunnel
     oeffentlich erreichbar ist - ohne das koennte jeder mit der Adresse die Firmenkontakte,
     Mail-Entwuerfe und die Kontaktdaten der Betriebe abrufen.
@@ -40,15 +61,52 @@ def require_admin(credentials: HTTPBasicCredentials = Depends(_basic_auth)) -> s
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="DASHBOARD_PASSWORD ist nicht gesetzt - Dashboard aus Sicherheitsgruenden gesperrt.",
         )
-    user_ok = secrets.compare_digest(credentials.username, settings.dashboard_user)
-    pass_ok = secrets.compare_digest(credentials.password, settings.dashboard_password)
-    if not (user_ok and pass_ok):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Falsche Zugangsdaten",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return credentials.username
+    cookie = request.cookies.get(SITZUNGS_COOKIE, "")
+    if cookie and secrets.compare_digest(cookie, _sitzungswert()):
+        return settings.dashboard_user
+    if credentials and _zugang_ok(credentials.username, credentials.password):
+        return credentials.username
+    # Die Startseite leitet zur Anmeldung um; API-Aufrufe bekommen weiter ein 401.
+    if request.method == "GET" and request.url.path == "/":
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER, headers={"Location": "/login"})
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Falsche Zugangsdaten",
+        headers={"WWW-Authenticate": "Basic"},
+    )
+
+
+_LOGIN_SEITE = """<!doctype html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>PhilsWebsites – Anmelden</title>
+<style>body{font-family:system-ui,sans-serif;background:#f4f4f5;display:grid;place-items:center;
+min-height:100vh;margin:0}form{background:#fff;padding:28px;border-radius:12px;width:300px;
+box-shadow:0 2px 12px rgba(0,0,0,.08)}h1{font-size:18px;margin:0 0 16px}label{display:block;
+font-size:13px;margin:10px 0 4px}input{width:100%;box-sizing:border-box;padding:9px;
+border:1px solid #ccc;border-radius:6px;font-size:15px}button{margin-top:18px;width:100%;
+padding:10px;border:0;border-radius:6px;background:#111;color:#fff;font-size:15px}
+.fehler{color:#b91c1c;font-size:13px;margin:0 0 8px}</style></head><body>
+<form method="post" action="/login"><h1>PhilsWebsites</h1>{FEHLER}
+<label for="u">Benutzer</label><input id="u" name="user" autocomplete="username" required>
+<label for="p">Passwort</label><input id="p" name="passwort" type="password"
+autocomplete="current-password" required><button>Anmelden</button></form></body></html>"""
+
+
+@router.get("/login", response_class=HTMLResponse)
+def login_seite():
+    return _LOGIN_SEITE.replace("{FEHLER}", "")
+
+
+@router.post("/login")
+async def login(request: Request):
+    formular = await request.form()
+    if not settings.dashboard_password or not _zugang_ok(str(formular.get("user", "")),
+                                                          str(formular.get("passwort", ""))):
+        return HTMLResponse(_LOGIN_SEITE.replace(
+            "{FEHLER}", '<p class="fehler">Benutzer oder Passwort falsch.</p>'), status_code=401)
+    antwort = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
+    antwort.set_cookie(SITZUNGS_COOKIE, _sitzungswert(), max_age=60 * 60 * 24 * 90,
+                       httponly=True, samesite="lax", secure=request.url.scheme == "https")
+    return antwort
 
 
 @router.get("/", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
