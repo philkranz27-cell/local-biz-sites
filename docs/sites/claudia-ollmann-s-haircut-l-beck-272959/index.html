@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claudia Ollmann&#39;s Haircut — Lübeck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Haarpflege nach Claudia Ollmanns Handschrift</div>
-    <h1>Claudia Ollmann – Ihr persönlicher Haarstylist</h1>
+    <div class="tagline">Haarkunst von Claudia Ollmann</div>
+    <h1>Claudia Ollmann&#39;s Haircut</h1>
     <div class="rule"></div>
-    <p class="sub">Friseurkunst aus Lübeck, geleitet von Claudia Ollmann</p>
+    <p class="sub">Friseursalon Claudia Ollmann in Lübeck</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Termin vereinbaren</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/interior-design-of-luxury-house-27165074/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/27165074/pexels-photo-27165074.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Claudia Ollmann&#39;s Haircut"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/modern-hair-salon-interior-at-night-35844834/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/35844834/pexels-photo-35844834.png?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Claudia Ollmann&#39;s Haircut"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>In der stilvollen Umgebung von Claudia Ollmann&#39;s Haircut wird jeder Haarschnitt nach einer ausführlichen Analyse Ihrer Gesichtsform und Ihrer Wünsche gestaltet. Das Team, das unter der Leitung von Claudia Ollmann arbeitet, verwendet ausschließlich Produkte, die von ihr persönlich ausgewählt wurden. Wir legen Wert darauf, dass das Ergebnis Ihren persönlichen Stil widerspiegelt, während Sie sich in einer zurückhaltend eleganten Atmosphäre befinden.</p>
+    <p>Bei Claudia Ollmann&#39;s Haircut in Lübeck können Sie eine individuelle Schnitt‑ und Farbberatung erwarten, die exakt auf Ihre Vorstellungen abgestimmt ist. Jeder Termin wird nach Ihren persönlichen Wünschen gestaltet, sodass das Ergebnis Ihren Stil unterstreicht. Wir legen Wert darauf, dass Sie sich während des gesamten Besuchs gut aufgehoben fühlen.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Individuelle Analyse Ihrer Gesichtsform</div><div class="hcol"><span class="mark">—</span>Zentrale Lage im Stadtzentrum Lübecks</div><div class="hcol"><span class="mark">—</span>Zurückhaltende Eleganz im Salon</div>
+      <div class="hcol"><span class="mark">—</span>Individuelle Beratung</div><div class="hcol"><span class="mark">—</span>Präziser Schnitt</div><div class="hcol"><span class="mark">—</span>Farbgestaltung</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Haarschnitt</h3><p>Präziser Schnitt, abgestimmt auf Ihre Gesichtsform und Ihren gewünschten Stil.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Farbberatung</h3><p>Auswahl von Farbtönen, die zu Ihrem Hautton und Ihrer Garderobe passen.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Strähnchen</h3><p>Feine Highlights, die subtile Tiefe und natürlichen Glanz erzeugen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Styling für besondere Anlässe</h3><p>Individuelles Styling, das Ihren Auftritt harmonisch ergänzt.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Pflegebehandlung</h3><p>Pflege, die das Haar geschmeidig macht und die natürliche Struktur stärkt.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Haarschnitt</h3><p>Ein Schnitt, der Ihre Gesichtszüge betont und Ihren persönlichen Stil widerspiegelt.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Färbung</h3><p>Eine Farbwahl, die harmonisch zu Ihrem Typ passt und Ihre Individualität hervorhebt.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Styling</h3><p>Ein Styling, das den Tag über hält und Ihren Look abrundet.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Beratung</h3><p>Ein Gespräch, in dem Ihre Wünsche präzise erfasst und in konkrete Vorschläge übersetzt werden.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/panoramic-view-of-luxury-beauty-salon-13068379/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/13068379/pexels-photo-13068379.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-brown-and-black-barber-chair-12339159/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/12339159/pexels-photo-12339159.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/low-angle-shot-of-electric-bulbs-lighting-16760607/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/16760607/pexels-photo-16760607.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/backwash-chair-in-contemporary-beauty-studio-7195812/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7195812/pexels-photo-7195812.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/large-round-mirror-hanging-on-a-wall-16778142/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/16778142/pexels-photo-16778142.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/woman-sitting-on-the-salon-chair-while-holding-vodka-glass-and-man-at-her-back-white-spraying-her-hair-696287/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/696287/pexels-photo-696287.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,6 +154,7 @@
 <section class="meta-grid reveal">
   
   <div class="meta-item"><b>Telefon</b>+49 451 33202</div>
+    
   
   
   <div class="meta-item"><b>Öffnungszeiten</b>
@@ -149,8 +164,9 @@
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Claudia Ollmann&#39;s Haircut, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/interior-design-of-luxury-house-27165074/">Wilcle Nunes</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Claudia Ollmann&#39;s Haircut, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/modern-hair-salon-interior-at-night-35844834/">Emirhan Sayar</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -184,6 +200,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -191,6 +210,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
@@ -220,7 +242,7 @@
           .map(function(k) { return (BEZEICHNUNG[k] || k) + ': ' + data[k]; });
         document.getElementById('reservationMailto').href =
           'mailto:kontakt@philswebsites.de'
-          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Claudia Ollmann\'s Haircut')
+          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Claudia Ollmann&#39;s Haircut')
           + '&body=' + encodeURIComponent(zeilen.join('\n'));
         reservationForm.style.display = 'none';
         document.getElementById('reservationError').style.display = 'block';

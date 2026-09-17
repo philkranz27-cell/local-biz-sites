@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flower Power — Wiesbaden</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Florale Eleganz aus Wiesbaden</div>
-    <h1>Flower Power – Florist in Wiesbaden</h1>
+    <div class="tagline">Blumen, die berühren – Flower Power, Wiesbaden</div>
+    <h1>Flower Power – Floristik</h1>
     <div class="rule"></div>
-    <p class="sub">Flower Power befindet sich am Marktplatz 5 in Wiesbaden und stellt Blumenarrangements zusammen, die exakt auf Ihre Wünsche abgestimmt sind.</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Beratung vereinbaren</a>
+    <p class="sub">Floristik aus Leidenschaft in Wiesbaden</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt bestellen</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/19140920/pexels-photo-19140920.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Flower Power"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/woman-in-pink-long-sleeve-shirt-arranging-flowers-5894060/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/5894060/pexels-photo-5894060.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Flower Power"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Im Laden am Marktplatz 5 präsentieren wir ein saisonal wechselndes Sortiment aus Schnittblumen und ausgewählten Topfpflanzen. Unser Team berät Sie individuell und setzt Ihre Vorstellungen in passende Arrangements um. Für Hochzeiten, Firmenveranstaltungen und private Feiern entwickeln wir gemeinsam mit Ihnen ein passendes Konzept. Die lichtdurchflutete Atmosphäre des Geschäfts ermöglicht Ihnen, die Auswahl in Ruhe zu prüfen.</p>
+    <p>Individuelle Gestecke werden nach Ihren Vorstellungen gestaltet. Eine Auswahl an Zimmerpflanzen ergänzt das Angebot.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Individuelle Beratung</div><div class="hcol"><span class="mark">—</span>Zentrale Lage am Marktplatz</div><div class="hcol"><span class="mark">—</span>Täglich frische Auswahl</div>
+      <div class="hcol"><span class="mark">—</span>Frische Schnittblumen</div><div class="hcol"><span class="mark">—</span>Gestecke nach Wunsch</div><div class="hcol"><span class="mark">—</span>Pflanzen für Zuhause</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Brautstrauß</h3><p>Nach Ihren Vorgaben gestalteter Blumenstrauß für den Hochzeitstag.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Eventdekoration</h3><p>Florale Gestaltung für Hochzeiten, Firmenfeiern und weitere Anlässe nach Ihrem Konzept.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Pflanzenpflege</h3><p>Beratung und Pflegehinweise für Ihre Zimmer- und Topfpflanzen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Lieferservice</h3><p>Zuverlässige Lieferung Ihrer Bestellung innerhalb Wiesbadens.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Geschenkarrangements</h3><p>Dezente Blumenpräsente für Geburtstage, Jubiläen und besondere Anlässe.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Ein individuell zusammengestellter Strauß, abgestimmt auf Ihren Anlass.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Gesteck</h3><p>Ein kunstvolles Gesteck, das Ihren Raum harmonisch ergänzt.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Pflanzenlieferung</h3><p>Ihre Wunschpflanze wird direkt zu Ihnen nach Hause geliefert.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Hochzeitsfloristik</h3><p>Ein abgestimmtes Floralkonzept für Ihren besonderen Tag.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Grußkarten</h3><p>Passende Grußkarten ergänzen Ihr Blumenarrangement.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/vibrant-pink-roses-in-bouquet-arrangement-36691684/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/36691684/pexels-photo-36691684.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/florist-making-flowers-bouquet-5927281/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5927281/pexels-photo-5927281.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/vibrant-flower-market-with-colorful-bouquets-31673820/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/31673820/pexels-photo-31673820.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/crop-woman-creating-bouquet-on-table-5410130/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5410130/pexels-photo-5410130.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/colorful-display-of-various-cut-flowers-at-market-37542470/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37542470/pexels-photo-37542470.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-woman-arranging-florist-5894087/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5894087/pexels-photo-5894087.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,6 +154,7 @@
 <section class="meta-grid reveal">
   <div class="meta-item"><b>Adresse</b>Marktplatz 5, 65183 Wiesbaden</div>
   <div class="meta-item"><b>Telefon</b>+49 611 3608910</div>
+    
   
   
   <div class="meta-item"><b>Öffnungszeiten</b>
@@ -149,8 +164,9 @@
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Flower Power, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/">Duygu</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Flower Power, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/woman-in-pink-long-sleeve-shirt-arranging-flowers-5894060/">Anna Shvets</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -184,6 +200,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -191,6 +210,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

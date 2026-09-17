@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Casa del Gatto — Bonn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/8414741/pexels-photo-8414741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/39551605/pexels-photo-39551605.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,9 +124,9 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Italienische Küche aus Bonn</div>
-    <h1>Casa del Gatto</h1>
-    <p class="sub">Im Stadtzentrum von Bonn serviert das Casa del Gatto italienische Gerichte, die mit regionalen Zutaten aus der Umgebung zubereitet werden.</p>
+    <div class="eyebrow">Italienisch frisch vegetarisch</div>
+    <h1>Casa del Gatto – italienische Küche</h1>
+    <p class="sub">Das Restaurant Casa del Gatto in Bonn serviert italienische Küche mit vegetarischen Optionen und Sitzplätzen im Freien.</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
@@ -127,29 +135,33 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Lage im Stadtzentrum von Bonn</div><div class="highlight reveal" style="transition-delay: 0.08s">Regionale Zutaten aus Bonn</div><div class="highlight reveal" style="transition-delay: 0.16s">Offene Küche</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">italienische Küche</span><span class="fakt">Vegetarische Gerichte</span><span class="fakt">Plätze im Freien</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Pasta &amp; Pizza</div><div class="highlight reveal" style="transition-delay: 0.08s">Weinauswahl</div><div class="highlight reveal" style="transition-delay: 0.16s">Pasta</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">italienische Küche</span><span class="fakt">Vegetarische Gerichte</span><span class="fakt">Plätze im Freien</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Im Casa del Gatto erhalten Sie italienische Klassiker, die wir aus frischen, regionalen Produkten von Lieferanten aus Bonn und Umgebung herstellen. Durch die offene Küche können Sie den Kochvorgang direkt verfolgen. Das Interieur verbindet klare, moderne Linien mit typischen italienischen Elementen, und unser Service sorgt dafür, dass Ihre Bestellung zügig und aufmerksam aufgenommen wird.</p>
+    <p>Im Casa del Gatto finden Sie italienische Gerichte, darunter eine Auswahl an vegetarischen Speisen. Die Karte umfasst Pasta, Pizza und weitere Klassiker.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Antipasti</h3><p>Kleine Vorspeisen zum Teilen, zum Beispiel hausgemachtes Bruschetta oder gegrilltes Gemüse.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Pasta</h3><p>Pasta – klassische italienische Pasta mit Sauce.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Pasta</h3><p>Selbstgemachte Pasta, serviert mit saisonalen Saucen aus regionalen Zutaten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Pizza</h3><p>Pizza – knusprige Pizza mit verschiedenen Belägen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Pizza</h3><p>Steinofenpizza mit knusprigem Rand und frischen Belägen aus der Region.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Vegetarische Lasagne</h3><p>Vegetarische Lasagne – Lasagne mit Gemüsefüllung.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Dessert</h3><p>Italienische Süßspeisen wie Tiramisu und Panna Cotta, zubereitet mit lokalen Milchprodukten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Antipasti</h3><p>Antipasti – Auswahl an italienischen Vorspeisen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Weinliste</h3><p>Auswahl italienischer Weine, passend zu den Gerichten des Hauses.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Dessert</h3><p>Dessert – italienisches Dessert.</p></div>
       
     </div>
   </section>
@@ -159,16 +171,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/italian-cuisine-with-pasta-and-white-wine-38475586/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/38475586/pexels-photo-38475586.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/outdoor-dining-at-ristorante-pedrocchi-in-venice-36514916/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/36514916/pexels-photo-36514916.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/people-at-restaurant-12181619/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/12181619/pexels-photo-12181619.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/italian-pizza-restaurant-italy-3498/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/3498/italian-pizza-restaurant-italy.jpg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/crop-unrecognizable-woman-eating-delicious-pasta-with-meat-balls-6248902/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/6248902/pexels-photo-6248902.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/people-sitting-outside-caffetteria-during-daytime-105066/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/105066/pexels-photo-105066.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
     </div>
@@ -177,8 +189,8 @@
 
   <section class="meta-grid reveal">
     <div class="meta-item"><b>Adresse</b>Kaiserplatz 20, 53113 Bonn</div>
-    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/casadelgattobonn/" target="_blank" rel="noopener">Facebook</a></div>
     
+    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/casadelgattobonn/" target="_blank" rel="noopener">Facebook</a></div>
     
     
     <div class="meta-item"><b>Öffnungszeiten</b>
@@ -188,8 +200,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Casa del Gatto, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/a-pasta-dish-on-a-table-8414741/">Aayush Rawat</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Casa del Gatto, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/quaint-canal-side-cafe-in-venice-italy-39551605/">Helena Jankovičová Kováčová</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -225,6 +238,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -232,6 +248,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

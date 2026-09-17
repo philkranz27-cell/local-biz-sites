@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trattoria Pizzeria Diego&#39;s — Mannheim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/6223229/pexels-photo-6223229.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,9 +124,9 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Italienisch. Authentisch. Nah.</div>
-    <h1>Trattoria Pizzeria Diego&#39;s</h1>
-    <p class="sub">Ihr italienisches Restaurant in Mannheim.</p>
+    <div class="eyebrow">Italienisch. Schnell. Direkt.</div>
+    <h1>Trattoria Pizzeria Diego&#39;s – Pizza &amp; Pasta</h1>
+    <p class="sub">Ein italienisches Restaurant in Mannheim.</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
   </div>
 </header>
@@ -127,29 +135,31 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Zentrale Lage in Mannheim</div><div class="highlight reveal" style="transition-delay: 0.08s">Regionale Zutaten</div><div class="highlight reveal" style="transition-delay: 0.16s">Steinofenpizza</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">italienische Küche</span><span class="fakt">Pizza</span><span class="fakt">Plätze im Freien</span><span class="fakt">Zum Mitnehmen</span><span class="fakt">Teilweise barrierefrei</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Pizza zum Mitnehmen</div><div class="highlight reveal" style="transition-delay: 0.08s">Margherita Pizza</div><div class="highlight reveal" style="transition-delay: 0.16s">Salami Pizza</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">italienische Küche</span><span class="fakt">Pizza</span><span class="fakt">Plätze im Freien</span><span class="fakt">Zum Mitnehmen</span><span class="fakt">Teilweise barrierefrei</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>In der Trattoria Pizzeria Diego&#39;s servieren wir Pizza aus dem Steinofen und Pasta, die wir nach eigenen Rezepten zubereiten. Alle Gerichte werden mit Zutaten aus der Region hergestellt. Die offene Küche ermöglicht Ihnen, den Geruch von frischen Kräutern und dem Holzofen direkt am Tisch zu erleben. Unser Personal kümmert sich um einen reibungslosen Ablauf Ihres Besuchs.</p>
+    <p>Die Trattoria Pizzeria Diego&#39;s präsentiert authentische italienische Küche im Herzen Mannheims. Einladend gestaltet, lädt das Lokal zum Verweilen ein.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Pizza aus dem Steinofen</h3><p>Individuell belegt, knusprig gebacken im Holzofen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Margherita Pizza</h3><p>Die Margherita Pizza enthält Tomaten, Mozzarella und Basilikum.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Hausgemachte Pasta</h3><p>Frisch zubereitet nach unseren eigenen Rezepten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Salami Pizza</h3><p>Die Salami Pizza ist belegt mit würziger Salami.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Italienische Antipasti</h3><p>Vorspeisen aus regionalen Produkten für den Einstieg.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Vegetarische Pizza</h3><p>Die vegetarische Pizza bietet eine Auswahl an Gemüse auf knusprigem Teig.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Desserts &amp; Tiramisu</h3><p>Italienische Süßspeisen zum Abschluss Ihres Essens.</p></div>
-      
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Wein‑ &amp; Getränkekarte</h3><p>Auswahl italienischer Weine und alkoholfreier Getränke.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Pasta Special</h3><p>Das Pasta Special beinhaltet ein italienisches Pastagericht nach Wahl.</p></div>
       
     </div>
   </section>
@@ -159,16 +169,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/close-up-shot-of-a-pizza-6605214/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/6605214/pexels-photo-6605214.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/pizza-boxes-in-a-restaurant-17626467/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/17626467/pexels-photo-17626467.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/shallow-focus-photography-of-several-pizzas-1566837/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/fireplace-1082342/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/1082342/pexels-photo-1082342.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/close-up-of-a-slice-of-margarita-pizza-on-a-plate-35760004/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/35760004/pexels-photo-35760004.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/cook-working-in-pizzeria-5953552/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5953552/pexels-photo-5953552.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="restaurant Impression" loading="lazy">
       </a>
       
     </div>
@@ -188,8 +198,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Trattoria Pizzeria Diego&#39;s, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/photo-of-pizza-and-pasta-6223229/">Antonius Ferret</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Trattoria Pizzeria Diego&#39;s, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/baked-pizza-on-pizza-peel-in-oven-905847/">Eneida Nieves</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -225,6 +236,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -232,6 +246,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
@@ -261,7 +278,7 @@
           .map(function(k) { return (BEZEICHNUNG[k] || k) + ': ' + data[k]; });
         document.getElementById('reservationMailto').href =
           'mailto:kontakt@philswebsites.de'
-          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Trattoria Pizzeria Diego\'s')
+          + '?subject=' + encodeURIComponent('Anfrage über ' + 'Trattoria Pizzeria Diego&#39;s')
           + '&body=' + encodeURIComponent(zeilen.join('\n'));
         reservationForm.style.display = 'none';
         document.getElementById('reservationError').style.display = 'block';

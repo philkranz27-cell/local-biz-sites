@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Intershop — Bochum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,22 +14,27 @@
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.55; overflow-x: hidden; }
   .badge { display: inline-block; background: #fff3cd; color: #7a5b00; padding: .35rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
 
-  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.15); } }
+  @keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.16); } }
   @keyframes floaty { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-14px, 18px); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* Das Hero-Bild liegt in einer eigenen Ebene und wird ueber transform gezoomt.
+     Vorher lief der Zoom ueber background-size - das ist die teuerste Variante: Der
+     Browser muss das Bild in JEDEM Einzelbild neu skalieren, was auf dem Handy sichtbar
+     zittert. transform uebernimmt die Grafikeinheit, das laeuft fluessig. */
   header.hero {
     position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden;
-    background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.15)), var(--ink);
-    color: #fff; padding: 3rem 1.5rem;
+    background: var(--ink); color: #fff; padding: 3rem 1.5rem;
   }
+  
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/33458438/pexels-photo-33458438.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/12478607/pexels-photo-12478607.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
   }
+  
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -69,6 +74,9 @@
   footer { text-align: center; padding: 2.5rem 1.5rem; font-size: .82rem; color: #8a8f98; border-top: 1px solid #eee; margin-top: 3rem; position: relative; z-index: 1; }
   footer a { color: #8a8f98; }
 
+  /* Handy: Die Karten werden per negativem Abstand ueber das Hero-Bild gezogen. Auf
+     dem grossen Bildschirm ist das gewollt, am Telefon ueberlappen sie die Bildkante
+     und wirken verrutscht - dort also normal untereinander. */
   @media (max-width: 680px) {
     .highlights { margin: 1.6rem auto 2.5rem; grid-template-columns: 1fr; gap: .7rem; }
     .highlight { padding: .9rem 1.1rem; }
@@ -116,10 +124,10 @@
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Bar Intershop – Zentrum von Bochum</div>
-    <h1>Intershop – Bar in Bochum</h1>
-    <p class="sub">Im Intershop an der Viktoriastraße 53a finden Sie abendliche Drinks im Herzen des Bochumer Zentrums.</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Tisch reservieren</a>
+    <div class="eyebrow">Bar Intershop – Ihr Treffpunkt in Bochum</div>
+    <h1>Intershop</h1>
+    <p class="sub">Für entspannte Abende und gesellige Runden in Bochum</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt reservieren</a>
   </div>
 </header>
 <main>
@@ -127,31 +135,33 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Lage an der Viktoriastraße 53a, fußläufig zum Hauptbahnhof</div><div class="highlight reveal" style="transition-delay: 0.08s">Cocktailkarte mit klassischen und hauseigenen Drinks</div><div class="highlight reveal" style="transition-delay: 0.16s">Industrieller Bar‑Look mit Holz‑ und Metallelementen</div>
-  </div>
-  <div class="fakten reveal"><span class="fakt">Plätze im Freien</span><span class="fakt">Barrierefreier Zugang</span></div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Cocktails &amp; Longdrinks</div><div class="highlight reveal" style="transition-delay: 0.08s">Bier vom Fass</div><div class="highlight reveal" style="transition-delay: 0.16s">Wein &amp; Spritz</div>
 
+  
+  <div class="fakten reveal">
+    <span class="fakt">Plätze im Freien</span><span class="fakt">Barrierefreier Zugang</span>
+  </div>
+  
+  </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Im Intershop an der Viktoriastraße 53a erwartet Sie ein industriell gestalteter Innenraum mit offenen Regalen, einer Theke aus dunklem Holz und einer Beleuchtung, die das Farbspiel der Cocktails betont. Unser Cocktailangebot umfasst klassische Rezepte sowie Eigenkreationen, die unser Barteam regelmäßig weiterentwickelt. Zusätzlich gibt es eine Auswahl an Bieren, Weinen und kleinen Snacks zum Teilen. Wir achten auf einen zuvorkommenden Service und die Erreichbarkeit zu Fuß aus dem Stadtzentrum.</p>
+    <p>Im Intershop können Sie den Tag mit einem Getränk Ihrer Wahl ausklingen lassen. Ob ein Drink nach der Arbeit oder ein Treffen mit Freundinnen und Freunden – wählen Sie aus Cocktails, Bieren vom Fass, Wein und Softdrinks. Eine kleine Auswahl an Snacks ergänzt Ihr Getränk.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktails &amp; Longdrinks</h3><p>Klassische und eigens kreierte Drinks, zubereitet von erfahrenen Bartendern.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Cocktail</h3><p>Ein Cocktail, frisch gemixt und serviert.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Craft Beer</h3><p>Auswahl an regionalen und internationalen Craft Bieren.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Bier</h3><p>Ein frisch gezapftes Bier vom Fass.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Wein &amp; Sekt</h3><p>Sorgfältig ausgesuchte Weine und Sekt.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Wein</h3><p>Eine Auswahl an Wein, passend zu Ihrem Moment.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Bar Snacks</h3><p>Kleine Snacks zum Teilen, z. B. Oliven, Nüsse, Käseplatten.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Softdrink</h3><p>Ein kühler Softdrink Ihrer Wahl.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Happy Hour</h3><p>Happy‑Hour von 18–20 Uhr mit Preisnachlässen auf ausgewählte Drinks.</p></div>
-      
-      <div class="service reveal" style="transition-delay: 0.35000000000000003s"><h3>Private Events</h3><p>Möglichkeit zur Buchung für Feiern oder geschäftliche Anlässe.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Snack</h3><p>Ein kleiner Snack, ideal zum Begleiten Ihres Getränks.</p></div>
       
     </div>
   </section>
@@ -161,8 +171,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/cozy-night-bar-in-katowice-poland-38082102/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/38082102/pexels-photo-38082102.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/the-dining-area-of-a-restaurant-6314543/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/6314543/pexels-photo-6314543.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/pile-of-labeled-bottles-2606387/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/2606387/pexels-photo-2606387.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
+      </a>
+      
+      <a class="reveal" href="https://www.pexels.com/photo/city-view-through-dimly-lit-bar-window-33999753/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/33999753/pexels-photo-33999753.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bar Impression" loading="lazy">
       </a>
       
     </div>
@@ -171,8 +189,8 @@
 
   <section class="meta-grid reveal">
     <div class="meta-item"><b>Adresse</b>Viktoriastraße 53a, 44787 Bochum</div>
-    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/bochum.intershop" target="_blank" rel="noopener">Facebook</a></div>
     
+    <div class="meta-item"><b>Im Netz</b><a href="https://www.facebook.com/bochum.intershop" target="_blank" rel="noopener">Facebook</a></div>
     
     
     <div class="meta-item"><b>Öffnungszeiten</b>
@@ -182,8 +200,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Intershop, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/industrial-chic-cocktail-bar-interior-in-cologne-33458438/">Julia Fuchs</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Intershop, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/illuminated-bar-reflecting-in-the-window-12478607/">Brett Sayles</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -219,6 +238,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -226,6 +248,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
