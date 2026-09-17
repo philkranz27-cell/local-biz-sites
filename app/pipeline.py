@@ -183,8 +183,20 @@ def phase_send_emails() -> None:
             if settings.max_emails_per_day else "Versand aus – MAX_EMAILS_PER_DAY steht auf 0",
         )
         return
+    # Harter Zaun: Liegt eine Mailauswahl vor, geht ausschliesslich an diese Betriebe Post
+    # raus - unabhaengig davon, was der Tagesdeckel noch erlauben wuerde.
+    auswahl = _slugliste(_MAILAUSWAHL_DATEI)
+    kandidaten = db.get_leads_by_status("ready_to_send", limit=500 if auswahl else budget)
+    if auswahl:
+        kandidaten = [r for r in kandidaten if r["site_slug"] in auswahl][:budget]
+    kandidaten = kandidaten[:MAILS_PRO_DURCHLAUF]
+    if not kandidaten:
+        progress.set_phase("versand", "Versand – nichts offen in der Mailauswahl"
+                           if auswahl else "Versand – nichts offen")
+        return
+
     progress.set_phase("versand", f"Versand – noch {budget} Mails heute möglich")
-    for row in db.get_leads_by_status("ready_to_send", limit=budget):
+    for row in kandidaten:
         if progress.is_paused():
             break
         # Widerspruch beachten. Steht vor dem Versand, nicht danach - eine gesperrte
@@ -213,6 +225,23 @@ def phase_send_emails() -> None:
 TEXTE_PRO_DURCHLAUF = 10
 _AUSWAHL_DATEI = Path(settings.db_path).parent / "auswahl.json"
 
+# Dieselbe Idee fuer den Mailversand: eine Liste von site_slug, an die geschrieben werden
+# darf. Ohne sie wuerde der Tagesdeckel einfach die ersten Leads nach ID nehmen - darunter
+# die 20 Briefempfaenger, die dann Brief UND Mail bekaemen.
+_MAILAUSWAHL_DATEI = Path(settings.db_path).parent / "mailauswahl.json"
+
+# Nicht alle Mails in derselben Minute: Zwanzig gleichzeitig an fremde Adressen sieht fuer
+# jeden Spamfilter nach einer Welle aus. Die Pipeline laeuft jede Minute, so verteilt sich
+# der Versand von selbst ueber eine knappe halbe Stunde.
+MAILS_PRO_DURCHLAUF = 3
+
+
+def _slugliste(datei: Path) -> set[str]:
+    try:
+        return set(json.loads(datei.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        return set()
+
 
 def phase_rewrite_texts() -> None:
     """Erneuert die Texte bestehender Seiten mit der aktuellen Fassung des Prompts.
@@ -227,10 +256,7 @@ def phase_rewrite_texts() -> None:
     offen = db.get_leads_ohne_text()
     if not offen:
         return
-    try:
-        bevorzugt = set(json.loads(_AUSWAHL_DATEI.read_text(encoding="utf-8")))
-    except (OSError, ValueError):
-        bevorzugt = set()
+    bevorzugt = _slugliste(_AUSWAHL_DATEI)
     offen.sort(key=lambda l: (l["site_slug"] not in bevorzugt, l["id"]))
 
     progress.set_phase("websites", f"Texte erneuern – {len(offen)} Seiten offen")
