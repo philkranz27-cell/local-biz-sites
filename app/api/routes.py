@@ -122,7 +122,7 @@ def dashboard(request: Request):
             "screened_leads": db.count_screened(),
             "emails_drafted": sum(1 for l in leads if l["email_subject"]),
             "emails_sent": sum(1 for l in leads if l["status"] == "emailed"),
-            "deals_active": sum(1 for l in leads if l["deal_status"] not in ("offen", "abgelehnt")),
+            "deals_active": sum(1 for l in leads if l["deal_status"] not in ("offen", "kontaktiert", "abgelehnt")),
             "stripe_configured": settings.stripe_configured,
             "source_health": overpass.source_health(),
             "publish_health": publisher.publish_health(),
