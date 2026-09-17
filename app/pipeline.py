@@ -289,13 +289,9 @@ def run_pipeline() -> None:
 
     progress.start_run()
     try:
-        # Versand ganz vorn: Ein Durchlauf haengt schnell eine halbe Stunde in den Texten
-        # (zehn Seiten, dazwischen Wartezeiten wegen des Groq-Limits) - der Versand kam
-        # dahinter nie an die Reihe. Verschickt werden ohnehin nur Betriebe, deren Seite
-        # in einem frueheren Durchlauf schon veroeffentlicht wurde, der Link geht also.
-        phase_send_emails()
-        if progress.is_paused():
-            return
+        # Der Versand laeuft nicht hier, sondern als eigener Job jede Minute (siehe
+        # app/scheduler.py). Zweimal aufgerufen koennten beide Stellen gleichzeitig
+        # denselben Betrieb greifen und ihm die Mail doppelt schicken.
         phase_rewrite_texts()
         if progress.is_paused():
             return
