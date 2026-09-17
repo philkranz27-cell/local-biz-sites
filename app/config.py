@@ -29,8 +29,9 @@ class Settings(BaseSettings):
     # ImprovMX kam sie nie an. Direkt zugestellt ist sie in Sekunden da.
     notify_email: str = ""
     # Postfach, in dem die Antworten der Betriebe landen (ueber die ImprovMX-Weiterleitung).
-    # Bei Gmail braucht IMAP ein App-Passwort, nicht das normale Konto-Passwort.
-    imap_host: str = "imap.gmail.com"
+    # Ein eigenes Postfach nur fuers Geschaeft (web.de), nicht das private Gmail-Konto:
+    # Faellt dort irgendetwas auf, soll es nicht das Hauptkonto treffen.
+    imap_host: str = "imap.web.de"
     imap_user: str = ""
     imap_password: str = ""
     from_name: str = "Website-Angebot"

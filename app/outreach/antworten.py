@@ -117,16 +117,28 @@ def _domain(adresse: str) -> str:
     return adresse.rsplit("@", 1)[-1].lower() if "@" in adresse else ""
 
 
-def _alle_nachrichten_ordner(imap: imaplib.IMAP4_SSL) -> str:
-    """Gmail legt archivierte Mails nicht im INBOX ab. Der Ordner mit dem Merkmal \\All
-    enthaelt alles - sein Name haengt aber von der Sprache ab ("Alle Nachrichten")."""
+def _ordner_zum_durchsuchen(imap: imaplib.IMAP4_SSL) -> list[str]:
+    """Welche Ordner durchsucht werden.
+
+    Gmail hat einen Ordner mit dem IMAP-Merkmal "All", der alles enthaelt, auch Archiviertes -
+    dann reicht der. Andere Anbieter haben keinen: Bei web.de landen Mails von fremden
+    Absendern oft im Ordner "Unbekannt", verdaechtige im Spam. Eine Antwort von einem
+    Betrieb, mit dem man noch nie geschrieben hat, ist genau so ein fremder Absender -
+    deshalb werden dort INBOX, Unbekannt und Spam durchsucht."""
     _, zeilen = imap.list()
+    alle, weitere = None, []
     for zeile in zeilen or []:
         text = zeile.decode("utf-8", errors="replace") if isinstance(zeile, bytes) else str(zeile)
-        if "\\All" in text:
-            name = text.rsplit(' "/" ', 1)[-1].strip()
-            return name if name.startswith('"') else f'"{name}"'
-    return "INBOX"
+        name = text.rsplit(' "/" ', 1)[-1].strip() if ' "/" ' in text else text.rsplit(" ", 1)[-1]
+        name = name if name.startswith('"') else f'"{name}"'
+        merkmale = text.split(")", 1)[0]
+        if "\\All" in merkmale:
+            alle = name
+        elif "\\Junk" in merkmale or "unbekannt" in name.lower() or name.strip('"').lower() in ("spam", "junk"):
+            weitere.append(name)
+    if alle:
+        return [alle]
+    return ["INBOX"] + weitere
 
 
 _MONATE_IMAP = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -166,65 +178,67 @@ def pruefe_antworten() -> int:
 
     with imaplib.IMAP4_SSL(settings.imap_host) as imap:
         imap.login(settings.imap_user, settings.imap_password)
-        imap.select(_alle_nachrichten_ordner(imap), readonly=True)
+        for ordner in _ordner_zum_durchsuchen(imap):
+            if imap.select(ordner, readonly=True)[0] != "OK":
+                continue
 
-        for lead in leads:
-            adresse = lead["contact_email"]
-            kriterien = [adresse]
-            domain = _domain(adresse)
-            if domain and domain not in FREEMAILER:
-                kriterien.append("@" + domain)
-            gesehen: set[bytes] = set()
-            for kriterium in kriterien:
-                _, daten = imap.search(None, "SINCE", _imap_datum(lead["emailed_at"]),
-                                       "FROM", f'"{kriterium}"')
+            for lead in leads:
+                adresse = lead["contact_email"]
+                kriterien = [adresse]
+                domain = _domain(adresse)
+                if domain and domain not in FREEMAILER:
+                    kriterien.append("@" + domain)
+                gesehen: set[bytes] = set()
+                for kriterium in kriterien:
+                    _, daten = imap.search(None, "SINCE", _imap_datum(lead["emailed_at"]),
+                                           "FROM", f'"{kriterium}"')
+                    for nummer in (daten[0] or b"").split():
+                        if nummer in gesehen:
+                            continue
+                        gesehen.add(nummer)
+                        nachricht = _hole(imap, nummer)
+                        if nachricht is None:
+                            continue
+                        empfangen = _empfangen(nachricht)
+                        if datetime.fromisoformat(empfangen) < datetime.fromisoformat(lead["emailed_at"]):
+                            continue
+                        if db.add_antwort(
+                            lead_id=lead["id"],
+                            nachricht_id=nachricht.get("Message-ID") or f"{adresse}:{empfangen}",
+                            art="antwort",
+                            absender=_dekodiere(nachricht.get("From")),
+                            betreff=_dekodiere(nachricht.get("Subject")),
+                            auszug=auszug(textkoerper(nachricht)),
+                            empfangen_am=empfangen,
+                        ):
+                            neu += 1
+                            logger.info("Antwort erkannt von Lead %s (%s)", lead["id"], adresse)
+
+            # Rueckläufer: Die Meldung kommt vom Mailserver, nicht vom Betrieb - erkennbar
+            # nur daran, dass unsere Empfaengeradresse im Text steht.
+            adressen = [l["contact_email"] for l in leads]
+            nach_adresse = {l["contact_email"].lower(): l for l in leads}
+            for absender in ("mailer-daemon", "postmaster"):
+                _, daten = imap.search(None, "SINCE", _imap_datum(frueheste), "FROM", absender)
                 for nummer in (daten[0] or b"").split():
-                    if nummer in gesehen:
-                        continue
-                    gesehen.add(nummer)
                     nachricht = _hole(imap, nummer)
                     if nachricht is None:
                         continue
-                    empfangen = _empfangen(nachricht)
-                    if datetime.fromisoformat(empfangen) < datetime.fromisoformat(lead["emailed_at"]):
+                    volltext = "\n".join(_teiltext(t) for t in nachricht.walk()
+                                         if t.get_content_maintype() != "multipart")
+                    getroffen = adresse_in_meldung(volltext, adressen)
+                    if not getroffen:
                         continue
+                    lead = nach_adresse[getroffen.lower()]
                     if db.add_antwort(
                         lead_id=lead["id"],
-                        nachricht_id=nachricht.get("Message-ID") or f"{adresse}:{empfangen}",
-                        art="antwort",
+                        nachricht_id=nachricht.get("Message-ID") or f"bounce:{getroffen}",
+                        art="unzustellbar",
                         absender=_dekodiere(nachricht.get("From")),
                         betreff=_dekodiere(nachricht.get("Subject")),
                         auszug=auszug(textkoerper(nachricht)),
-                        empfangen_am=empfangen,
+                        empfangen_am=_empfangen(nachricht),
                     ):
                         neu += 1
-                        logger.info("Antwort erkannt von Lead %s (%s)", lead["id"], adresse)
-
-        # Rueckläufer: Die Meldung kommt vom Mailserver, nicht vom Betrieb - erkennbar
-        # nur daran, dass unsere Empfaengeradresse im Text steht.
-        adressen = [l["contact_email"] for l in leads]
-        nach_adresse = {l["contact_email"].lower(): l for l in leads}
-        for absender in ("mailer-daemon", "postmaster"):
-            _, daten = imap.search(None, "SINCE", _imap_datum(frueheste), "FROM", absender)
-            for nummer in (daten[0] or b"").split():
-                nachricht = _hole(imap, nummer)
-                if nachricht is None:
-                    continue
-                volltext = "\n".join(_teiltext(t) for t in nachricht.walk()
-                                     if t.get_content_maintype() != "multipart")
-                getroffen = adresse_in_meldung(volltext, adressen)
-                if not getroffen:
-                    continue
-                lead = nach_adresse[getroffen.lower()]
-                if db.add_antwort(
-                    lead_id=lead["id"],
-                    nachricht_id=nachricht.get("Message-ID") or f"bounce:{getroffen}",
-                    art="unzustellbar",
-                    absender=_dekodiere(nachricht.get("From")),
-                    betreff=_dekodiere(nachricht.get("Subject")),
-                    auszug=auszug(textkoerper(nachricht)),
-                    empfangen_am=_empfangen(nachricht),
-                ):
-                    neu += 1
-                    logger.info("Unzustellbar: Lead %s (%s)", lead["id"], getroffen)
+                        logger.info("Unzustellbar: Lead %s (%s)", lead["id"], getroffen)
     return neu

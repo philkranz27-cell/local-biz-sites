@@ -462,11 +462,11 @@
     <h3>💬 Antworten{% if antworten %} · {{ antworten|length }}{% endif %}</h3>
     <p class="card-sub">
       Mails von angeschriebenen Betrieben und Unzustellbar-Meldungen, alle fünf Minuten aus
-      deinem Postfach geholt. Gesucht wird nur nach deren Adressen – der Rest deines
+      dem Geschäftspostfach geholt. Gesucht wird nur nach deren Adressen – der Rest deines
       Postfachs wird nicht gelesen.
     </p>
     {% if not antworten_eingerichtet %}
-      <p class="not-configured">Noch nicht eingerichtet: In der .env fehlt <code>IMAP_PASSWORD</code> (Gmail-App-Passwort).</p>
+      <p class="not-configured">Noch nicht eingerichtet: In der .env fehlt <code>IMAP_PASSWORD</code> (Passwort des web.de-Postfachs).</p>
     {% elif not antworten %}
       <p class="not-configured">Noch keine Antwort.</p>
     {% endif %}

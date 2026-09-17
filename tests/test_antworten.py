@@ -166,6 +166,23 @@ def test_nur_lesend():
                for teil in rest)
 
 
+def test_webde_ordner_unbekannt_und_spam_werden_durchsucht():
+    """web.de hat keinen Alle-Nachrichten-Ordner - fremde Absender landen in "Unbekannt"."""
+    class WebDe(FakeImap):
+        def list(self):
+            return "OK", [b'(\\HasNoChildren) "/" "INBOX"', b'(\\HasNoChildren \\Sent) "/" "Gesendet"',
+                          b'(\\HasNoChildren) "/" "Unbekannt"', b'(\\HasNoChildren \\Junk) "/" "Spam"']
+    alt = antworten.imaplib.IMAP4_SSL
+    postfach = {b"1": _mail("info@landhaus-wibbecke.de", "Re", "Thu, 17 Sep 2026 20:00:00 +0200", "ja", "<w1@x>")}
+    try:
+        FakeImap.postfach, FakeImap.abgesetzt = postfach, []
+        antworten.imaplib.IMAP4_SSL = WebDe
+        ordner = antworten._ordner_zum_durchsuchen(WebDe("imap.web.de"))
+    finally:
+        antworten.imaplib.IMAP4_SSL = alt
+    assert ordner == ["INBOX", '"Unbekannt"', '"Spam"'], ordner
+
+
 def test_zitat_wird_abgeschnitten():
     text = NL.join(["Ja, gerne!", "", "Am 17.09.2026 um 17:40 schrieb Philipp Kranz:",
                     "> Guten Tag,", "> für das Landhaus ..."])
