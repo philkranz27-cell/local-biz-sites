@@ -131,11 +131,19 @@ def dashboard(request: Request):
             "status_zaehler": db.zaehle_status(),
             "blocklist": db.get_blocklist(),
             "reservations": db.get_reservations(),
+            "antworten": db.get_antworten(),
+            "antworten_eingerichtet": settings.imap_configured,
             # Der komplette Text, wie er beim Betrieb ankaeme - nicht nur der von der KI
             # geschriebene Teil. Sonst sieht man hier etwas anderes, als rausgeht.
             "mail_texte": {l["id"]: akquise_mail_fuer_lead(l) for l in leads if l["email_body"]},
         },
     )
+
+
+@router.post("/api/antwort/{antwort_id}/gelesen", dependencies=[Depends(require_admin)])
+def api_antwort_gelesen(antwort_id: int):
+    db.markiere_antwort_gelesen(antwort_id)
+    return {"status": "ok"}
 
 
 @router.get("/healthz")

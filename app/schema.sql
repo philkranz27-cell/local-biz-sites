@@ -86,3 +86,18 @@ CREATE TABLE IF NOT EXISTS aufnahmen (
     benachrichtigt INTEGER NOT NULL DEFAULT 0,
     erstellt_am TEXT NOT NULL
 );
+
+-- Antworten der angeschriebenen Betriebe und Unzustellbar-Meldungen, per IMAP erkannt.
+-- nachricht_id ist die Message-ID der Mail: Derselbe Durchlauf alle fuenf Minuten
+-- findet dieselbe Mail immer wieder, gespeichert wird sie nur einmal.
+CREATE TABLE IF NOT EXISTS antworten (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lead_id INTEGER NOT NULL REFERENCES leads(id),
+    nachricht_id TEXT NOT NULL UNIQUE,
+    art TEXT NOT NULL,
+    absender TEXT,
+    betreff TEXT,
+    auszug TEXT,
+    empfangen_am TEXT NOT NULL,
+    gelesen INTEGER NOT NULL DEFAULT 0
+);

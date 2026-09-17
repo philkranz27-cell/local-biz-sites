@@ -277,6 +277,13 @@
   .aufnahme-feld span { display: block; font-size: .72rem; text-transform: uppercase;
                         letter-spacing: .06em; color: var(--muted); margin-bottom: .1rem; }
   .aufnahme-feld p { margin: 0; white-space: pre-wrap; }
+  .antwort-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem; }
+  .antwort.gelesen { opacity: .55; }
+  .antwort-art { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em;
+                 padding: .12rem .5rem; border-radius: 999px; margin-left: .5rem;
+                 background: rgba(52,211,153,.18); color: #6ee7b7; }
+  .antwort-art.unzustellbar { background: rgba(248,113,113,.18); color: #fca5a5; }
+  .antwort-neu { color: #fbbf24; font-size: .75rem; margin-left: .4rem; }
   .aufnahme-aktion { margin-top: .9rem; display: flex; align-items: center; gap: .8rem;
                      flex-wrap: wrap; }
   .uebernehmen-btn { font: inherit; font-size: .85rem; padding: .45rem 1rem; border-radius: 8px;
@@ -337,7 +344,8 @@
       <div class="mm-inner">
         <span class="mm-icon">📧</span>
         <span class="mm-label">E-Mails</span>
-        <span class="mm-count">{{ emails_drafted }} entworfen · {{ emails_sent }} versendet</span>
+        {% set neue_antworten = antworten|selectattr('gelesen', 'equalto', 0)|selectattr('art', 'equalto', 'antwort')|list|length %}
+        <span class="mm-count">{{ emails_drafted }} entworfen · {{ emails_sent }} versendet{% if neue_antworten %} · <b style="color:#fbbf24">{{ neue_antworten }} neue Antwort{{ 'en' if neue_antworten != 1 }}</b>{% endif %}</span>
       </div>
     </button>
     <button class="mm-node orb mm-bubble mm-bubble-3" onclick="showView('payments-view')">
@@ -450,6 +458,36 @@
   <h2 class="section-title">📧 E-Mails</h2>
   <p class="section-sub">Entwürfe und Versand-Historie. Antworten der Betriebe kommen direkt in dein Postfach.</p>
 
+  <div class="card aufnahme-card antwort-card">
+    <h3>💬 Antworten{% if antworten %} · {{ antworten|length }}{% endif %}</h3>
+    <p class="card-sub">
+      Mails von angeschriebenen Betrieben und Unzustellbar-Meldungen, alle fünf Minuten aus
+      deinem Postfach geholt. Gesucht wird nur nach deren Adressen – der Rest deines
+      Postfachs wird nicht gelesen.
+    </p>
+    {% if not antworten_eingerichtet %}
+      <p class="not-configured">Noch nicht eingerichtet: In der .env fehlt <code>IMAP_PASSWORD</code> (Gmail-App-Passwort).</p>
+    {% elif not antworten %}
+      <p class="not-configured">Noch keine Antwort.</p>
+    {% endif %}
+    {% for a in antworten %}
+    <div class="aufnahme antwort{% if a.gelesen %} gelesen{% endif %}" data-antwort-id="{{ a.id }}">
+      <div class="aufnahme-kopf">
+        <span><b>{{ a.betrieb }}</b>{% if a.stadt %} <span class="aufnahme-zeit">{{ a.stadt }}</span>{% endif %}
+          <span class="antwort-art {{ a.art }}">{{ 'unzustellbar' if a.art == 'unzustellbar' else 'Antwort' }}</span>{% if not a.gelesen %}<span class="antwort-neu">● neu</span>{% endif %}</span>
+        <span class="aufnahme-zeit">{{ a.empfangen_am[:16].replace('T', ' ') }} UTC</span>
+      </div>
+      <div class="aufnahme-feld"><span>Von</span><p>{{ a.absender }}</p></div>
+      {% if a.betreff %}<div class="aufnahme-feld"><span>Betreff</span><p>{{ a.betreff }}</p></div>{% endif %}
+      {% if a.auszug %}<div class="aufnahme-feld"><span>{{ 'Meldung' if a.art == 'unzustellbar' else 'Nachricht' }}</span><p>{{ a.auszug }}</p></div>{% endif %}
+      <div class="aufnahme-aktion">
+        {% if a.site_slug %}<a class="aufnahme-zeit" href="https://philswebsites.de/sites/{{ a.site_slug }}/" target="_blank" rel="noopener">Demo-Seite ansehen</a>{% endif %}
+        {% if not a.gelesen %}<button type="button" class="uebernehmen-btn" onclick="antwortGelesen(this)">Erledigt</button>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
   <div class="card block-card">
     <h3>🚫 Sperrliste{% if blocklist %} · {{ blocklist|length }}{% endif %}</h3>
     <p class="card-sub">
@@ -480,7 +518,8 @@
     <div class="card email-card">
       <div class="meta">
         <span><b style="color:#fff">{{ lead.name }}</b> · {{ lead.contact_email }}</span>
-        <span class="status-chip">{{ 'versendet' if lead.status == 'emailed' else 'entworfen, noch nicht gesendet' }}</span>
+        {% set art_der_antwort = (antworten|selectattr('lead_id', 'equalto', lead.id)|map(attribute='art')|list) %}
+        <span class="status-chip">{% if 'antwort' in art_der_antwort %}💬 geantwortet{% elif 'unzustellbar' in art_der_antwort %}⚠️ unzustellbar{% elif lead.status == 'emailed' %}versendet{% else %}entworfen, noch nicht gesendet{% endif %}</span>
       </div>
       <button type="button" class="mail-head" onclick="toggleMail(this)">
         <span>
@@ -729,6 +768,20 @@
     });
   }
 
+
+  function antwortGelesen(btn) {
+    var block = btn.closest('.antwort');
+    btn.disabled = true;
+    fetch('/api/antwort/' + block.dataset.antwortId + '/gelesen', { method: 'POST' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        block.classList.add('gelesen');
+        var neu = block.querySelector('.antwort-neu');
+        if (neu) neu.remove();
+        btn.remove();
+      })
+      .catch(function (e) { btn.disabled = false; alert('Konnte nicht speichern: ' + e.message); });
+  }
 
   function aufnahmeUebernehmen(btn) {
     var block = btn.closest('.aufnahme');

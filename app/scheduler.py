@@ -4,6 +4,7 @@ from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.config import settings
+from app.outreach.antworten import pruefe_antworten
 from app.pipeline import phase_send_emails, run_pipeline
 from app.sicherung import sichern
 
@@ -32,6 +33,15 @@ def _versand_job() -> None:
         logger.exception("Mailversand fehlgeschlagen")
 
 
+def _antworten_job() -> None:
+    try:
+        pruefe_antworten()
+    except Exception:
+        # Ein falsches App-Passwort oder ein kurzer Ausfall von Gmail darf den Server
+        # nicht stoeren - der naechste Versuch kommt in fuenf Minuten.
+        logger.exception("Antworten abrufen fehlgeschlagen")
+
+
 def _sicherungs_job() -> None:
     try:
         sichern()
@@ -54,6 +64,14 @@ def create_scheduler() -> BackgroundScheduler:
         "interval",
         seconds=60,
         id="versand",
+        next_run_time=datetime.now(),
+    )
+    # Antworten der Betriebe: alle fuenf Minuten reicht, niemand wartet auf die Sekunde.
+    scheduler.add_job(
+        _antworten_job,
+        "interval",
+        minutes=5,
+        id="antworten",
         next_run_time=datetime.now(),
     )
     # Nachts um vier ist die Pipeline zwischen zwei Durchlaeufen am ruhigsten.

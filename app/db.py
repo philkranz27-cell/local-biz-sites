@@ -416,3 +416,39 @@ def get_leads_ohne_text() -> list[sqlite3.Row]:
 def text_fehlgeschlagen(lead_id: int) -> None:
     with get_connection() as conn:
         conn.execute("UPDATE leads SET error_count = error_count + 1 WHERE id = ?", (lead_id,))
+
+
+def get_angeschriebene_leads() -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT id, name, contact_email, emailed_at FROM leads "
+            "WHERE emailed_at IS NOT NULL AND contact_email IS NOT NULL AND contact_email != ''"
+        ).fetchall()
+
+
+def add_antwort(lead_id: int, nachricht_id: str, art: str, absender: str, betreff: str,
+                auszug: str, empfangen_am: str) -> bool:
+    """True, wenn die Mail neu ist. Eine schon bekannte Message-ID wird still uebergangen."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "INSERT OR IGNORE INTO antworten "
+            "(lead_id, nachricht_id, art, absender, betreff, auszug, empfangen_am) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (lead_id, nachricht_id, art, absender, betreff, auszug, empfangen_am),
+        )
+        return cur.rowcount == 1
+
+
+def get_antworten() -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT a.*, l.name AS betrieb, l.city AS stadt, l.site_slug, l.contact_email "
+            "FROM antworten a JOIN leads l ON l.id = a.lead_id "
+            "ORDER BY a.gelesen ASC, a.empfangen_am DESC"
+        ).fetchall()
+
+
+def markiere_antwort_gelesen(antwort_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE antworten SET gelesen = 1 WHERE id = ?", (antwort_id,))
+

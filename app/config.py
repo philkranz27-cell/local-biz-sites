@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     # 08.09.2026 gescheitert - Brevo nahm sie an und meldete danach Soft Bounce, bei
     # ImprovMX kam sie nie an. Direkt zugestellt ist sie in Sekunden da.
     notify_email: str = ""
+    # Postfach, in dem die Antworten der Betriebe landen (ueber die ImprovMX-Weiterleitung).
+    # Bei Gmail braucht IMAP ein App-Passwort, nicht das normale Konto-Passwort.
+    imap_host: str = "imap.gmail.com"
+    imap_user: str = ""
+    imap_password: str = ""
     from_name: str = "Website-Angebot"
     sender_impressum: str = ""
 
@@ -126,6 +131,10 @@ class Settings(BaseSettings):
     @property
     def mail_configured(self) -> bool:
         return bool(self.smtp_host and self.smtp_user and self.smtp_pass and self.from_email)
+
+    @property
+    def imap_configured(self) -> bool:
+        return bool(self.imap_host and self.imap_user and self.imap_password)
 
     @property
     def stripe_configured(self) -> bool:
