@@ -289,22 +289,26 @@ def run_pipeline() -> None:
 
     progress.start_run()
     try:
+        # Versand ganz vorn: Ein Durchlauf haengt schnell eine halbe Stunde in den Texten
+        # (zehn Seiten, dazwischen Wartezeiten wegen des Groq-Limits) - der Versand kam
+        # dahinter nie an die Reihe. Verschickt werden ohnehin nur Betriebe, deren Seite
+        # in einem frueheren Durchlauf schon veroeffentlicht wurde, der Link geht also.
+        phase_send_emails()
+        if progress.is_paused():
+            return
         phase_rewrite_texts()
         if progress.is_paused():
             return
         phase_generate_sites()
         if progress.is_paused():
             return
-        # Erst veroeffentlichen, dann Mails entwerfen und verschicken: Der Link in einer
-        # Mail muss ab dem Moment funktionieren, in dem sie rausgeht - nicht erst beim
-        # naechsten Durchlauf.
+        # Erst veroeffentlichen, dann Mails entwerfen: Der Link in einer Mail muss ab dem
+        # Moment funktionieren, in dem sie rausgeht. Verschickt wird der Entwurf deshalb
+        # erst im naechsten Durchlauf, ganz oben - eine Minute spaeter.
         progress.set_phase("veroeffentlichen", "Seiten veröffentlichen")
         if veroeffentlichen():
             progress.log("veroeffentlichen", "Demo-Seiten hochgeladen")
         phase_draft_emails()
-        if progress.is_paused():
-            return
-        phase_send_emails()
         if progress.is_paused():
             return
         progress.set_phase("suche", "Neue Betriebe suchen")
