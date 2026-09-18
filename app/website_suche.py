@@ -170,7 +170,7 @@ def _passt(sichtbar: str, roh: str, name_woerter: list[str], ort: list[str]) -> 
 
 
 def pruefe_domain_fuer_betrieb(domain: str, name: str, adresse: str | None, stadt: str | None,
-                              timeout: float = 5.0) -> tuple[str | None, bool]:
+                              timeout: float = 5.0, streng: bool = False) -> tuple[str | None, bool]:
     """(URL, sicher). URL ist None, wenn unter `domain` nichts von diesem Betrieb steht.
 
     sicher=False heisst: Die Domain heisst wie der Betrieb, die Seite ist aber ein leeres
@@ -189,6 +189,10 @@ def pruefe_domain_fuer_betrieb(domain: str, name: str, adresse: str | None, stad
         return None, False
     name_woerter = _woerter(name, True)
     ort = _ortsmerkmale(adresse, stadt)
+    if streng and len(ort) > 1:
+        # Treffer aus der Websuche: Auch ein Zeitungsartikel ueber den Betrieb nennt Name
+        # und Stadt. Strasse oder Postleitzahl stehen aber fast nur auf seiner eigenen Seite.
+        ort = ["ohne-stadt-zaehlt-nicht"] + ort[1:]
     if _passt(_klartext(antwort.text), _ascii(antwort.text, True), name_woerter, ort):
         return str(antwort.url), True
     # Die Anschrift steht bei deutschen Seiten spaetestens im Impressum.
@@ -237,7 +241,7 @@ def finde_website(name: str, stadt: str | None, adresse: str | None, email: str 
     if websuche:
         from app.websuche import domains_aus_suche
         for domain in domains_aus_suche(name, stadt):
-            url, sicher = pruefe_domain_fuer_betrieb(domain, name, adresse, stadt)
+            url, sicher = pruefe_domain_fuer_betrieb(domain, name, adresse, stadt, streng=True)
             if url and sicher:
                 return Befund("website", url, "suche")
     if unsicher:

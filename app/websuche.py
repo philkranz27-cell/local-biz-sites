@@ -42,6 +42,21 @@ VERZEICHNISSE = {
     "northdata.de", "northdata.com", "unternehmensregister.de", "bundesanzeiger.de", "yably.de",
     "marcopolo.de", "prinz.de", "qype.com", "linktr.ee", "apple.com", "bing.com", "wlw.de",
     "stadtplan.net", "stadtbekannt.de", "tagesspiegel.de", "falstaff.com", "falstaff.de",
+    "mapquest.com", "waz.de", "ruhrnachrichten.de", "rp-online.de", "ksta.de", "express.de",
+    "sueddeutsche.de", "abendzeitung-muenchen.de", "tz.de", "merkur.de", "bild.de", "t-online.de",
+    "welt.de", "spiegel.de", "zeit.de", "faz.net", "stern.de", "mopo.de", "ndr.de", "wdr.de",
+    "br.de", "swr.de", "mdr.de", "hr.de", "rbb24.de", "lvz.de", "sz-online.de", "saechsische.de",
+    "haz.de", "neue-westfaelische.de", "wn.de", "noz.de", "weser-kurier.de", "stuttgarter-zeitung.de",
+    "stuttgarter-nachrichten.de", "augsburger-allgemeine.de", "nordbayern.de", "mainpost.de",
+    "hna.de", "fr.de", "fnp.de", "badische-zeitung.de", "ka-news.de", "mannheimer-morgen.de",
+    "ln-online.de", "kn-online.de", "ostsee-zeitung.de", "svz.de", "nnn.de", "volksstimme.de",
+    "mz.de", "thueringer-allgemeine.de", "otz.de", "tlz.de", "freiepresse.de", "aachener-zeitung.de",
+    "general-anzeiger-bonn.de", "wz.de", "derwesten.de", "lokalkompass.de", "nw.de",
+    "creditreform.de", "handelsregister.de", "firmen.wko.at", "companyhouse.de", "online-handelsregister.de",
+    "gastroguide.de", "gastronomie.de", "friseur.com", "salonkee.de", "shore.com", "booksy.com",
+    "doctolib.de", "jameda.de", "urlaubsguru.de", "holidaycheck.de", "booking.com", "hrs.de",
+    "trivago.de", "expedia.de", "airbnb.de", "ebay-kleinanzeigen.de", "kleinanzeigen.de", "indeed.com",
+    "stepstone.de", "yellowmap.de", "stadtbranchenbuch.de", "branchen-info.net", "werliefertwas.de",
 }
 
 
