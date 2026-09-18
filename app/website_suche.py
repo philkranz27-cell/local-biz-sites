@@ -219,6 +219,9 @@ def _name_als_domain(domain: str, name: str) -> bool:
 def finde_website(name: str, stadt: str | None, adresse: str | None, email: str | None,
                   osm_website: str | None = None, websuche: bool = False) -> Befund:
     """Ergebnis "website" oder "vielleicht" heisst: nicht anschreiben."""
+    if websuche:
+        from app.websuche import verfuegbar
+        websuche = verfuegbar()
     if osm_website:
         return Befund("website", osm_website, "osm")
     maildomain = pruefe_maildomain(email)
