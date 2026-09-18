@@ -13,6 +13,7 @@ from app.sitegen.generator import generate_site
 from app import progress
 from app.publisher import veroeffentlichen
 from app.sources.overpass import find_leads
+from app.website_pruefung import pruefe_maildomain
 from app.llm import generate_outreach_email
 
 logger = logging.getLogger(__name__)
@@ -81,6 +82,12 @@ def phase_find_leads() -> None:
                 db.set_status(lead_id, "excluded_kette")
             elif lead.osm_email:
                 db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
+                # OSM kennt keine Website - unter der Domain der Mailadresse steht aber
+                # vielleicht eine (oder die Domain ist tot). Dann gleich raus: spart die
+                # Demo-Seite und die Groq-Tokens.
+                ergebnis = pruefe_maildomain(lead.osm_email)
+                if ergebnis in ("website", "tot"):
+                    db.markiere_maildomain(lead_id, ergebnis, vollstaendig(lead.address))
             elif vollstaendig(lead.address):
                 # Keine Mailadresse, aber eine Anschrift, an die ein Brief ankommt.
                 # Frueher landeten diese Betriebe unter "excluded_no_email" und waren
@@ -204,6 +211,15 @@ def phase_send_emails() -> None:
         if db.is_blocked(row["contact_email"]):
             db.set_status(row["id"], "blocked")
             logger.info("Uebersprungen, Adresse gesperrt: %s", row["contact_email"])
+            continue
+        # Letzte Sicherung vor dem Versand: Hat die Mail-Domain schon eine Website? In der
+        # ersten Runde am 17.09. traf das auf 8 von 20 zu - OSM kannte ihre Seiten nicht.
+        ergebnis = pruefe_maildomain(row["contact_email"])
+        if ergebnis in ("website", "tot"):
+            neu = db.markiere_maildomain(row["id"], ergebnis, vollstaendig(row["address"]))
+            logger.info("Nicht gesendet an Lead %s: Maildomain %s -> %s", row["id"], ergebnis, neu)
+            progress.log("versand", f"Übersprungen: {row['name']} – "
+                         + ("hat schon eine Website" if ergebnis == "website" else "Mail-Domain tot"))
             continue
         try:
             extras = json.loads(row["osm_extras_json"]) if row["osm_extras_json"] else None

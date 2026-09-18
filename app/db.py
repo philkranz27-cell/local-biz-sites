@@ -452,3 +452,20 @@ def markiere_antwort_gelesen(antwort_id: int) -> None:
     with get_connection() as conn:
         conn.execute("UPDATE antworten SET gelesen = 1 WHERE id = ?", (antwort_id,))
 
+
+def markiere_maildomain(lead_id: int, ergebnis: str, anschrift_vollstaendig: bool) -> str:
+    """Ergebnis der Pruefung aus app/website_pruefung.py festhalten. Gibt den neuen
+    Status zurueck. Hat die Mail-Domain eine Website, faellt der Betrieb raus. Ist sie
+    tot, geht keine Mail mehr hin - ein Brief kommt aber noch an, wenn die Anschrift
+    vollstaendig ist."""
+    if ergebnis == "website":
+        status = "excluded_has_website"
+    elif anschrift_vollstaendig:
+        status = "nur_anschrift"
+    else:
+        status = "excluded_no_email"
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET status = ?, website_verdict = ? WHERE id = ?",
+                     (status, f"maildomain_{ergebnis}", lead_id))
+    return status
+

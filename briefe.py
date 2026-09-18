@@ -154,8 +154,13 @@ def main() -> int:
             auswahl = set(json.loads(pathlib.Path(arg.split("=", 1)[1]).read_text(encoding="utf-8")))
     grenze = int(argumente[0]) if argumente else 0
 
-    kandidaten = [l for l in db.get_all_leads(limit=1000)
-                  if l["site_slug"] and l["status"] in ("ready_to_send", "site_generated")
+    # "nur_anschrift" mit Demo-Seite gehoert dazu: So stehen seit dem 18.09. auch Betriebe
+    # da, deren Mail-Domain tot ist (verkauft, abgelaufen). Keine Mail mehr, aber ein
+    # Brief kommt an. Wer laut Pruefung schon eine Website hat, faellt dagegen raus.
+    with db.get_connection() as conn:
+        alle = conn.execute("SELECT * FROM leads WHERE site_slug IS NOT NULL").fetchall()
+    kandidaten = [l for l in alle
+                  if l["status"] in ("ready_to_send", "site_generated", "nur_anschrift")
                   and (auswahl is None or l["site_slug"] in auswahl)]
 
     # Nur vollstaendige Anschriften. Jeder Brief kostet Porto - eine Adresse ohne
