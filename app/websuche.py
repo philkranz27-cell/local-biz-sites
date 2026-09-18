@@ -57,6 +57,7 @@ VERZEICHNISSE = {
     "doctolib.de", "jameda.de", "urlaubsguru.de", "holidaycheck.de", "booking.com", "hrs.de",
     "trivago.de", "expedia.de", "airbnb.de", "ebay-kleinanzeigen.de", "kleinanzeigen.de", "indeed.com",
     "stepstone.de", "yellowmap.de", "stadtbranchenbuch.de", "branchen-info.net", "werliefertwas.de",
+    "partyamt.de", "eventbrite.de", "eventim.de", "meetup.com", "rausgegangen.de", "prinz.de",
 }
 
 
