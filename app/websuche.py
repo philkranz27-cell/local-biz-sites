@@ -4,10 +4,12 @@ Die Namenssuche in app/website_suche.py findet nur Domains, die aus dem Namen fo
 tun das nicht: "Die Eule" in Essen steht unter hotelfabritz.de. Eine Suchmaschine findet so
 etwas, wenn man "Die Eule Essen" sucht.
 
-Benutzt die Brave Search API (kostenloser Zugang: 2.000 Suchen im Monat). Ohne
+Benutzt die Brave Search API: 5 Dollar pro 1.000 Suchen, dafuer 5 Dollar Gratis-
+Guthaben jeden Monat - also 1.000 Suchen umsonst (Stand September 2026). Ohne
 BRAVE_API_KEY in der .env ist sie aus - dann bleibt es bei OSM, Mail-Domain und Namenssuche.
 Weil das Kontingent knapp ist, wird nur gesucht, wenn ein Betrieb gleich angeschrieben
-werden soll, und nie mehr als WEBSUCHE_PRO_MONAT Mal.
+werden soll, und nie mehr als WEBSUCHE_PRO_MONAT Mal (Standard 950 - bleibt unter dem
+Gratis-Guthaben, kostet also nichts).
 """
 
 from __future__ import annotations

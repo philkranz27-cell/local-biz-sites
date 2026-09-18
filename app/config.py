@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     imap_password: str = ""
     # Websuche nach Websites, die OSM nicht kennt (app/websuche.py). Ohne Schluessel aus.
     brave_api_key: str = ""
-    websuche_pro_monat: int = 1900
+    websuche_pro_monat: int = 950
     from_name: str = "Website-Angebot"
     sender_impressum: str = ""
 
