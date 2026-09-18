@@ -170,7 +170,7 @@ def _passt(sichtbar: str, roh: str, name_woerter: list[str], ort: list[str]) -> 
 
 
 def pruefe_domain_fuer_betrieb(domain: str, name: str, adresse: str | None, stadt: str | None,
-                              timeout: float = 8.0) -> tuple[str | None, bool]:
+                              timeout: float = 5.0) -> tuple[str | None, bool]:
     """(URL, sicher). URL ist None, wenn unter `domain` nichts von diesem Betrieb steht.
 
     sicher=False heisst: Die Domain heisst wie der Betrieb, die Seite ist aber ein leeres

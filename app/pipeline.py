@@ -104,7 +104,7 @@ def phase_find_leads() -> None:
         )
 
 
-WEBSITE_PRUEFUNGEN_PRO_LAUF = 40
+WEBSITE_PRUEFUNGEN_PRO_LAUF = 64
 
 
 def _website_pruefen(row, websuche: bool = False):
@@ -139,7 +139,7 @@ def phase_websites_pruefen() -> None:
             logger.exception("Website-Pruefung fehlgeschlagen fuer Lead %s", row["id"])
             return None
 
-    with ThreadPoolExecutor(20) as pool:
+    with ThreadPoolExecutor(32) as pool:
         befunde = [b for b in pool.map(pruefen, offen) if b]
     gefunden = sum(1 for b in befunde if b.ergebnis in ("website", "vielleicht"))
     if gefunden:
