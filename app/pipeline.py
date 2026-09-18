@@ -315,7 +315,12 @@ def phase_rewrite_texts() -> None:
     if not offen:
         return
     bevorzugt = _slugliste(_AUSWAHL_DATEI)
-    offen.sort(key=lambda l: (l["site_slug"] not in bevorzugt, l["id"]))
+    # Danach die Seiten, deren Betrieb sicher keine Website hat (auch per Websuche
+    # geprueft) - die koennen als Naechstes angeschrieben werden. Ungepruefte zuletzt:
+    # Wer sich als Betrieb mit Website herausstellt, faellt raus, und der Text war umsonst.
+    reihenfolge = {"suche_keine": 0, "name_keine": 1}
+    offen.sort(key=lambda l: (l["site_slug"] not in bevorzugt,
+                              reihenfolge.get(l["website_verdict"] or "", 2), l["id"]))
 
     progress.set_phase("websites", f"Texte erneuern – {len(offen)} Seiten offen")
     for row in offen[:TEXTE_PRO_DURCHLAUF]:
