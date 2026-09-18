@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blumenland G. Fischer-Recker — Koblenz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Florale Eleganz aus Koblenz</div>
+    <div class="tagline">Blumige Eleganz</div>
     <h1>Blumenland G. Fischer‑Recker</h1>
     <div class="rule"></div>
-    <p class="sub">Ihr Florist in Koblenz, der mit Erfahrung und Liebe zum Detail florale Konzepte realisiert.</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Bestellen Sie jetzt</a>
+    <p class="sub">Ihr Florist in Koblenz</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt bestellen</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/woman-holding-slim-and-tall-vase-with-bouquet-6764294/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/6764294/pexels-photo-6764294.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumenland G. Fischer-Recker"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/florist-putting-flowers-on-display-6764292/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/6764292/pexels-photo-6764292.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumenland G. Fischer-Recker"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Blumenland G. Fischer‑Recker befindet sich in der Arenberger Straße, wo wir ein ausgewähltes Sortiment aus Schnittblumen, Topfpflanzen und saisonalen Arrangements anbieten. Unser Team berät Sie persönlich, um die passenden Pflanzen für Ihren Anlass oder Ihr Zuhause zu finden. Dabei stehen Frische, sorgfältige Handhabung und eine zurückhaltende Präsentation im Vordergrund. Wir laden Sie ein, die Auswahl in einer ruhigen Atmosphäre zu erkunden.</p>
+    <p>Im Blumenland G. Die Farben und Formen fügen sich harmonisch in Ihr Zuhause oder besondere Anlässe ein. Wir freuen uns, Sie in Koblenz begrüßen zu dürfen.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Lage an der Arenberger Straße</div><div class="hcol"><span class="mark">—</span>Täglich frische Lieferungen</div><div class="hcol"><span class="mark">—</span>Individuelle Beratung</div>
+      <div class="hcol"><span class="mark">—</span>Frische Schnittblumen</div><div class="hcol"><span class="mark">—</span>Individuelle Sträuße</div><div class="hcol"><span class="mark">—</span>Blumenstrauß</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Schnittblumen</h3><p>Frisch geschnittene Blumen, abgestimmt auf Ihren gewünschten Stil und Anlass.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Pflanzen für Zuhause</h3><p>Langfristige Topfpflanzen, die sich harmonisch in Wohn- und Arbeitsräume einfügen.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Brautfloristik</h3><p>Maßgeschneiderte Blumenkonzepte, die Ihre Hochzeitsästhetik unterstreichen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Firmenarrangements</h3><p>Florale Lösungen, die Büros und Events eine dezente Note verleihen.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Gartenberatung</h3><p>Praktische Tipps zur Gestaltung und Pflege Ihres Gartens, abgestimmt auf lokale Bedingungen.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Ein sorgfältig zusammengestellter Strauß, geeignet für private Anlässe oder als Geschenk.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Gestecke für Events</h3><p>Gestecke, die sich harmonisch in Ihre Veranstaltung einfügen.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Hochzeitsfloristik</h3><p>Individuelle Blumenkreationen, die Ihren Hochzeitstag bereichern.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Pflanzenberatung</h3><p>Beratung zur Auswahl und Pflege von Zimmerpflanzen für ein gesundes Wohnumfeld.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Grußkarten</h3><p>Passende Grußkarte, die Sie Ihrer Blumenbestellung beilegen können.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/a-woman-holding-a-flower-vase-with-roses-6764288/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/6764288/pexels-photo-6764288.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/charming-indoor-flower-arrangement-display-37309560/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37309560/pexels-photo-37309560.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/assorted-flower-arrangements-947914/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/947914/pexels-photo-947914.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/crop-woman-near-fridge-with-flowers-5410134/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5410134/pexels-photo-5410134.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/woman-in-white-crew-neck-t-shirt-wearing-black-apron-holding-flowers-3894245/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/3894245/pexels-photo-3894245.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/37309564/pexels-photo-37309564.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,13 +154,15 @@
 <section class="meta-grid reveal">
   <div class="meta-item"><b>Adresse</b>Arenberger Straße 80, 56077 Koblenz</div>
   <div class="meta-item"><b>Telefon</b>+49 261 64964</div>
+    
   
   
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Blumenland G. Fischer-Recker, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/woman-holding-slim-and-tall-vase-with-bouquet-6764294/">Pavel Danilyuk</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Blumenland G. Fischer-Recker, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/florist-putting-flowers-on-display-6764292/">Pavel Danilyuk</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
@@ -180,6 +196,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -187,6 +206,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');
