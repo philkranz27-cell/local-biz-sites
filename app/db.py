@@ -50,6 +50,12 @@ def init_db() -> None:
             conn.execute("ALTER TABLE leads ADD COLUMN deal_notes TEXT")
         if "stripe_payment_link" not in existing_columns:
             conn.execute("ALTER TABLE leads ADD COLUMN stripe_payment_link TEXT")
+        if "website_url" not in existing_columns:
+            # Gefundene Website trotz fehlendem OSM-Tag (app/website_suche.py) und wann
+            # zuletzt geprueft wurde. Ohne Pruefung wird weder gebaut noch angeschrieben.
+            conn.execute("ALTER TABLE leads ADD COLUMN website_url TEXT")
+        if "website_geprueft_am" not in existing_columns:
+            conn.execute("ALTER TABLE leads ADD COLUMN website_geprueft_am TEXT")
         if "osm_image" not in existing_columns:
             conn.execute("ALTER TABLE leads ADD COLUMN osm_image TEXT")
         if "osm_extras_json" not in existing_columns:
@@ -336,7 +342,7 @@ def zaehle_ohne_text() -> int:
     with get_connection() as conn:
         return conn.execute(
             "SELECT COUNT(*) FROM leads WHERE site_slug IS NOT NULL "
-            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette') AND error_count < 3"
+            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette', 'excluded_has_website') AND error_count < 3"
         ).fetchone()[0]
 
 
@@ -409,7 +415,7 @@ def get_leads_ohne_text() -> list[sqlite3.Row]:
     with get_connection() as conn:
         return conn.execute(
             "SELECT * FROM leads WHERE site_slug IS NOT NULL AND site_copy_json IS NULL "
-            "AND status NOT IN ('excluded_kette') AND error_count < 3 ORDER BY id"
+            "AND status NOT IN ('excluded_kette', 'excluded_has_website') AND error_count < 3 ORDER BY id"
         ).fetchall()
 
 
@@ -453,19 +459,52 @@ def markiere_antwort_gelesen(antwort_id: int) -> None:
         conn.execute("UPDATE antworten SET gelesen = 1 WHERE id = ?", (antwort_id,))
 
 
-def markiere_maildomain(lead_id: int, ergebnis: str, anschrift_vollstaendig: bool) -> str:
-    """Ergebnis der Pruefung aus app/website_pruefung.py festhalten. Gibt den neuen
-    Status zurueck. Hat die Mail-Domain eine Website, faellt der Betrieb raus. Ist sie
-    tot, geht keine Mail mehr hin - ein Brief kommt aber noch an, wenn die Anschrift
-    vollstaendig ist."""
-    if ergebnis == "website":
-        status = "excluded_has_website"
-    elif anschrift_vollstaendig:
-        status = "nur_anschrift"
-    else:
-        status = "excluded_no_email"
+# Reihenfolge der Website-Pruefung: wer demnaechst angeschrieben wird, zuerst.
+_PRUEF_REIHENFOLGE = """
+    CASE
+      WHEN status = 'ready_to_send' THEN 0
+      WHEN status = 'site_generated' THEN 1
+      WHEN status = 'email_found' THEN 2
+      WHEN status = 'nur_anschrift' AND site_slug IS NOT NULL THEN 3
+      WHEN status = 'nur_anschrift' THEN 4
+      ELSE 5
+    END"""
+
+
+def get_ungepruefte_leads(limit: int) -> list[sqlite3.Row]:
     with get_connection() as conn:
-        conn.execute("UPDATE leads SET status = ?, website_verdict = ? WHERE id = ?",
-                     (status, f"maildomain_{ergebnis}", lead_id))
-    return status
+        return conn.execute(
+            "SELECT * FROM leads WHERE website_geprueft_am IS NULL "
+            "AND status IN ('ready_to_send', 'site_generated', 'email_found', 'nur_anschrift', 'emailed') "
+            f"ORDER BY {_PRUEF_REIHENFOLGE}, id LIMIT ?",
+            (limit,),
+        ).fetchall()
+
+
+def zaehle_ungepruefte() -> int:
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT COUNT(*) FROM leads WHERE website_geprueft_am IS NULL "
+            "AND status IN ('ready_to_send', 'site_generated', 'email_found', 'nur_anschrift')"
+        ).fetchone()[0]
+
+
+def speichere_websitebefund(lead_id: int, ergebnis: str, url: str | None, quelle: str,
+                            anschrift_vollstaendig: bool) -> str:
+    """Befund festhalten und den Status anpassen. Bereits angeschriebene Betriebe behalten
+    ihren Status - dort ist es nur noch zur Information."""
+    with get_connection() as conn:
+        alt = conn.execute("SELECT status FROM leads WHERE id = ?", (lead_id,)).fetchone()["status"]
+        status = alt
+        if alt != "emailed":
+            if ergebnis in ("website", "vielleicht"):
+                status = "excluded_has_website"
+            elif ergebnis == "tot":
+                status = "nur_anschrift" if anschrift_vollstaendig else "excluded_no_email"
+        conn.execute(
+            "UPDATE leads SET status = ?, website_url = ?, website_verdict = ?, "
+            "website_geprueft_am = ? WHERE id = ?",
+            (status, url, f"{quelle}_{ergebnis}", _now(), lead_id),
+        )
+        return status
 

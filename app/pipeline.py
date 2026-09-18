@@ -13,7 +13,7 @@ from app.sitegen.generator import generate_site
 from app import progress
 from app.publisher import veroeffentlichen
 from app.sources.overpass import find_leads
-from app.website_pruefung import pruefe_maildomain
+from app.website_suche import finde_website
 from app.llm import generate_outreach_email
 
 logger = logging.getLogger(__name__)
@@ -81,13 +81,9 @@ def phase_find_leads() -> None:
                 # Porto ohne Aussicht.
                 db.set_status(lead_id, "excluded_kette")
             elif lead.osm_email:
+                # Ob es trotzdem eine Website gibt, prueft phase_websites_pruefen - vorher
+                # wird fuer den Betrieb weder eine Seite gebaut noch geschrieben.
                 db.set_website_verdict(lead_id, "osm_tagged", lead.osm_email)
-                # OSM kennt keine Website - unter der Domain der Mailadresse steht aber
-                # vielleicht eine (oder die Domain ist tot). Dann gleich raus: spart die
-                # Demo-Seite und die Groq-Tokens.
-                ergebnis = pruefe_maildomain(lead.osm_email)
-                if ergebnis in ("website", "tot"):
-                    db.markiere_maildomain(lead_id, ergebnis, vollstaendig(lead.address))
             elif vollstaendig(lead.address):
                 # Keine Mailadresse, aber eine Anschrift, an die ein Brief ankommt.
                 # Frueher landeten diese Betriebe unter "excluded_no_email" und waren
@@ -108,6 +104,49 @@ def phase_find_leads() -> None:
         )
 
 
+WEBSITE_PRUEFUNGEN_PRO_LAUF = 24
+
+
+def _website_pruefen(row, websuche: bool = False):
+    befund = finde_website(row["name"], row["city"], row["address"], row["contact_email"],
+                           row["existing_website"], websuche=websuche)
+    neu = db.speichere_websitebefund(row["id"], befund.ergebnis, befund.url, befund.quelle,
+                                     vollstaendig(row["address"]))
+    if befund.ergebnis != "keine":
+        logger.info("Website-Pruefung %s (%s): %s %s -> %s", row["name"], row["city"],
+                    befund.ergebnis, befund.url or "", neu)
+    return befund
+
+
+def phase_websites_pruefen() -> None:
+    """Prueft, ob Betriebe schon eine Website haben, bevor irgendetwas fuer sie passiert.
+
+    Eigener Job im Minutentakt (app/scheduler.py), damit er nicht hinter der langen
+    Pipeline wartet. Die Websuche (knappes Kontingent) nur fuer Betriebe, die demnaechst
+    angeschrieben werden - per Mail oder per Brief."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    offen = db.get_ungepruefte_leads(WEBSITE_PRUEFUNGEN_PRO_LAUF)
+    if not offen:
+        return
+
+    def pruefen(row):
+        bald = row["status"] in ("ready_to_send", "site_generated") or (
+            row["status"] == "nur_anschrift" and row["site_slug"])
+        try:
+            return _website_pruefen(row, websuche=bald)
+        except Exception:
+            logger.exception("Website-Pruefung fehlgeschlagen fuer Lead %s", row["id"])
+            return None
+
+    with ThreadPoolExecutor(12) as pool:
+        befunde = [b for b in pool.map(pruefen, offen) if b]
+    gefunden = sum(1 for b in befunde if b.ergebnis in ("website", "vielleicht"))
+    if gefunden:
+        progress.log("suche", f"Website-Prüfung: {gefunden} von {len(befunde)} Betrieben haben schon eine",
+                     gruppe="suche:website-pruefung")
+
+
 def phase_generate_sites() -> None:
     if not settings.groq_configured:
         progress.set_phase("websites", "Websites übersprungen – kein Groq-Zugang hinterlegt")
@@ -126,7 +165,10 @@ def phase_generate_sites() -> None:
                      gruppe="websites:neubau-ruht")
         return
 
-    wartend = db.get_leads_by_status("email_found", limit=20)
+    # Nur Betriebe, bei denen die Website-Pruefung schon durch ist - sonst baut man eine
+    # Demo-Seite fuer jemanden, der laengst eine hat, und verbraucht Groq-Tokens dafuer.
+    wartend = [r for r in db.get_leads_by_status("email_found", limit=60)
+               if r["website_geprueft_am"]][:20]
     progress.set_phase("websites", f"Websites bauen – {len(wartend)} Betriebe in der Warteschlange")
     for row in wartend:
         if progress.is_paused():
@@ -212,15 +254,15 @@ def phase_send_emails() -> None:
             db.set_status(row["id"], "blocked")
             logger.info("Uebersprungen, Adresse gesperrt: %s", row["contact_email"])
             continue
-        # Letzte Sicherung vor dem Versand: Hat die Mail-Domain schon eine Website? In der
-        # ersten Runde am 17.09. traf das auf 8 von 20 zu - OSM kannte ihre Seiten nicht.
-        ergebnis = pruefe_maildomain(row["contact_email"])
-        if ergebnis in ("website", "tot"):
-            neu = db.markiere_maildomain(row["id"], ergebnis, vollstaendig(row["address"]))
-            logger.info("Nicht gesendet an Lead %s: Maildomain %s -> %s", row["id"], ergebnis, neu)
-            progress.log("versand", f"Übersprungen: {row['name']} – "
-                         + ("hat schon eine Website" if ergebnis == "website" else "Mail-Domain tot"))
-            continue
+        # Letzte Sicherung vor dem Versand: Hat der Betrieb schon eine Website? In der
+        # ersten Runde am 17.09. traf das auf 10 von 20 zu - OSM kannte ihre Seiten nicht.
+        if not row["website_geprueft_am"]:
+            befund = _website_pruefen(row, websuche=True)
+            if befund.ergebnis != "keine":
+                progress.log("versand", f"Übersprungen: {row['name']} – "
+                             + ("hat schon eine Website" if befund.ergebnis in ("website", "vielleicht")
+                                else "Mail-Domain tot"))
+                continue
         try:
             extras = json.loads(row["osm_extras_json"]) if row["osm_extras_json"] else None
             send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"],

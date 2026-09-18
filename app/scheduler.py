@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.config import settings
 from app.outreach.antworten import pruefe_antworten
-from app.pipeline import phase_send_emails, run_pipeline
+from app.pipeline import phase_send_emails, phase_websites_pruefen, run_pipeline
 from app.sicherung import sichern
 
 logger = logging.getLogger(__name__)
@@ -31,6 +31,13 @@ def _versand_job() -> None:
         phase_send_emails()
     except Exception:
         logger.exception("Mailversand fehlgeschlagen")
+
+
+def _website_pruef_job() -> None:
+    try:
+        phase_websites_pruefen()
+    except Exception:
+        logger.exception("Website-Pruefung fehlgeschlagen")
 
 
 def _antworten_job() -> None:
@@ -64,6 +71,15 @@ def create_scheduler() -> BackgroundScheduler:
         "interval",
         seconds=60,
         id="versand",
+        next_run_time=datetime.now(),
+    )
+    # Hat der Betrieb schon eine Website? Laeuft neben der Pipeline her, damit nichts
+    # gebaut oder verschickt wird, bevor das geklaert ist.
+    scheduler.add_job(
+        _website_pruef_job,
+        "interval",
+        seconds=60,
+        id="website_pruefung",
         next_run_time=datetime.now(),
     )
     # Antworten der Betriebe: alle fuenf Minuten reicht, niemand wartet auf die Sekunde.

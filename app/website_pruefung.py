@@ -36,7 +36,8 @@ _GEPARKT = re.compile(
     r"website expired|domain expired|abgelaufen|parked|geparkt|sedo|dan\.com|"
     r"hier entsteht (eine|die) neue|under construction|coming soon|baustelle|"
     r"default web page|welcome to nginx|it works!|plesk|strato.*platzhalter|"
-    r"diese domain wurde|domain registriert|webhosting",
+    r"diese domain wurde|domain registriert|webhosting|freigeschaltete homepage|"
+    r"soeben freigeschaltet|noch keine inhalte|this site is under construction",
     re.IGNORECASE,
 )
 

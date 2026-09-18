@@ -162,6 +162,15 @@ def main() -> int:
     kandidaten = [l for l in alle
                   if l["status"] in ("ready_to_send", "site_generated", "nur_anschrift")
                   and (auswahl is None or l["site_slug"] in auswahl)]
+    # Kein Brief, solange nicht geklaert ist, ob der Betrieb schon eine Website hat - der
+    # Brief erklaert ja gerade, warum sich eine lohnt.
+    ungeprueft = [l for l in kandidaten if not l["website_geprueft_am"]]
+    kandidaten = [l for l in kandidaten if l["website_geprueft_am"]]
+    if ungeprueft:
+        print(f"{len(ungeprueft)} Betriebe noch nicht auf eine vorhandene Website geprueft - "
+              f"kommen in den naechsten Minuten dran, dann nochmal aufrufen:")
+        for lead in ungeprueft[:5]:
+            print(f"    {lead['name']}")
 
     # Nur vollstaendige Anschriften. Jeder Brief kostet Porto - eine Adresse ohne
     # Hausnummer oder ohne Ort kommt nicht an, das waere Geld zum Fenster raus.
