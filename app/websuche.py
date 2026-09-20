@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from datetime import date
 from pathlib import Path
@@ -59,6 +60,15 @@ VERZEICHNISSE = {
     "stepstone.de", "yellowmap.de", "stadtbranchenbuch.de", "branchen-info.net", "werliefertwas.de",
     "partyamt.de", "eventbrite.de", "eventim.de", "meetup.com", "rausgegangen.de", "prinz.de",
 }
+
+
+# Stadtportale und Gutscheinseiten fuehren jeden Laden der Stadt mit Anschrift auf -
+# "Cupido coffee Oldenburg" landete so auf virtuelle-innenstadt-oldenburg.de.
+_PORTAL_MUSTER = re.compile(
+    r"innenstadt|stadtmarketing|citymarketing|stadtportal|stadtinfo|city-?guide|"
+    r"gutschein|einkaufen-in|wirsind|lieblingsladen|standort-?verzeichnis",
+    re.IGNORECASE,
+)
 
 
 def _registrierbar(host: str) -> str:
@@ -115,6 +125,7 @@ def domains_aus_suche(name: str, stadt: str | None) -> list[str]:
     domains: list[str] = []
     for treffer in antwort.json().get("web", {}).get("results", []):
         domain = _registrierbar(urlparse(treffer.get("url", "")).hostname or "")
-        if domain and domain not in VERZEICHNISSE and domain not in domains:
+        if (domain and domain not in VERZEICHNISSE and domain not in domains
+                and not _PORTAL_MUSTER.search(domain)):
             domains.append(domain)
     return domains[:5]
