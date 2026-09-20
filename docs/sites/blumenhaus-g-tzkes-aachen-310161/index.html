@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blumenhaus Götzkes — Aachen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,6 +86,18 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 6px; border: none; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
@@ -96,28 +108,30 @@
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
     <div class="hero-grid">
       <div>
-        <div class="tagline">Blumen, die Ihre Sinne berühren</div>
-        <h1>Blumenhaus Götzkes – Ihr Florist in Aachen</h1>
-        <p class="sub">Individuelle Blumenkunst aus Aachens Herzen</p>
-        <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt Ihr persönliches Bouquet anfragen</a>
+        <div class="tagline">Blumenhaus Götzkes – Blumen für jeden Moment</div>
+        <h1>Blumenhaus Götzkes</h1>
+        <p class="sub">Ihr Florist in Aachen</p>
+        <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt Blumen auswählen</a>
       </div>
-      <div class="hero-image"><img src="https://images.pexels.com/photos/37502512/pexels-photo-37502512.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumenhaus Götzkes"></div>
+      <div class="hero-image"><img src="https://images.pexels.com/photos/5409690/pexels-photo-5409690.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Blumenhaus Götzkes"></div>
     </div>
   </header>
 
   <section class="about-block reveal">
     <div class="dropcap">„</div>
-    <p>Im Blumenhaus Götzkes in Aachen verbinden wir fachkundige Handwerkskunst mit saisonal gewachsenen Blüten. Unser Team berät Sie persönlich und stellt jeden Strauß exakt nach Ihren Farb‑ und Stilvorstellungen zusammen. Neben frischen Schnittblumen finden Sie ausgewählte Topfpflanzen und liebevoll gestaltete Geschenkartikel. Ein Besuch offenbart eine einladende Atmosphäre, in der jedes Detail auf Ihr Wohlbefinden abgestimmt ist.</p>
+    <p>Jeder Strauß entsteht aus einer bewussten Auswahl von Blüten, die nach klassischen Handwerkstechniken gebunden werden. Lassen Sie sich von den Farben und Düften inspirieren und wählen Sie das Arrangement, das zu Ihrem Anlass passt.</p>
   </section>
 
   <div class="highlights-row">
-    <span class="chip reveal" style="transition-delay: 0.0s">Täglich frische Saisonblumen aus regionalem Anbau</span><span class="chip reveal" style="transition-delay: 0.08s">Individuelle Beratung im Haus</span><span class="chip reveal" style="transition-delay: 0.16s">Fußläufig vom Aachener Dom</span>
+    <span class="chip reveal" style="transition-delay: 0.0s">Schnittblumen</span><span class="chip reveal" style="transition-delay: 0.08s">Maßgeschneiderte Sträuße</span><span class="chip reveal" style="transition-delay: 0.16s">Blumenstrauß</span>
   </div>
+
+  
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-list">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Nach Ihrem Farb‑ und Stilwunsch handgebunden, mit besonderer Sorgfalt arrangiert.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Hochzeitsfloristik</h3><p>Maßgeschneiderte Blumenkonzepte für Ihre Zeremonie, abgestimmt auf Farben, Raum und Stimmung.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Gartenpflanzen</h3><p>Robuste Stauden und Balkonpflanzen, optimal geeignet für das Aachener Klima.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Grußkarten</h3><p>Handverlesene Karten, kombiniert mit passenden Mini‑Blumen für jeden Anlass.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Eventdekoration</h3><p>Stimmungsvolle Arrangements für Feiern, exakt auf Ihre Location und Ihr Konzept abgestimmt.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Ein Strauß aus ausgewählten Schnittblumen, passend zu Ihrem Anlass.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Gesteck</h3><p>Ein Gesteck, das Räume mit einer harmonischen Farbkomposition belebt.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Pflanzenlieferung</h3><p>Wir bringen ausgewählte Pflanzen zu Ihnen nach Hause.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Hochzeitsfloristik</h3><p>Individuelle Blumenkonzepte für Ihre Hochzeitsfeier.</p></li>
     </ul>
   </section>
 
@@ -126,16 +140,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-strip">
       
-      <a class="reveal" href="https://www.pexels.com/photo/black-welcome-signage-under-pendant-lamp-photography-810041/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/810041/pexels-photo-810041.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/assorted-flower-arrangements-947914/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/947914/pexels-photo-947914.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/rustic-indoor-decor-with-sunflower-arrangement-34684882/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/34684882/pexels-photo-34684882.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/vibrant-flower-shop-display-with-sunflowers-38545655/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/38545655/pexels-photo-38545655.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/elegant-pink-flower-bouquet-in-florist-s-workshop-37309568/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37309568/pexels-photo-37309568.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/woman-preparing-floral-bouquet-in-floral-shop-5409707/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5409707/pexels-photo-5409707.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -147,6 +161,7 @@
     <div class="meta-item"><b>Telefon</b>+49 241 526255</div>
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>Mo–Fr: 09:00–18:30 Uhr</li><li>Sa: 09:00–14:00 Uhr</li><li>So: 10:30–12:30 Uhr</li></ul>
     </div>
@@ -154,8 +169,9 @@
   </section>
 
   <footer>
-    Dies ist ein unverbindlicher Demo-Entwurf für Blumenhaus Götzkes, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-    <br>Foto: <a href="https://www.pexels.com/photo/elegant-arrangement-of-dried-flowers-in-warm-indoor-light-37502512/">mingche lee</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+    Dies ist ein unverbindlicher Demo-Entwurf für Blumenhaus Götzkes, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+    <br>Foto: <a href="https://www.pexels.com/photo/happy-ethnic-florist-wrapping-bouquet-in-paper-5409690/">Amina Filkins</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
   </footer>
 </div>
 
@@ -190,6 +206,9 @@
 </div>
 
 <script>
+  // rootMargin: Abschnitte werden schon 300px VOR dem Sichtbarwerden eingeblendet.
+  // Auf dem Handy scrollt man schneller als die Einblendung dauert - ohne Vorlauf
+  // sieht man leere Flaechen und haelt die Seite fuer kaputt.
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
@@ -197,6 +216,9 @@
   }, { threshold: 0.05, rootMargin: '300px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 
+  // Sicherheitsnetz: Falls der Beobachter aus irgendeinem Grund nicht ausloest, waere
+  // der Inhalt dauerhaft unsichtbar. Nach 2,5s alles zeigen, was noch versteckt ist -
+  // lieber ohne Animation sichtbar als mit Animation unsichtbar.
   setTimeout(function() {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(function(el) {
       el.classList.add('is-visible');

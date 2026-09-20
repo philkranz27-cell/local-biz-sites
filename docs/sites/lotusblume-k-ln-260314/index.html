@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Florale Gestaltung für besondere Momente</div>
-    <h1>Lotusblume – Floristik aus Köln</h1>
+    <div class="tagline">Lotusblume – Floristik aus Köln</div>
+    <h1>Lotusblume</h1>
     <div class="rule"></div>
-    <p class="sub">Individuelle Blumenlösungen für Ihr Event in Köln</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Bestellen Sie jetzt</a>
+    <p class="sub">Ihre Adresse für florale Gestaltung in Köln</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Blumen bestellen</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/pretty-woman-holding-a-bouquet-of-flowers-4612214/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/4612214/pexels-photo-4612214.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Lotusblume"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/37309564/pexels-photo-37309564.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Lotusblume"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Bei Lotusblume entwerfen wir Blumenarrangements, die exakt auf Ihre Wünsche abgestimmt sind. Unser Atelier in Köln bietet eine ruhige Umgebung, in der Sie die Auswahl in Ihrem eigenen Tempo prüfen können. Wir arbeiten ausschließlich mit saisonal verfügbaren Schnittblumen und beraten Sie persönlich, um das passende Bouquet für Hochzeit, Firmenveranstaltung oder ein persönliches Präsent zu schaffen.</p>
+    <p>Im Lotusblume finden Sie eine Auswahl frischer Schnittblumen und individuell gestalteter Gestecke. Jede Blüte wird sorgfältig ausgewählt, um Ihren Anlass zu bereichern. Wir freuen uns, wenn Sie die Vielfalt unserer floralen Kreationen entdecken.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Saisonale Schnittblumen</div><div class="hcol"><span class="mark">—</span>Individuelle Beratung</div><div class="hcol"><span class="mark">—</span>Gute Erreichbarkeit im Kölner Innenstadtkern</div>
+      <div class="hcol"><span class="mark">—</span>Frische Schnittblumen</div><div class="hcol"><span class="mark">—</span>Individuelle Gestecke</div><div class="hcol"><span class="mark">—</span>Blumige Geschenke</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Hochzeitsfloristik</h3><p>Maßgeschneiderte Brautsträuße und Tischdekorationen, abgestimmt auf Ihr Hochzeitskonzept.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Eventblumen</h3><p>Florale Gestaltung für Firmenveranstaltungen, Tagungen und private Feiern mit einem dezenten Farbkonzept.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Gartenpflanzen</h3><p>Auswahl an pflegeleichten Stauden und Kübelpflanzen für Balkon oder Garten, passend zur Kölner Klimazone.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Geschenkbund</h3><p>Komponierte Blumenbunde, die sich als persönliches Geschenk eignen.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Workshops</h3><p>Kleine Kurse, in denen Sie die Grundlagen des Blumenbindens praktisch erlernen.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Blumenstrauß</h3><p>Ein nach Wunsch zusammengestellter Blumenstrauß für Ihren Anlass.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Gesteck</h3><p>Ein Gesteck, das wir nach Ihren Vorgaben gestalten.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Hochzeitsfloristik</h3><p>Florale Gestaltung für Hochzeiten, abgestimmt auf Ihre Farbwünsche.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Firmenarrangements</h3><p>Arrangements für Empfangsbereiche und Events.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Pflanzenberatung</h3><p>Beratung zur Auswahl und Pflege von Zimmerpflanzen.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/bouquet-in-a-glass-vase-15742584/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/15742584/pexels-photo-15742584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/close-up-shot-of-flowers-bouquet-7462737/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7462737/pexels-photo-7462737.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/woman-in-white-long-sleeve-dress-holding-bouquet-of-flowers-4270228/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/4270228/pexels-photo-4270228.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/woman-in-a-wedding-dress-holding-bouquet-of-flowers-5173879/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/5173879/pexels-photo-5173879.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/beautiful-assorted-flowers-8112774/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/8112774/pexels-photo-8112774.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/woman-holding-white-rose-bouquet-4691822/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/4691822/pexels-photo-4691822.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,13 +154,15 @@
 <section class="meta-grid reveal">
   
   
+    
   
   
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Lotusblume, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/pretty-woman-holding-a-bouquet-of-flowers-4612214/">Antoni Shkraba</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Lotusblume, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/">Pew Nguyen</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
