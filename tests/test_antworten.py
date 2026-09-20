@@ -148,6 +148,25 @@ def test_dieselbe_mail_wird_nur_einmal_gespeichert():
             db.settings.db_path = alt
 
 
+def test_antwort_von_gmail_statt_googlemail():
+    """Nadja Dahlmann stand mit @googlemail.com in OSM und antwortete von @gmail.com."""
+    leads = [{"id": 3, "name": "Flower Power", "contact_email": "nadja.dahlmann@googlemail.com",
+              "emailed_at": "2026-09-18T13:55:00+00:00"}]
+    postfach = {b"1": _mail("nadja dahlmann <nadja.dahlmann@gmail.com>", "Re: Demo",
+                            "Fri, 18 Sep 2026 16:13:16 +0200", "Ich habe schon eine tolle Website", "<f1@x>")}
+    neu, gespeichert = _lauf(postfach, leads)
+    assert neu == 1 and gespeichert[0]["lead_id"] == 3
+
+
+def test_fremde_mail_mit_aehnlichem_postfachnamen_zaehlt_nicht():
+    leads = [{"id": 4, "name": "X", "contact_email": "nadja.dahlmann@googlemail.com",
+              "emailed_at": "2026-09-18T13:55:00+00:00"}]
+    postfach = {b"1": _mail("Werbung <nadja.dahlmann@spamfirma.de>", "Angebot",
+                            "Fri, 18 Sep 2026 17:00:00 +0200", "Kaufen Sie", "<f2@x>")}
+    neu, _ = _lauf(postfach, leads)
+    assert neu == 0
+
+
 def test_unzustellbar_wird_dem_betrieb_zugeordnet():
     meldung = _mail("Mail Delivery Subsystem <mailer-daemon@googlemail.com>", "Delivery Status Notification",
                     "Thu, 17 Sep 2026 18:00:00 +0200",

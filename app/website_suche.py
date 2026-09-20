@@ -72,7 +72,16 @@ def _woerter(text: str, umlaut_lang: bool) -> list[str]:
     return [w for w in t.split() if w and w not in _FUELLWOERTER]
 
 
-def kandidaten(name: str, stadt: str | None) -> list[str]:
+# Viele Betriebe stellen ihrer Domain die Branche voran: "Flower Power" in Wiesbaden
+# steht unter blumen-flower-power.de. Aus dem Namen allein ist das nicht zu erraten.
+_BRANCHENWORT = {
+    "florist": ("blumen",), "bakery": ("baeckerei", "backerei"), "cafe": ("cafe",),
+    "restaurant": ("restaurant",), "bar": ("bar",), "hair_salon": ("friseur", "salon"),
+    "gym": ("fitness",), "yoga": ("yoga",),
+}
+
+
+def kandidaten(name: str, stadt: str | None, kategorie: str | None = None) -> list[str]:
     """Naheliegende Domains fuer einen Betrieb. Hoechstens ~16, meistgenutzte zuerst."""
     domains: list[str] = []
 
@@ -101,7 +110,11 @@ def kandidaten(name: str, stadt: str | None) -> list[str]:
             dazu("".join(woerter) + "-" + ort, (".de",))
             if eigen:
                 dazu("".join(eigen) + "-" + ort, (".de",))
-    return domains[:16]
+        for vorne in _BRANCHENWORT.get(kategorie or "", ()):
+            if vorne not in woerter:
+                dazu(vorne + "-" + "-".join(woerter), (".de",))
+                dazu(vorne + "".join(woerter), (".de",))
+    return domains[:20]
 
 
 def _abrufen(url: str, timeout: float) -> httpx.Response | None:
@@ -221,7 +234,8 @@ def _name_als_domain(domain: str, name: str) -> bool:
 
 
 def finde_website(name: str, stadt: str | None, adresse: str | None, email: str | None,
-                  osm_website: str | None = None, websuche: bool = False) -> Befund:
+                  osm_website: str | None = None, websuche: bool = False,
+                  kategorie: str | None = None) -> Befund:
     """Ergebnis "website" oder "vielleicht" heisst: nicht anschreiben."""
     if websuche:
         from app.websuche import verfuegbar
@@ -232,7 +246,7 @@ def finde_website(name: str, stadt: str | None, adresse: str | None, email: str 
     if maildomain == "website":
         return Befund("website", "https://" + email.rsplit("@", 1)[1].lower() + "/", "maildomain")
     unsicher = None
-    for domain in kandidaten(name, stadt):
+    for domain in kandidaten(name, stadt, kategorie):
         url, sicher = pruefe_domain_fuer_betrieb(domain, name, adresse, stadt)
         if url and sicher:
             return Befund("website", url, "name")

@@ -109,7 +109,7 @@ WEBSITE_PRUEFUNGEN_PRO_LAUF = 64
 
 def _website_pruefen(row, websuche: bool = False):
     befund = finde_website(row["name"], row["city"], row["address"], row["contact_email"],
-                           row["existing_website"], websuche=websuche)
+                           row["existing_website"], websuche=websuche, kategorie=row["category"])
     neu = db.speichere_websitebefund(row["id"], befund.ergebnis, befund.url, befund.quelle,
                                      vollstaendig(row["address"]))
     if befund.ergebnis != "keine":

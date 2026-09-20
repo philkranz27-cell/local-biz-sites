@@ -38,6 +38,15 @@ def test_kandidaten_k_wie_kartoffel():
     assert "k-wie-kartoffel.de" in kandidaten("K wie Kartoffel", "Bochum")
 
 
+def test_branchenwort_vor_dem_namen():
+    """Flower Power in Wiesbaden steht unter blumen-flower-power.de - aus dem Namen allein
+    nicht zu erraten. Die Betreiberin antwortete am 18.09.2026: "Ich habe schon eine tolle
+    Website"."""
+    k = kandidaten("Flower Power", "Wiesbaden", "florist")
+    assert "blumen-flower-power.de" in k and "blumenflowerpower.de" in k
+    assert "blumen-flower-power.de" not in kandidaten("Flower Power", "Wiesbaden")
+
+
 def test_seite_mit_name_und_stadt_passt():
     html = "<title>Casa del Gatto Bonn</title><p>Italienisches Restaurant in Bonn</p>"
     assert _pruefe(html, "Casa del Gatto", "Poppelsdorfer Allee 5, 53115 Bonn", "Bonn")

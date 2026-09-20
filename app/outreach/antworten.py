@@ -19,7 +19,7 @@ import re
 from datetime import datetime, timezone
 from email.header import decode_header
 from email.message import Message
-from email.utils import parsedate_to_datetime
+from email.utils import parseaddr, parsedate_to_datetime
 
 from app import db
 from app.config import settings
@@ -113,6 +113,40 @@ def adresse_in_meldung(text: str, adressen: list[str]) -> str | None:
     return None
 
 
+# Postfaecher, deren oertlicher Teil nichts Eigenes ist - danach zu suchen wuerde jede
+# beliebige Firmenmail treffen.
+_ALLERWELTS_POSTFACH = {
+    "info", "kontakt", "contact", "mail", "email", "office", "buero", "team", "service",
+    "post", "hallo", "hello", "shop", "laden", "praxis", "salon", "restaurant", "cafe",
+}
+# gmail.com und googlemail.com sind dasselbe Konto. Nadja Dahlmann stand in OSM mit
+# @googlemail.com und antwortete am 18.09.2026 von @gmail.com - die Antwort fiel durch.
+_GLEICHE_ANBIETER = [{"gmail.com", "googlemail.com"}]
+
+
+def _ortsteil(adresse: str) -> str:
+    return adresse.rsplit("@", 1)[0].lower() if "@" in adresse else ""
+
+
+def ist_derselbe_absender(unsere_adresse: str, from_header: str) -> bool:
+    """Kommt die Mail von dem Betrieb, den wir angeschrieben haben?
+
+    Gleiche Adresse, dieselbe Firmendomain - oder bei Freemailern derselbe Postfachname
+    bei einem gleichwertigen Anbieter (gmail/googlemail)."""
+    absender = parseaddr(from_header or "")[1].lower()
+    unsere = (unsere_adresse or "").lower()
+    if not absender or not unsere:
+        return False
+    if absender == unsere:
+        return True
+    d_absender, d_unser = _domain(absender), _domain(unsere)
+    if d_unser and d_unser not in FREEMAILER and d_absender == d_unser:
+        return True
+    gleichwertig = d_absender == d_unser or any(
+        {d_absender, d_unser} <= gruppe for gruppe in _GLEICHE_ANBIETER)
+    return gleichwertig and _ortsteil(absender) == _ortsteil(unsere)
+
+
 def _domain(adresse: str) -> str:
     return adresse.rsplit("@", 1)[-1].lower() if "@" in adresse else ""
 
@@ -188,6 +222,13 @@ def pruefe_antworten() -> int:
                 domain = _domain(adresse)
                 if domain and domain not in FREEMAILER:
                     kriterien.append("@" + domain)
+                else:
+                    # Freemailer: Der Betrieb antwortet oft von derselben Adresse bei einem
+                    # Schwester-Anbieter (googlemail.com -> gmail.com). Deshalb nach dem
+                    # Postfachnamen suchen - aber nur, wenn der eigen genug ist.
+                    ortsteil = _ortsteil(adresse)
+                    if len(ortsteil) >= 6 and ortsteil not in _ALLERWELTS_POSTFACH:
+                        kriterien.append(ortsteil)
                 gesehen: set[bytes] = set()
                 for kriterium in kriterien:
                     _, daten = imap.search(None, "SINCE", _imap_datum(lead["emailed_at"]),
@@ -198,6 +239,8 @@ def pruefe_antworten() -> int:
                         gesehen.add(nummer)
                         nachricht = _hole(imap, nummer)
                         if nachricht is None:
+                            continue
+                        if not ist_derselbe_absender(adresse, nachricht.get("From")):
                             continue
                         empfangen = _empfangen(nachricht)
                         if datetime.fromisoformat(empfangen) < datetime.fromisoformat(lead["emailed_at"]):
