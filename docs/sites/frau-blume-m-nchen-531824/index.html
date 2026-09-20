@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Blumen für den feinen Moment</div>
-    <h1>Frau Blume – Florale Eleganz aus München</h1>
+    <div class="tagline">Blumige Eleganz</div>
+    <h1>Frau Blume – Florale Kreationen</h1>
     <div class="rule"></div>
-    <p class="sub">Frau Blume, Florist, Arnulfstraße 212, gestaltet für jeden Anlass ein durchdachtes Bouquet.</p>
-    <a class="cta" href="#" onclick="openReservationModal(event)">Beratung vereinbaren</a>
+    <p class="sub">Frau Blume, Ihr Florist in München, stellt Blumenarrangements für verschiedene Anlässe bereit.</p>
+    <a class="cta" href="#" onclick="openReservationModal(event)">Blumen bestellen</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/19140920/pexels-photo-19140920.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Frau Blume"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/elegant-floral-arrangement-in-luxurious-setting-37155355/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/37155355/pexels-photo-37155355.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="Frau Blume"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Arnulfstraße 212 – hier präsentiert Frau Blume ein sorgfältig kuratiertes Sortiment saisonaler Schnittblumen und Topfpflanzen. Jede Komposition wird mit Bedacht ausgewählt, um Ihrem Anlass eine dezente Note zu verleihen. Unser Team berät Sie gern bei der Auswahl von Farben und Formen, sodass Ihre Wünsche in ein harmonisches Bouquet übergehen. Diskretion und Qualität stehen bei uns im Mittelpunkt.</p>
+    <p>Bei Frau Blume finden Sie Schnittblumen, Topfpflanzen und Trockenblumen, die wir für Ihre Anlässe zusammenstellen. Wir beraten Sie bei der Auswahl des passenden Bouquets und stehen Ihnen mit fachkundigem Rat zur Verfügung.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Persönliche Farb‑ und Formberatung</div><div class="hcol"><span class="mark">—</span>Täglich frisch geschnittene Blumen</div><div class="hcol"><span class="mark">—</span>Lage Arnulfstraße 212</div>
+      <div class="hcol"><span class="mark">—</span>Schnittblumen</div><div class="hcol"><span class="mark">—</span>Topfpflanzen</div><div class="hcol"><span class="mark">—</span>Geschenkverpackungen</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Eventblumen</h3><p>Frau Blume kreiert für Firmenevents und private Feiern ein abgestimmtes Blumenarrangement, das den Rahmen Ihrer Veranstaltung subtil ergänzt.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Hochzeitsbouquets</h3><p>Maßgeschneiderte Brautsträuße, die exakt auf Ihren Hochzeitsstil und Ihre Farbwahl abgestimmt sind.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Firmenfloristik</h3><p>Regelmäßige Lieferung von frischen Pflanzen für Ihr Büro, um ein ruhiges und gepflegtes Arbeitsumfeld zu unterstützen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Gartenpflanzen</h3><p>Auswahl an robusten Stauden und Ziergehölzen, die sich harmonisch in Ihren Garten einfügen.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Pflanzenpflege</h3><p>Professionelle Pflege und individuelle Beratung für Ihre Topfpflanzen, damit diese lange ihre Schönheit bewahren.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Bouquet bestellen</h3><p>Wir stellen für Sie ein Bouquet zusammen, das Ihrem Anlass entspricht.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Hochzeitsfloristik</h3><p>Wir übernehmen die Floristik Ihrer Hochzeit und gestalten passende Blumenarrangements.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Firmenarrangements</h3><p>Wir erstellen Blumenkompositionen für geschäftliche Anlässe.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Blumenlieferung</h3><p>Wir liefern die von Ihnen gewählten Blumen zur gewünschten Adresse.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Blumen-Workshop</h3><p>In unserem Workshop zeigen wir Ihnen, wie Sie eigene Sträuße kreieren.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/charming-indoor-flower-arrangement-display-37309560/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37309560/pexels-photo-37309560.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/19140920/pexels-photo-19140920.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/elegant-floral-arrangement-display-at-flower-shop-37309564/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/37309564/pexels-photo-37309564.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/charming-bouquet-behind-glass-display-with-flores-29466625/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/29466625/pexels-photo-29466625.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/florist-putting-flowers-on-display-6764292/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/6764292/pexels-photo-6764292.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/elegant-arrangement-of-red-roses-in-glass-vases-34710240/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/34710240/pexels-photo-34710240.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="florist Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,6 +154,7 @@
 <section class="meta-grid reveal">
   <div class="meta-item"><b>Adresse</b>Arnulfstraße 212</div>
   
+    
   
   
   <div class="meta-item"><b>Öffnungszeiten</b>
@@ -149,8 +164,9 @@
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Frau Blume, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/vases-with-flowers-in-a-flower-shop-19140920/">Duygu</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Frau Blume, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/elegant-floral-arrangement-in-luxurious-setting-37155355/">Aleksandar Trnjakov</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
