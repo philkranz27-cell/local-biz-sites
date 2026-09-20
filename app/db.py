@@ -342,7 +342,7 @@ def zaehle_ohne_text() -> int:
     with get_connection() as conn:
         return conn.execute(
             "SELECT COUNT(*) FROM leads WHERE site_slug IS NOT NULL "
-            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette', 'excluded_has_website') AND error_count < 3"
+            "AND site_copy_json IS NULL AND status NOT IN ('excluded_kette', 'excluded_has_website') AND (seite_status IS NULL OR seite_status != 'offline') AND error_count < 3"
         ).fetchone()[0]
 
 
@@ -415,7 +415,7 @@ def get_leads_ohne_text() -> list[sqlite3.Row]:
     with get_connection() as conn:
         return conn.execute(
             "SELECT * FROM leads WHERE site_slug IS NOT NULL AND site_copy_json IS NULL "
-            "AND status NOT IN ('excluded_kette', 'excluded_has_website') AND error_count < 3 ORDER BY id"
+            "AND status NOT IN ('excluded_kette', 'excluded_has_website') AND (seite_status IS NULL OR seite_status != 'offline') AND error_count < 3 ORDER BY id"
         ).fetchall()
 
 
