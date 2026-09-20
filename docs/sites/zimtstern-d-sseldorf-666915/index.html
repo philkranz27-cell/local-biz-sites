@@ -29,7 +29,7 @@
   
   header.hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
-    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/30667454/pexels-photo-30667454.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+    background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
     background-position: center; background-repeat: no-repeat; background-size: cover;
     animation: kenburns 16s ease-in-out infinite alternate;
     will-change: transform;
@@ -106,15 +106,27 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .85rem; color: inherit; opacity: .8; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 16px; border: none; }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="hero-inner">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="eyebrow">Zimtstern – Backkunst aus Düsseldorf</div>
-    <h1>Zimtstern – Frisch gebacken in Düsseldorf</h1>
-    <p class="sub">Wir backen in Düsseldorf täglich Brot, Brötchen und süßes Gebäck aus regionalen, saisonalen Zutaten.</p>
+    <div class="eyebrow">Zimtstern – Bäckerei in Düsseldorf</div>
+    <h1>Zimtstern</h1>
+    <p class="sub">Wir bieten klassisches Brot, Brötchen, Kuchen und weitere Backwaren.</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Jetzt bestellen</a>
   </div>
 </header>
@@ -123,27 +135,29 @@
   <div class="blob blob-2"></div>
 
   <div class="highlights">
-    <div class="highlight reveal" style="transition-delay: 0.0s">Regionale Zutaten aus NRW</div><div class="highlight reveal" style="transition-delay: 0.08s">Eigene Steinofen‑Backkunst</div><div class="highlight reveal" style="transition-delay: 0.16s">Zentrale Lage in der Düsseldorfer Altstadt</div>
+    <div class="highlight reveal" style="transition-delay: 0.0s">Täglich frisches Brot</div><div class="highlight reveal" style="transition-delay: 0.08s">Auswahl an süßem Gebäck</div><div class="highlight reveal" style="transition-delay: 0.16s">Verschiedene Kaffeesorten</div>
+
+  
   </div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>In der Düsseldorfer Altstadt backt Zimtstern täglich Brot, Brötchen und süßes Gebäck aus regionalen, saisonalen Zutaten. Tradition trifft moderne Rezepte – so entstehen unverwechselbare Geschmäcker. Unser Team berät Sie bei der Auswahl und liefert schnellen Service.</p>
+    <p>Bei Zimtstern können Sie den Tag mit einem knusprigen Brötchen beginnen oder einen süßen Moment mit einem Stück Kuchen erleben. Unser Sortiment umfasst verschiedene Brotsorten, Brötchen, Kuchen und weitere Backwaren, die täglich frisch zubereitet werden. Jeden Morgen finden Sie bei uns eine Auswahl, die Ihren Geschmack trifft.</p>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <div class="services">
       
-      <div class="service reveal" style="transition-delay: 0.0s"><h3>Brot</h3><p>Verschiedene Sorten, täglich aus dem Steinofen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.0s"><h3>Brot</h3><p>Sie wählen aus unserem knusprigen Brotsortiment.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.07s"><h3>Brötchen</h3><p>Knusprige Frühstücksbrötchen, klassisch und vegan.</p></div>
+      <div class="service reveal" style="transition-delay: 0.07s"><h3>Brötchen</h3><p>Sie nehmen ein frisch gebackenes Brötchen.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.14s"><h3>Feingebäck</h3><p>Zarte Teilchen wie Croissants, Streuselschnecken und Zimtschnecken.</p></div>
+      <div class="service reveal" style="transition-delay: 0.14s"><h3>Kuchen</h3><p>Sie probieren ein Stück unseres Kuchens.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Kuchen</h3><p>Hausgemachte Kuchen für jede Gelegenheit.</p></div>
+      <div class="service reveal" style="transition-delay: 0.21000000000000002s"><h3>Kaffee</h3><p>Ein aromatischer Kaffee rundet Ihr Frühstück ab.</p></div>
       
-      <div class="service reveal" style="transition-delay: 0.28s"><h3>Catering</h3><p>Individuelle Backwaren für Events und Firmen.</p></div>
+      <div class="service reveal" style="transition-delay: 0.28s"><h3>Snacks</h3><p>Sie wählen kleine Snacks für zwischendurch.</p></div>
       
     </div>
   </section>
@@ -153,16 +167,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery">
       
-      <a class="reveal" href="https://www.pexels.com/photo/coffee-beans-around-cup-with-bread-behind-19987199/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/19987199/pexels-photo-19987199.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/pastry-shop-3639541/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/3639541/pexels-photo-3639541.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/freshly-baked-croissant-on-cutting-board-5373248/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/5373248/pexels-photo-5373248.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/turkish-flag-in-a-window-of-a-bakery-18656839/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/18656839/pexels-photo-18656839.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/croissant-near-a-hot-drink-13119735/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/13119735/pexels-photo-13119735.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/pastry-chef-arranging-fresh-croissants-in-bakery-33650388/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/33650388/pexels-photo-33650388.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="bakery Impression" loading="lazy">
       </a>
       
     </div>
@@ -174,6 +188,7 @@
     
     
     
+    
     <div class="meta-item"><b>Öffnungszeiten</b>
       <ul class="hours-list"><li>Sa–So: 07:00–12:00 Uhr</li></ul>
     </div>
@@ -181,8 +196,9 @@
   </section>
 </main>
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für Zimtstern, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/bakery-display-with-fresh-pastries-30667454/">James Collington</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für Zimtstern, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/cozy-bakery-display-with-assorted-fresh-pastries-32459865/">Ani Hadushaj</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
