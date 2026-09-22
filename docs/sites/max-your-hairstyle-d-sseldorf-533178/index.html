@@ -85,33 +85,47 @@
   .modal-submit:hover { background: var(--accent-dark); }
   .modal-success { display: none; text-align: center; }
   .modal-tel { display: block; text-align: center; margin-top: 1rem; font-size: .82rem; color: inherit; opacity: .75; }
+
+  /* Angaben aus OpenStreetMap - im Gegensatz zu den Highlights nicht geschrieben,
+     sondern nachgeschlagen. Deshalb ruhiger gesetzt als die Chips darueber. */
+  .fakten { display: flex; flex-wrap: wrap; gap: .55rem 1.6rem; margin: 2.2rem 0 0;
+             padding: 1.05rem 1.3rem; background: var(--paper-alt);
+             border-radius: 0; border: 1px solid rgba(0,0,0,.08); }
+  .fakt { display: inline-flex; align-items: center; gap: .5rem; font-size: .86rem; }
+  .fakt::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                   background: var(--accent); flex: none; }
+  .meta-item a { color: var(--accent-dark); text-decoration: none;
+                  border-bottom: 1px solid currentColor; }
+  @media (max-width: 640px) { .fakten { gap: .5rem 1rem; padding: .9rem 1rem; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <span class="badge">Unverbindlicher Website-Entwurf · Texte und Fotos sind Beispiele</span>
-    <div class="tagline">Ihre Haarästhetik, unser Fokus</div>
-    <h1>max your hairstyle – Haarästhetik für Anspruchsvolle</h1>
+    <div class="tagline">max your hairstyle – Friseurkunst aus Düsseldorf</div>
+    <h1>max your hairstyle</h1>
     <div class="rule"></div>
-    <p class="sub">Ein Salon für anspruchsvolle Haarpflege in Düsseldorf</p>
+    <p class="sub">Ihr Friseursalon in Düsseldorf</p>
     <a class="cta" href="#" onclick="openReservationModal(event)">Termin vereinbaren</a>
   </header>
 
-  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/interior-of-barbershop-with-bright-illumination-7195807/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/7195807/pexels-photo-7195807.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="max your hairstyle"></a></div>
+  <div class="hero-banner"><a class="frame" href="https://www.pexels.com/photo/woman-sitting-on-the-salon-chair-while-holding-vodka-glass-and-man-at-her-back-white-spraying-her-hair-696287/" target="_blank" rel="noopener"><img src="https://images.pexels.com/photos/696287/pexels-photo-696287.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="max your hairstyle"></a></div>
 
   <section class="about reveal">
     <h2>Über uns</h2>
-    <p>Der Salon max your hairstyle bietet Ihnen ein zurückhaltend elegantes Interieur, in dem wir Ihre Wünsche in einem persönlichen Gespräch aufnehmen. Unser Team verbindet fachliche Präzision mit ausgewählten Pflegeprodukten, um Ihr Haar nach Ihren Vorstellungen zu formen. Wir legen Wert auf eine diskrete Atmosphäre und auf jedes Detail, das Ihren Look ausmacht. Vereinbaren Sie einen Termin und erleben Sie eine individuelle Stilberatung.</p>
+    <p>Bei max your hairstyle beraten wir Sie persönlich und setzen Ihre Wünsche präzise um. Jeder Haarschnitt wird mit Sorgfalt gestaltet, sodass das Ergebnis Ihrem Stil entspricht. Wir begleiten Sie bis zum fertigen Look und sorgen dafür, dass Sie den Salon zufrieden verlassen.</p>
     <div class="highlights-cols">
-      <div class="hcol"><span class="mark">—</span>Individuelle Beratung</div><div class="hcol"><span class="mark">—</span>Ausgewählte Pflegeprodukte</div><div class="hcol"><span class="mark">—</span>Gute Erreichbarkeit</div>
+      <div class="hcol"><span class="mark">—</span>Haarschnitt</div><div class="hcol"><span class="mark">—</span>Färbung</div><div class="hcol"><span class="mark">—</span>Styling</div>
+
+  
     </div>
   </section>
 
   <section>
     <h2 class="reveal">Angebot</h2>
     <ul class="service-table">
-      <li class="reveal" style="transition-delay: 0.0s"><h3>Haarschnitt Damen</h3><p>Auf Ihre Gesichtsform abgestimmter Schnitt, der Ihre natürliche Ausstrahlung betont.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Haarschnitt Herren</h3><p>Präziser Schnitt, der klassischen Stil und moderne Akzente verbindet.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Farbberatung &amp; Balayage</h3><p>Gemeinsame Auswahl von Farbtönen, die Ihren Teint harmonisch ergänzen.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Styling &amp; Hochsteckfrisur</h3><p>Dezentes Styling, das zu Ihrem Anlass passt und lange hält.</p></li><li class="reveal" style="transition-delay: 0.24s"><h3>Haarpflegebehandlung</h3><p>Pflegebehandlung mit ausgewählten Produkten, die Haarstruktur und Glanz stärken.</p></li><li class="reveal" style="transition-delay: 0.3s"><h3>Bartpflege</h3><p>Formgebung und Pflege, abgestimmt auf Ihre Gesichtsform und Ihren Stil.</p></li>
+      <li class="reveal" style="transition-delay: 0.0s"><h3>Haarschnitt</h3><p>Ein präziser Schnitt, der Ihre Vorstellungen berücksichtigt.</p></li><li class="reveal" style="transition-delay: 0.06s"><h3>Färbung</h3><p>Gezielte Farbgestaltung, abgestimmt auf den gewünschten Look.</p></li><li class="reveal" style="transition-delay: 0.12s"><h3>Styling</h3><p>Professionelles Styling, passend für verschiedene Anlässe.</p></li><li class="reveal" style="transition-delay: 0.18s"><h3>Beratung</h3><p>Umfassende Beratung, um den optimalen Auftritt zu planen.</p></li>
     </ul>
   </section>
 
@@ -120,16 +134,16 @@
     <h2 class="reveal">Impressionen</h2>
     <div class="gallery-row">
       
-      <a class="reveal" href="https://www.pexels.com/photo/backwash-chair-in-contemporary-beauty-studio-7195812/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/7195812/pexels-photo-7195812.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/hairdresser-styling-a-client-s-hair-4783330/" style="transition-delay: 0.0s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/4783330/pexels-photo-4783330.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/modern-hair-salon-interior-at-night-35844834/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/35844834/pexels-photo-35844834.png?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/a-man-cutting-a-hair-7518740/" style="transition-delay: 0.1s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/7518740/pexels-photo-7518740.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
-      <a class="reveal" href="https://www.pexels.com/photo/photo-of-the-interior-of-a-salon-7750108/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
-        <img src="https://images.pexels.com/photos/7750108/pexels-photo-7750108.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
+      <a class="reveal" href="https://www.pexels.com/photo/woman-getting-a-haircut-3992866/" style="transition-delay: 0.2s" target="_blank" rel="noopener">
+        <img src="https://images.pexels.com/photos/3992866/pexels-photo-3992866.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940" alt="hair_salon Impression" loading="lazy">
       </a>
       
     </div>
@@ -140,13 +154,15 @@
 <section class="meta-grid reveal">
   <div class="meta-item"><b>Adresse</b>Brehmstraße 3, 40239 Düsseldorf</div>
   <div class="meta-item"><b>Telefon</b>+49 211 1709654</div>
+    
   
   
 </section>
 
 <footer>
-  Dies ist ein unverbindlicher Demo-Entwurf für max your hairstyle, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs. Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
-  <br>Foto: <a href="https://www.pexels.com/photo/interior-of-barbershop-with-bright-illumination-7195807/">Max Vakhtbovych</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
+  Dies ist ein unverbindlicher Demo-Entwurf für max your hairstyle, erstellt zu Vorstellungszwecken — keine offizielle Website des Betriebs.
+  Adresse, Telefon, Öffnungszeiten und die Angaben zur Ausstattung stammen aus OpenStreetMap. Die übrigen Texte sind Vorschläge und beschreiben nicht das tatsächliche Angebot; die echten Inhalte setze ich nach Ihren Angaben ein.
+  <br>Foto: <a href="https://www.pexels.com/photo/woman-sitting-on-the-salon-chair-while-holding-vodka-glass-and-man-at-her-back-white-spraying-her-hair-696287/">Valeria Boltneva</a> via Pexels (Symbolbild, kein echtes Foto des Betriebs).
 </footer>
 
 <div class="modal-overlay" id="reservationModal">
