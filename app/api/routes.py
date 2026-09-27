@@ -199,7 +199,7 @@ async def api_besuch(slug: str, request: Request):
     """Zaehlt einen Aufruf einer Demo-Seite. Oeffentlich, weil die Seiten auf GitHub
     Pages liegen. Gespeichert wird weder IP noch Kennung - nur Seite, Zeit, Weg, Geraet.
 
-    Kommt als text/plain (navigator.sendBeacon), damit der Browser keine CORS-Vorabfrage
+    Kommt als text/plain (fetch mit mode no-cors), damit der Browser keine CORS-Vorabfrage
     schickt - die kaeme sonst doppelt so oft an wie der Besuch selbst."""
     agent = (request.headers.get("user-agent") or "").lower()
     if not agent or any(b in agent for b in _BOT):
