@@ -113,7 +113,7 @@
         <p class="sub">{{ subheadline }}</p>
         <a class="cta" href="#" onclick="openReservationModal(event)">{{ cta_text }}</a>
       </div>
-      {% if hero_image %}<div class="hero-image"><img src="{{ hero_image.url }}" alt="{{ name }}"></div>{% endif %}
+      {% if hero_image %}<div class="hero-image"><img src="{{ hero_image.url }}" srcset="{{ hero_image.url|srcset }}" sizes="(max-width: 700px) 100vw, 60vw" fetchpriority="high" alt="{{ name }}"></div>{% endif %}
     </div>
   </header>
 
@@ -145,7 +145,7 @@
     <div class="gallery-strip">
       {% for img in gallery_images %}
       <a class="reveal" href="{{ img.source_url }}" style="transition-delay: {{ loop.index0 * 0.1 }}s" target="_blank" rel="noopener">
-        <img src="{{ img.url }}" alt="{{ category }} Impression" loading="lazy">
+        <img src="{{ img.url }}" srcset="{{ img.url|srcset }}" sizes="(max-width: 700px) 100vw, 33vw" alt="{{ category }} Impression" loading="lazy">
       </a>
       {% endfor %}
     </div>

@@ -110,7 +110,7 @@
     <a class="cta" href="#" onclick="openReservationModal(event)">{{ cta_text }}</a>
   </header>
 
-  {% if hero_image %}<div class="hero-banner"><a class="frame" href="{{ hero_image.source_url }}" target="_blank" rel="noopener"><img src="{{ hero_image.url }}" alt="{{ name }}"></a></div>{% endif %}
+  {% if hero_image %}<div class="hero-banner"><a class="frame" href="{{ hero_image.source_url }}" target="_blank" rel="noopener"><img src="{{ hero_image.url }}" srcset="{{ hero_image.url|srcset }}" sizes="(max-width: 700px) 100vw, 60vw" fetchpriority="high" alt="{{ name }}"></a></div>{% endif %}
 
   <section class="about reveal">
     <h2>Über uns</h2>
@@ -139,7 +139,7 @@
     <div class="gallery-row">
       {% for img in gallery_images %}
       <a class="reveal" href="{{ img.source_url }}" style="transition-delay: {{ loop.index0 * 0.1 }}s" target="_blank" rel="noopener">
-        <img src="{{ img.url }}" alt="{{ category }} Impression" loading="lazy">
+        <img src="{{ img.url }}" srcset="{{ img.url|srcset }}" sizes="(max-width: 700px) 100vw, 33vw" alt="{{ category }} Impression" loading="lazy">
       </a>
       {% endfor %}
     </div>

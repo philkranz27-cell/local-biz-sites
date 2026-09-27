@@ -35,6 +35,11 @@
     will-change: transform;
   }
   {% endif %}
+  {% if hero_image %}
+  @media (max-width: 700px) {
+    header.hero::before { background-image: linear-gradient(0deg, rgba(0,0,0,.72), rgba(0,0,0,.1)), url('{{ hero_image.url | klein | safe }}'); }
+  }
+  {% endif %}
   .hero-inner { max-width: 900px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
   .hero-inner > * { opacity: 0; animation: fadeUp .8s ease forwards; }
   .hero-inner .badge { animation-delay: .05s; }
@@ -164,7 +169,7 @@
     <div class="gallery">
       {% for img in gallery_images %}
       <a class="reveal" href="{{ img.source_url }}" style="transition-delay: {{ loop.index0 * 0.1 }}s" target="_blank" rel="noopener">
-        <img src="{{ img.url }}" alt="{{ category }} Impression" loading="lazy">
+        <img src="{{ img.url }}" srcset="{{ img.url|srcset }}" sizes="(max-width: 700px) 100vw, 33vw" alt="{{ category }} Impression" loading="lazy">
       </a>
       {% endfor %}
     </div>

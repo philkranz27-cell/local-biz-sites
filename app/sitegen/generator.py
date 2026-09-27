@@ -21,6 +21,34 @@ SITES_DIR = PROJECT_ROOT / "data" / "sites"
 
 _env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=True)
 
+
+def _srcset(url: str) -> str:
+    """Bildgroessen fuer den Browser zur Auswahl. Bisher bekam jedes Handy das Bild in
+    doppelter Aufloesung (dpr=2, bis 1.880 Pixel breit, gut 400 KB) - bei schwachem Netz
+    blieb das erste Bild auf der Demo-Seite lange leer. Jetzt holt sich das Handy die
+    kleine Fassung. Nur fuer Pexels-Adressen, andere bleiben, wie sie sind."""
+    if "images.pexels.com" not in (url or "") or "?" not in url:
+        return ""
+    basis, abfrage = url.split("?", 1)
+    rest = "&".join(p for p in abfrage.split("&")
+                    if p.split("=", 1)[0] not in ("dpr", "h", "w", "fit"))
+    return ", ".join(f"{basis}?{rest}&w={b} {b}w" for b in (480, 800, 1200, 1600))
+
+
+def _klein(url: str, breite: int = 900) -> str:
+    """Eine einzelne kleinere Fassung - fuer Titelbilder, die als CSS-Hintergrund gesetzt
+    sind und deshalb kein srcset kennen."""
+    if "images.pexels.com" not in (url or "") or "?" not in url:
+        return url
+    basis, abfrage = url.split("?", 1)
+    rest = "&".join(p for p in abfrage.split("&")
+                    if p.split("=", 1)[0] not in ("dpr", "h", "w", "fit"))
+    return f"{basis}?{rest}&w={breite}"
+
+
+_env.filters["srcset"] = _srcset
+_env.filters["klein"] = _klein
+
 ALL_TEMPLATES = ["modern_minimal.html.j2", "warm_editorial.html.j2", "bold_dark.html.j2", "elegant_boutique.html.j2"]
 
 # Welche Design-Sprachen zu welcher Betriebsart passen - je Kategorie 2 Optionen, damit
