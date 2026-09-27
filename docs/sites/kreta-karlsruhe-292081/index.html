@@ -261,5 +261,22 @@
       });
   });
 </script>
+<script>
+/* Besuchszaehler: ohne Cookie, ohne Kennung, ohne IP. Zaehlt nur, dass die Seite
+   geoeffnet wurde - und ueber welchen Weg (?q=mail aus der Mail, ?q=brief vom QR-Code). */
+(function () {
+  try {
+    var p = new URLSearchParams(location.search), intern = p.get('von') === 'dashboard';
+    try {
+      if (intern) localStorage.setItem('pw_intern', '1');
+      intern = intern || localStorage.getItem('pw_intern') === '1';
+    } catch (e) {}
+    var d = JSON.stringify({ quelle: p.get('q') || (document.referrer ? 'verweis' : 'direkt'), intern: intern });
+    var u = 'https://philipplaptop.tail191c07.ts.net/api/besuch/kreta-karlsruhe-292081';
+    if (navigator.sendBeacon) navigator.sendBeacon(u, new Blob([d], { type: 'text/plain' }));
+    else fetch(u, { method: 'POST', body: d, keepalive: true, mode: 'no-cors' });
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
