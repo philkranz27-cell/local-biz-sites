@@ -34,9 +34,10 @@
   .sub { font-size: 1.1rem; opacity: .8; max-width: 44ch; margin: 0 auto 2rem; }
   .cta { display: inline-block; padding: .8rem 2.2rem; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; transition: all .2s; }
   .cta:hover { background: var(--ink); color: #fff; letter-spacing: .16em; }
-  .hero-banner { margin: 2rem 0 0; overflow: hidden; opacity: 0; animation: fadeUp 1s ease .3s forwards; }
+  .hero-banner { margin: 2rem 0 0; overflow: hidden; isolation: isolate; opacity: 0; animation: fadeUp 1s ease .3s forwards; }
   .hero-banner .frame { overflow: hidden; border: 10px solid #fff; box-shadow: 0 20px 50px -20px rgba(0,0,0,.3); display: block; }
-  .hero-banner img { width: 100%; height: 340px; object-fit: cover; display: block; animation: kenburns-img 20s ease-in-out infinite alternate; }
+  /* Kein Zoom-Effekt: siehe warm_editorial - Safari auf dem iPhone malte das Bild sonst nicht. */
+  .hero-banner img { width: 100%; height: 340px; object-fit: cover; display: block; }
   section { margin: 4.5rem 0; text-align: center; }
   h2 { font-size: 1.9rem; margin-bottom: .8rem; }
   .about p { font-size: 1.12rem; max-width: 62ch; margin: 0 auto; }
