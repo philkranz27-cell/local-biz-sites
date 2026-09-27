@@ -58,6 +58,15 @@ def _send(to_email: str, subject: str, body: str) -> None:
         smtp.send_message(message)
 
 
+# Der Demo-Link in der Mail bekommt ?q=mail - so zeigt der Besuchszaehler, ob jemand
+# ueber die Mail kam oder ueber den QR-Code im Brief (?q=brief).
+_DEMO_LINK = re.compile(r"(https?://\S+?/sites/[^/\s?]+/)(?=\s|$)")
+
+
+def _mit_quelle(text: str) -> str:
+    return _DEMO_LINK.sub(lambda m: m.group(1) + "?q=mail", text)
+
+
 def akquise_mail_text(body: str, kategorie: str | None = None, stadt: str | None = None,
                       extras: dict | None = None) -> str:
     """Der komplette Text, wie er beim Betrieb ankommt.
@@ -67,6 +76,7 @@ def akquise_mail_text(body: str, kategorie: str | None = None, stadt: str | None
     eigentlichen Anschreiben: erst "hier ist Ihr Entwurf", dann "darum lohnt es sich"."""
     punkte = vorteile(kategorie, stadt, extras)
     block = "\n\nWas Ihnen eine eigene Website bringt:\n" + "\n".join(f"– {p}" for p in punkte)
+    body = _mit_quelle(body)
     return (GREETING + _satz_klein_beginnen(_ohne_anrede(body)) + block + PHOTO_NOTE
             + _signature() + OPT_OUT_NOTE)
 

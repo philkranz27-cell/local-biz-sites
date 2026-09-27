@@ -508,3 +508,37 @@ def speichere_websitebefund(lead_id: int, ergebnis: str, url: str | None, quelle
         )
         return status
 
+
+BESUCHE_PRO_SEITE_UND_TAG = 200   # darueber ist es kein Mensch mehr, sondern Unfug
+
+
+def add_besuch(lead_id: int, slug: str, quelle: str, geraet: str, intern: bool) -> bool:
+    heute = datetime.now(timezone.utc).date().isoformat()
+    with get_connection() as conn:
+        n = conn.execute("SELECT COUNT(*) FROM besuche WHERE site_slug = ? AND zeit >= ?",
+                         (slug, heute)).fetchone()[0]
+        if n >= BESUCHE_PRO_SEITE_UND_TAG:
+            return False
+        conn.execute(
+            "INSERT INTO besuche (lead_id, site_slug, zeit, quelle, geraet, intern) VALUES (?, ?, ?, ?, ?, ?)",
+            (lead_id, slug, _now(), quelle, geraet, 1 if intern else 0),
+        )
+        return True
+
+
+def get_besuche_je_lead() -> dict[int, dict]:
+    """{lead_id: {"anzahl": n, "zuletzt": iso}} - nur echte Besuche, keine eigenen."""
+    with get_connection() as conn:
+        return {r["lead_id"]: {"anzahl": r["anzahl"], "zuletzt": r["zuletzt"]}
+                for r in conn.execute(
+                    "SELECT lead_id, COUNT(*) AS anzahl, MAX(zeit) AS zuletzt FROM besuche "
+                    "WHERE intern = 0 GROUP BY lead_id")}
+
+
+def get_letzte_besuche(limit: int = 40) -> list[sqlite3.Row]:
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT b.*, l.name AS betrieb, l.city AS stadt, l.emailed_at FROM besuche b "
+            "LEFT JOIN leads l ON l.id = b.lead_id WHERE b.intern = 0 "
+            "ORDER BY b.zeit DESC LIMIT ?", (limit,)).fetchall()
+

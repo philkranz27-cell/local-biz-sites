@@ -132,6 +132,8 @@ def dashboard(request: Request):
             "blocklist": db.get_blocklist(),
             "reservations": db.get_reservations(),
             "antworten": db.get_antworten(),
+            "besuche_je_lead": db.get_besuche_je_lead(),
+            "letzte_besuche": db.get_letzte_besuche(),
             "antworten_eingerichtet": settings.imap_configured,
             # Der komplette Text, wie er beim Betrieb ankaeme - nicht nur der von der KI
             # geschriebene Teil. Sonst sieht man hier etwas anderes, als rausgeht.
@@ -183,6 +185,38 @@ def api_progress(seit: int = 0):
 @router.get("/api/stats", dependencies=[Depends(require_admin)])
 def api_stats():
     return db.get_stats()
+
+
+# Link-Vorschauen von Mailprogrammen, Virenscanner, Suchmaschinen: fuehren meist gar kein
+# JavaScript aus, und wenn doch, verraten sie sich hier.
+_BOT = ("bot", "crawl", "spider", "preview", "scan", "headless", "lighthouse", "curl", "python",
+        "httpx", "wget", "facebookexternalhit", "slurp", "monitor")
+_QUELLEN = {"mail", "brief", "verweis", "direkt"}
+
+
+@router.post("/api/besuch/{slug}")
+async def api_besuch(slug: str, request: Request):
+    """Zaehlt einen Aufruf einer Demo-Seite. Oeffentlich, weil die Seiten auf GitHub
+    Pages liegen. Gespeichert wird weder IP noch Kennung - nur Seite, Zeit, Weg, Geraet.
+
+    Kommt als text/plain (navigator.sendBeacon), damit der Browser keine CORS-Vorabfrage
+    schickt - die kaeme sonst doppelt so oft an wie der Besuch selbst."""
+    agent = (request.headers.get("user-agent") or "").lower()
+    if not agent or any(b in agent for b in _BOT):
+        return {"status": "ignoriert"}
+    lead = db.get_lead_by_slug(slug)
+    if lead is None:
+        return {"status": "ignoriert"}
+    try:
+        import json as _json
+        daten = _json.loads((await request.body())[:500] or b"{}")
+    except ValueError:
+        daten = {}
+    quelle = str(daten.get("quelle") or "direkt")
+    quelle = quelle if quelle in _QUELLEN else "direkt"
+    geraet = "handy" if any(m in agent for m in ("mobi", "android", "iphone", "ipad")) else "rechner"
+    db.add_besuch(lead["id"], slug, quelle, geraet, bool(daten.get("intern")))
+    return {"status": "ok"}
 
 
 @router.post("/api/reservation/{slug}")

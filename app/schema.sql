@@ -101,3 +101,19 @@ CREATE TABLE IF NOT EXISTS antworten (
     empfangen_am TEXT NOT NULL,
     gelesen INTEGER NOT NULL DEFAULT 0
 );
+
+-- Aufrufe der Demo-Seiten. Bewusst ohne IP, ohne Cookie, ohne Nutzerkennung: gezaehlt wird
+-- nur, DASS eine Seite im Browser geoeffnet wurde, wann, ueber welchen Weg (Mail, Brief,
+-- direkt) und ob am Handy. "intern" markiert Aufrufe aus dem Dashboard - die eigenen
+-- Klicks sollen die Zahlen nicht verfaelschen.
+CREATE TABLE IF NOT EXISTS besuche (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lead_id INTEGER REFERENCES leads(id),
+    site_slug TEXT NOT NULL,
+    zeit TEXT NOT NULL,
+    quelle TEXT,
+    geraet TEXT,
+    intern INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_besuche_lead ON besuche(lead_id);
+

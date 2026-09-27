@@ -74,6 +74,9 @@ def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> 
     from app.outreach.vorteile import vorteile
 
     demo_url = f"{settings.base_url}/sites/{lead['site_slug']}/"
+    # Der QR-Code zeigt auf dieselbe Seite, aber mit ?q=brief - der Besuchszaehler
+    # unterscheidet so Brief und Mail. Unter dem Code steht die kurze Adresse ohne Zusatz.
+    qr_url = demo_url + "?q=brief"
     anschrift = [t.strip() for t in (lead["address"] or "").split(",") if t.strip()]
     anrede = _anrede(lead)
     # Warum sich eine Website lohnt - bisher stand im Brief nur, dass der Entwurf fertig
@@ -111,7 +114,7 @@ def _brief(lead, absender_name: str, absender_zeilen: list[str], heute: str) -> 
   </p>
 
   <div class="qr-block">
-    <div class="qr">{_qr_svg(demo_url)}</div>
+    <div class="qr">{_qr_svg(qr_url)}</div>
     <div class="qr-text">
       <strong>Mit dem Handy scannen</strong>
       <span class="url">{html.escape(demo_url)}</span>

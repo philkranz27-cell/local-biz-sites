@@ -278,6 +278,11 @@
                         letter-spacing: .06em; color: var(--muted); margin-bottom: .1rem; }
   .aufnahme-feld p { margin: 0; white-space: pre-wrap; }
   .antwort-card { padding: 1.4rem 1.5rem; margin-bottom: 2rem; }
+  .besuch-zeile { border-top: 1px solid rgba(255,255,255,.07); padding: .55rem 0;
+                  display: flex; flex-wrap: wrap; gap: .3rem .7rem; align-items: baseline; }
+  .besuch-zeile b { color: #fff; }
+  .besuch-meta { color: var(--muted); font-size: .8rem; margin-left: auto; }
+  .besuch-chip { font-size: .75rem; color: #93c5fd; margin-left: .5rem; }
   .antwort.gelesen { opacity: .55; }
   .antwort-art { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em;
                  padding: .12rem .5rem; border-radius: 999px; margin-left: .5rem;
@@ -345,7 +350,7 @@
         <span class="mm-icon">📧</span>
         <span class="mm-label">E-Mails</span>
         {% set neue_antworten = antworten|selectattr('gelesen', 'equalto', 0)|selectattr('art', 'equalto', 'antwort')|list|length %}
-        <span class="mm-count">{{ emails_drafted }} entworfen · {{ emails_sent }} versendet{% if neue_antworten %} · <b style="color:#fbbf24">{{ neue_antworten }} neue Antwort{{ 'en' if neue_antworten != 1 }}</b>{% endif %}</span>
+        <span class="mm-count">{{ emails_drafted }} entworfen · {{ emails_sent }} versendet{% if besuche_je_lead %} · {{ besuche_je_lead|length }} angesehen{% endif %}{% if neue_antworten %} · <b style="color:#fbbf24">{{ neue_antworten }} neue Antwort{{ 'en' if neue_antworten != 1 }}</b>{% endif %}</span>
       </div>
     </button>
     <button class="mm-node orb mm-bubble mm-bubble-3" onclick="showView('payments-view')">
@@ -418,7 +423,7 @@
         <td>{{ lead.city }}</td>
         <td><span class="status-chip">{{ lead.status }}</span></td>
         <td>{{ lead.contact_email or lead.phone or '—' }}</td>
-        <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
+        <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/?von=dashboard" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -437,7 +442,7 @@
           <td>{{ lead.category }}</td>
           <td>{{ lead.city }}</td>
           <td>{{ lead.address }}</td>
-          <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
+          <td>{% if lead.site_slug %}<a class="site-link" href="/sites/{{ lead.site_slug }}/?von=dashboard" target="_blank">ansehen</a>{% else %}—{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -481,9 +486,24 @@
       {% if a.betreff %}<div class="aufnahme-feld"><span>Betreff</span><p>{{ a.betreff }}</p></div>{% endif %}
       {% if a.auszug %}<div class="aufnahme-feld"><span>{{ 'Meldung' if a.art == 'unzustellbar' else 'Nachricht' }}</span><p>{{ a.auszug }}</p></div>{% endif %}
       <div class="aufnahme-aktion">
-        {% if a.site_slug %}<a class="aufnahme-zeit" href="https://philswebsites.de/sites/{{ a.site_slug }}/" target="_blank" rel="noopener">Demo-Seite ansehen</a>{% endif %}
+        {% if a.site_slug %}<a class="aufnahme-zeit" href="https://philswebsites.de/sites/{{ a.site_slug }}/?von=dashboard" target="_blank" rel="noopener">Demo-Seite ansehen</a>{% endif %}
         {% if not a.gelesen %}<button type="button" class="uebernehmen-btn" onclick="antwortGelesen(this)">Erledigt</button>{% endif %}
       </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card aufnahme-card besuch-card">
+    <h3>👀 Besuche der Demo-Seiten{% if letzte_besuche %} · {{ besuche_je_lead|length }} Betriebe{% endif %}</h3>
+    <p class="card-sub">
+      Wer seine Demo-Seite geöffnet hat – ohne Cookies, ohne IP. Deine eigenen Klicks aus
+      dem Dashboard zählen nicht mit. Gezählt wird nur, solange der Laptop läuft.
+    </p>
+    {% if not letzte_besuche %}<p class="not-configured">Noch kein Besuch.</p>{% endif %}
+    {% for b in letzte_besuche %}
+    <div class="besuch-zeile">
+      <b>{{ b.betrieb or b.site_slug }}</b>{% if b.stadt %} <span class="aufnahme-zeit">{{ b.stadt }}</span>{% endif %}
+      <span class="besuch-meta">{{ b.zeit[:16].replace('T', ' ') }} UTC · {{ {'mail': 'über die Mail', 'brief': 'über den Brief', 'verweis': 'über einen Link', 'direkt': 'direkt'}.get(b.quelle, b.quelle) }} · {{ 'Handy' if b.geraet == 'handy' else 'Rechner' }}</span>
     </div>
     {% endfor %}
   </div>
@@ -517,7 +537,7 @@
     {% if lead.email_subject %}
     <div class="card email-card">
       <div class="meta">
-        <span><b style="color:#fff">{{ lead.name }}</b> · {{ lead.contact_email }}</span>
+        <span><b style="color:#fff">{{ lead.name }}</b> · {{ lead.contact_email }}{% set bs = besuche_je_lead.get(lead.id) %}{% if bs %}<span class="besuch-chip" title="zuletzt {{ bs.zuletzt[:16].replace('T', ' ') }} UTC">👀 {{ bs.anzahl }}× angesehen</span>{% endif %}</span>
         {% set art_der_antwort = (antworten|selectattr('lead_id', 'equalto', lead.id)|map(attribute='art')|list) %}
         <span class="status-chip">{% if 'antwort' in art_der_antwort %}💬 geantwortet{% elif 'unzustellbar' in art_der_antwort %}⚠️ unzustellbar{% elif lead.status == 'emailed' %}versendet{% else %}entworfen, noch nicht gesendet{% endif %}</span>
       </div>
@@ -572,7 +592,7 @@
         {% else %}
           <button type="button" class="uebernehmen-btn" onclick="aufnahmeUebernehmen(this)">Angaben übernehmen</button>
         {% endif %}
-        <a class="site-link" href="/sites/{{ a.site_slug }}/" target="_blank">Seite ansehen</a>
+        <a class="site-link" href="/sites/{{ a.site_slug }}/?von=dashboard" target="_blank">Seite ansehen</a>
         <span class="uebernahme-meldung"></span>
       </div>
     </div>
