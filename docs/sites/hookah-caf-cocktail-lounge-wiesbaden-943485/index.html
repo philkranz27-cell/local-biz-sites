@@ -305,8 +305,9 @@
     } catch (e) {}
     var d = JSON.stringify({ quelle: p.get('q') || (document.referrer ? 'verweis' : 'direkt'), intern: intern });
     var u = 'https://philipplaptop.tail191c07.ts.net/api/besuch/hookah-caf-cocktail-lounge-wiesbaden-943485';
-    if (navigator.sendBeacon) navigator.sendBeacon(u, new Blob([d], { type: 'text/plain' }));
-    else fetch(u, { method: 'POST', body: d, keepalive: true, mode: 'no-cors' });
+    /* Bewusst fetch statt navigator.sendBeacon: Beacons ("ping") blockieren Werbeblocker
+       und manche Browser pauschal. Ein schlichter POST mit Text geht ohne CORS-Vorabfrage. */
+    fetch(u, { method: 'POST', body: d, keepalive: true, mode: 'no-cors' });
   } catch (e) {}
 })();
 </script>
