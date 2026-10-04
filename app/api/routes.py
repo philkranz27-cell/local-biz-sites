@@ -109,6 +109,17 @@ async def login(request: Request):
     return antwort
 
 
+def _mailvorschau(lead) -> str:
+    """Gesendete Mails: was rausging. Offene: die kurze Mail, die rausgehen wird."""
+    from app.outreach import kurzmail
+    if lead["status"] == "emailed":
+        return lead["email_body"] if lead["email_subject"].startswith("Kurze Frage")             else akquise_mail_fuer_lead(lead)
+    try:
+        return kurzmail.erstmail(lead)
+    except kurzmail.PreisFehlt:
+        return "(Noch kein Preis gesetzt - ANGEBOT_PREIS in der .env. Ohne Preis geht keine Mail raus.)"
+
+
 @router.get("/", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 def dashboard(request: Request):
     leads = db.get_all_leads()
@@ -137,7 +148,9 @@ def dashboard(request: Request):
             "antworten_eingerichtet": settings.imap_configured,
             # Der komplette Text, wie er beim Betrieb ankaeme - nicht nur der von der KI
             # geschriebene Teil. Sonst sieht man hier etwas anderes, als rausgeht.
-            "mail_texte": {l["id"]: akquise_mail_fuer_lead(l) for l in leads if l["email_body"]},
+            "mail_texte": {l["id"]: _mailvorschau(l) for l in leads if l["email_body"]},
+            "anrufliste": db.get_anrufliste(),
+            "preis_fehlt": not (settings.angebot_preis or "").strip(),
         },
     )
 

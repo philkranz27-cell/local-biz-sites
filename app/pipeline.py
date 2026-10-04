@@ -8,7 +8,8 @@ import groq
 from app import db
 from app.anschrift import vollstaendig
 from app.config import settings
-from app.outreach.mailer import send_outreach_email
+from app.outreach import kurzmail
+from app.outreach.mailer import _send
 from app.sitegen.generator import generate_site
 from app import progress
 from app.publisher import veroeffentlichen
@@ -167,8 +168,12 @@ def phase_generate_sites() -> None:
 
     # Nur Betriebe, bei denen die Website-Pruefung schon durch ist - sonst baut man eine
     # Demo-Seite fuer jemanden, der laengst eine hat, und verbraucht Groq-Tokens dafuer.
-    wartend = [r for r in db.get_leads_by_status("email_found", limit=60)
-               if r["website_geprueft_am"]][:20]
+    # Betriebe mit Instagram oder Facebook zuerst: Wer dort aktiv ist, kuemmert sich
+    # erkennbar um seinen Auftritt und ist eher offen fuer eine Website.
+    wartend = [r for r in db.get_leads_by_status("email_found", limit=400)
+               if r["website_geprueft_am"]]
+    wartend.sort(key=lambda r: "soziale_netze" not in (r["osm_extras_json"] or ""))
+    wartend = wartend[:20]
     progress.set_phase("websites", f"Websites bauen – {len(wartend)} Betriebe in der Warteschlange")
     for row in wartend:
         if progress.is_paused():
@@ -244,6 +249,12 @@ def phase_send_emails() -> None:
                            if auswahl else "Versand – nichts offen")
         return
 
+    try:
+        kurzmail.erstmail(kandidaten[0])
+    except kurzmail.PreisFehlt:
+        progress.set_phase("versand", "Versand aus – ANGEBOT_PREIS fehlt in der .env")
+        return
+
     progress.set_phase("versand", f"Versand – noch {budget} Mails heute möglich")
     for row in kandidaten:
         if progress.is_paused():
@@ -264,9 +275,11 @@ def phase_send_emails() -> None:
                                 else "Mail-Domain tot"))
                 continue
         try:
-            extras = json.loads(row["osm_extras_json"]) if row["osm_extras_json"] else None
-            send_outreach_email(row["contact_email"], row["email_subject"], row["email_body"],
-                                row["category"], row["city"], extras)
+            # Die kurze Mail mit Preis (app/outreach/kurzmail.py) statt des KI-Entwurfs mit
+            # Vorteile-Block - der wurde kaum geoeffnet. Gespeichert wird, was rausging.
+            text = kurzmail.erstmail(row)
+            _send(row["contact_email"], kurzmail.betreff(row), text)
+            db.speichere_gesendete_mail(row["id"], kurzmail.betreff(row), text)
             db.mark_emailed(row["id"])
             logger.info("Mail gesendet an Lead %s (%s)", row["id"], row["contact_email"])
             progress.log("versand", f"Mail gesendet an {row['name']} <{row['contact_email']}>")
@@ -275,6 +288,36 @@ def phase_send_emails() -> None:
             db.mark_error(row["id"])
             progress.log("fehler", f"Versand fehlgeschlagen: {row['name']} – {type(exc).__name__}",
                          gruppe=f"versand:{type(exc).__name__}")
+
+
+def phase_nachfassen() -> None:
+    """Eine einzige Erinnerung, sieben Tage nach der ersten Mail - nur an Betriebe, die
+    nicht geantwortet haben und nicht gesperrt sind. Danach nie wieder.
+
+    Rechtlich heikel wie die erste Mail auch (Paragraf 7 UWG, Werbung ohne Einwilligung);
+    Philipp hat sich am 04.10.2026 bewusst dafuer entschieden."""
+    from datetime import timedelta
+
+    if not settings.mail_configured or settings.max_nachfass_per_day <= 0:
+        return
+    budget = settings.max_nachfass_per_day - db.count_nachfass_since(_start_of_today_iso())
+    if budget <= 0:
+        return
+    stichtag = (datetime.now(timezone.utc) - timedelta(days=kurzmail.NACHFASS_NACH_TAGEN)).isoformat()
+    for row in db.get_nachfass_kandidaten(stichtag, min(budget, MAILS_PRO_DURCHLAUF)):
+        if db.is_blocked(row["contact_email"]):
+            continue
+        try:
+            _send(row["contact_email"], kurzmail.nachfass_betreff(row), kurzmail.nachfassmail(row))
+            db.mark_nachfass(row["id"])
+            logger.info("Nachfass-Mail an Lead %s (%s)", row["id"], row["contact_email"])
+            progress.log("versand", f"Nachfass-Mail an {row['name']} <{row['contact_email']}>")
+        except kurzmail.PreisFehlt:
+            return
+        except Exception:
+            logger.exception("Nachfass-Mail fehlgeschlagen fuer Lead %s", row["id"])
+            # Als erledigt markieren: lieber keine Erinnerung als dreimal dieselbe.
+            db.mark_nachfass(row["id"])
 
 
 # Pro Durchlauf nur ein Stueck: Die Pipeline laeuft jede Minute, und ein Durchlauf soll

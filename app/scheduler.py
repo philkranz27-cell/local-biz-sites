@@ -5,7 +5,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.config import settings
 from app.outreach.antworten import pruefe_antworten
-from app.pipeline import phase_send_emails, phase_websites_pruefen, run_pipeline
+from app.pipeline import (phase_nachfassen, phase_send_emails, phase_websites_pruefen,
+                          run_pipeline)
 from app.sicherung import sichern
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,11 @@ def _versand_job() -> None:
         phase_send_emails()
     except Exception:
         logger.exception("Mailversand fehlgeschlagen")
+    # Im selben Job, nicht parallel: sonst gingen Erst- und Nachfass-Mail gleichzeitig raus.
+    try:
+        phase_nachfassen()
+    except Exception:
+        logger.exception("Nachfassen fehlgeschlagen")
 
 
 def _website_pruef_job() -> None:

@@ -508,6 +508,27 @@
     {% endfor %}
   </div>
 
+  {% if preis_fehlt %}
+  <div class="card aufnahme-card"><h3>⚠️ Kein Preis gesetzt</h3>
+    <p class="card-sub">Die neue kurze Mail nennt einen Preis. Solange <code>ANGEBOT_PREIS</code>
+    in der .env leer ist, geht keine Akquise- und keine Nachfass-Mail raus.</p></div>
+  {% endif %}
+
+  <div class="card aufnahme-card">
+    <h3>📞 Anrufliste{% if anrufliste %} · {{ anrufliste|length }}{% endif %}</h3>
+    <p class="card-sub">Angeschrieben, keine Antwort, Telefonnummer bekannt. Wer seine Seite
+      angesehen hat, steht oben.</p>
+    {% if not anrufliste %}<p class="not-configured">Niemand mit Telefonnummer.</p>{% endif %}
+    {% for l in anrufliste %}
+    <div class="besuch-zeile">
+      <b>{{ l.name }}</b> <span class="aufnahme-zeit">{{ l.city }}</span>
+      <a href="tel:{{ l.phone|replace(' ', '') }}">{{ l.phone }}</a>
+      <a class="aufnahme-zeit" href="https://philswebsites.de/sites/{{ l.site_slug }}/?von=dashboard" target="_blank" rel="noopener">Seite</a>
+      <span class="besuch-meta">{% if l.besuche %}👀 {{ l.besuche }}× angesehen · {% endif %}Mail {{ l.emailed_at[:10] }}{% if l.nachfass_am %} · erinnert {{ l.nachfass_am[:10] }}{% endif %}</span>
+    </div>
+    {% endfor %}
+  </div>
+
   <div class="card block-card">
     <h3>🚫 Sperrliste{% if blocklist %} · {{ blocklist|length }}{% endif %}</h3>
     <p class="card-sub">

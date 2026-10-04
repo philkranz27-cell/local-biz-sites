@@ -50,6 +50,8 @@ def init_db() -> None:
             conn.execute("ALTER TABLE leads ADD COLUMN deal_notes TEXT")
         if "stripe_payment_link" not in existing_columns:
             conn.execute("ALTER TABLE leads ADD COLUMN stripe_payment_link TEXT")
+        if "nachfass_am" not in existing_columns:
+            conn.execute("ALTER TABLE leads ADD COLUMN nachfass_am TEXT")
         if "website_url" not in existing_columns:
             # Gefundene Website trotz fehlendem OSM-Tag (app/website_suche.py) und wann
             # zuletzt geprueft wurde. Ohne Pruefung wird weder gebaut noch angeschrieben.
@@ -541,4 +543,47 @@ def get_letzte_besuche(limit: int = 40) -> list[sqlite3.Row]:
             "SELECT b.*, l.name AS betrieb, l.city AS stadt, l.emailed_at FROM besuche b "
             "LEFT JOIN leads l ON l.id = b.lead_id WHERE b.intern = 0 "
             "ORDER BY b.zeit DESC LIMIT ?", (limit,)).fetchall()
+
+
+def speichere_gesendete_mail(lead_id: int, betreff: str, text: str) -> None:
+    """Was wirklich rausging - fuers Dashboard. Bisher stand dort der KI-Entwurf."""
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET email_subject = ?, email_body = ? WHERE id = ?",
+                     (betreff, text, lead_id))
+
+
+def get_nachfass_kandidaten(vor_iso: str, limit: int) -> list[sqlite3.Row]:
+    """Angeschrieben vor dem Stichtag, noch nie nachgefasst, keine Antwort, Seite online."""
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT * FROM leads l WHERE l.status = 'emailed' AND l.emailed_at <= ? "
+            "AND l.nachfass_am IS NULL AND l.contact_email IS NOT NULL "
+            "AND (l.seite_status IS NULL OR l.seite_status != 'offline') "
+            "AND l.deal_status NOT IN ('abgelehnt', 'bezahlt') "
+            "AND NOT EXISTS (SELECT 1 FROM antworten a WHERE a.lead_id = l.id) "
+            "ORDER BY l.emailed_at LIMIT ?", (vor_iso, limit)).fetchall()
+
+
+def mark_nachfass(lead_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("UPDATE leads SET nachfass_am = ? WHERE id = ?", (_now(), lead_id))
+
+
+def count_nachfass_since(since_iso: str) -> int:
+    with get_connection() as conn:
+        return conn.execute("SELECT COUNT(*) FROM leads WHERE nachfass_am >= ?", (since_iso,)).fetchone()[0]
+
+
+def get_anrufliste(limit: int = 60) -> list[sqlite3.Row]:
+    """Angeschrieben, keine Antwort, nicht gesperrt, Telefonnummer vorhanden. Wer seine
+    Seite angesehen hat, steht oben - mit dem lohnt ein Anruf am meisten."""
+    with get_connection() as conn:
+        return conn.execute(
+            "SELECT l.*, (SELECT COUNT(*) FROM besuche b WHERE b.lead_id = l.id AND b.intern = 0) AS besuche "
+            "FROM leads l WHERE l.emailed_at IS NOT NULL AND l.phone IS NOT NULL AND l.phone != '' "
+            "AND l.deal_status NOT IN ('abgelehnt', 'bezahlt') "
+            "AND NOT EXISTS (SELECT 1 FROM antworten a WHERE a.lead_id = l.id) "
+            "AND NOT EXISTS (SELECT 1 FROM blocklist s WHERE s.email = lower(l.contact_email)) "
+            "ORDER BY besuche DESC, (l.osm_extras_json LIKE '%soziale_netze%') DESC, l.emailed_at DESC "
+            "LIMIT ?", (limit,)).fetchall()
 

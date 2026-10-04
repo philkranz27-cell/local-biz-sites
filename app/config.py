@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     imap_password: str = ""
     # Websuche nach Websites, die OSM nicht kennt (app/websuche.py). Ohne Schluessel aus.
     brave_api_key: str = ""
+    # Preis in der Akquise-Mail, als Satzteil: "einmalig 299 €, danach 9 € im Monat".
+    # Leer = es geht keine Akquise-Mail raus (app/outreach/kurzmail.py).
+    angebot_preis: str = ""
+    # Hoechstens so viele Nachfass-Mails am Tag (eine pro Betrieb, nach 7 Tagen).
+    max_nachfass_per_day: int = 20
     websuche_pro_monat: int = 950
     from_name: str = "Website-Angebot"
     sender_impressum: str = ""
