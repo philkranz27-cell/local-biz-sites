@@ -265,6 +265,12 @@ def phase_send_emails() -> None:
             db.set_status(row["id"], "blocked")
             logger.info("Uebersprungen, Adresse gesperrt: %s", row["contact_email"])
             continue
+        # Niemanden zweimal anschreiben - auch nicht, wenn derselbe Laden in OSM doppelt
+        # steht und unter einem zweiten Eintrag wieder auftaucht.
+        if db.schon_angeschrieben(row["contact_email"]):
+            db.set_status(row["id"], "schon_angeschrieben")
+            logger.info("Uebersprungen, Adresse schon angeschrieben: %s", row["contact_email"])
+            continue
         # Letzte Sicherung vor dem Versand: Hat der Betrieb schon eine Website? In der
         # ersten Runde am 17.09. traf das auf 10 von 20 zu - OSM kannte ihre Seiten nicht.
         if not row["website_geprueft_am"]:

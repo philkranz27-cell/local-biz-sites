@@ -587,3 +587,21 @@ def get_anrufliste(limit: int = 60) -> list[sqlite3.Row]:
             "ORDER BY besuche DESC, (l.osm_extras_json LIKE '%soziale_netze%') DESC, l.emailed_at DESC "
             "LIMIT ?", (limit,)).fetchall()
 
+
+def schon_angeschrieben(email: str) -> bool:
+    """Ging an diese Adresse schon einmal eine Akquise-Mail - egal unter welchem Betrieb?
+    OSM fuehrt manche Laeden doppelt (zwei Eintraege, eine Adresse). Gross-/Kleinschreibung
+    egal, gmail und googlemail gelten als dieselbe Adresse."""
+    e = (email or "").strip().lower()
+    if not e:
+        return False
+    varianten = {e}
+    lokal, _, domain = e.partition("@")
+    if domain in ("gmail.com", "googlemail.com"):
+        varianten = {f"{lokal}@gmail.com", f"{lokal}@googlemail.com"}
+    platz = ",".join("?" * len(varianten))
+    with get_connection() as conn:
+        return conn.execute(
+            f"SELECT 1 FROM leads WHERE emailed_at IS NOT NULL AND lower(contact_email) IN ({platz})",
+            tuple(varianten)).fetchone() is not None
+
